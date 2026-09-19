@@ -1,22 +1,27 @@
-.page {
+.app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
 }
 
-/* Header / brand */
-.route-header {
+/* Top bar */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 20px;
   background: var(--navy);
-  color: #fff;
-  padding: 18px 22px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 .brand-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: 8px;
 }
 
 .logo {
@@ -29,16 +34,84 @@
 .wordmark {
   font-family: var(--sans);
   font-weight: 800;
-  font-size: 17px;
+  font-size: 16px;
   letter-spacing: -0.01em;
   color: #fff;
 }
 
-.brand-tagline {
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.tab {
+  font-family: var(--sans);
+  font-weight: 600;
   font-size: 13px;
+  padding: 8px 14px;
   color: #9aa4d4;
-  padding-left: 10px;
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  border-radius: 7px;
+  background: none;
+  border: none;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.tab.active {
+  color: #fff;
+  background: rgba(59, 99, 232, 0.35);
+}
+
+.key-toggle {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 8px 14px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.key-toggle:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Workspace */
+.workspace {
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px;
+}
+
+.mode-blurb {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
+/* Route panel (track + check-my-work), now a normal card in the page flow */
+.route-panel {
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 18px 20px;
+  color: #fff;
 }
 
 .track {
@@ -173,12 +246,6 @@
   flex-shrink: 0;
 }
 
-.mode-blurb {
-  margin: 4px 0 0;
-  font-size: 13.5px;
-  color: #b7c0f0;
-}
-
 .ghost-tip code {
   font-family: var(--mono);
   background: rgba(0, 0, 0, 0.25);
@@ -215,29 +282,39 @@
   background: rgba(255, 255, 255, 0.16);
 }
 
-/* Body layout */
-.body-wrap {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 230px 1fr;
-  min-height: 0;
-}
-
-@media (max-width: 760px) {
-  .body-wrap {
-    grid-template-columns: 1fr;
-  }
-  .sidebar {
-    display: none;
-  }
+/* Key index — slide-in overlay, not a layout column */
+.sidebar-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 30, 0.35);
+  z-index: 29;
 }
 
 .sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 300px;
+  max-width: 85vw;
   background: var(--navy);
   color: #fff;
-  padding: 18px 16px;
+  padding: 16px;
   overflow-y: auto;
-  min-height: 0;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+  z-index: 30;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .sidebar h2 {
@@ -245,8 +322,22 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #8f9ada;
-  margin: 0 0 12px;
+  margin: 0;
   font-weight: 700;
+}
+
+.sidebar-close {
+  background: none;
+  border: none;
+  color: #9aa4d4;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.sidebar-close:hover {
+  color: #fff;
 }
 
 .key-search {
@@ -300,50 +391,15 @@
   font-size: 12.5px;
 }
 
-.main {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.tabs {
-  display: flex;
-  border-bottom: 1px solid var(--line);
-  background: var(--panel);
-  flex-shrink: 0;
-}
-
-.tab {
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 13px;
-  padding: 12px 20px;
-  color: var(--ink-dim);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  background: none;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-}
-
-.tab.active {
-  color: var(--blue);
-  border-bottom-color: var(--blue);
-  background: var(--bg);
-}
-
-.tab:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
-/* Shared labeled editor/output panel */
+/* Editor / output panels — fixed, comfortable heights instead of fighting
+   the viewport for remaining space, so the page can scroll normally. */
 .editor-panel {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  height: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg);
 }
 
 .editor-panel-bar {
@@ -364,9 +420,7 @@
 }
 
 .output-panel {
-  flex: 1.3;
-  min-height: 0;
-  border-bottom: 1px solid var(--line);
+  height: 300px;
 }
 
 .output-panel .editor-panel-body {
@@ -382,24 +436,19 @@
 }
 
 .lower {
-  flex: 1;
   display: grid;
   grid-template-columns: 1fr 230px;
-  min-height: 0;
+  gap: 18px;
 }
 
 @media (max-width: 600px) {
   .lower {
     grid-template-columns: 1fr;
   }
-  .stats {
-    display: none;
-  }
 }
 
 .code-panel {
-  border-right: 1px solid var(--line);
-  overflow: hidden;
+  height: 320px;
 }
 
 .code-panel .cm-editor {
@@ -411,12 +460,14 @@
 }
 
 .stats {
-  padding: 18px 16px;
+  padding: 16px;
   background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow-y: auto;
+  height: fit-content;
 }
 
 .stat h3 {
@@ -444,21 +495,21 @@
 
 /* Puzzle pane */
 .puzzle-pane {
-  flex: 1;
   display: flex;
-  min-height: 0;
+  gap: 18px;
+  align-items: flex-start;
 }
 
 .puzzle-list {
   width: 230px;
   flex-shrink: 0;
   background: var(--panel);
-  border-right: 1px solid var(--line);
-  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow-y: auto;
 }
 
 .puzzle-pick {
@@ -487,9 +538,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: 18px 22px;
   gap: 14px;
-  overflow-y: auto;
 }
 
 .puzzle-prompt {
@@ -501,18 +550,10 @@
 
 .puzzle-editor-wrap {
   height: 200px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  flex-shrink: 0;
-  overflow: hidden;
 }
 
 .puzzle-output {
   height: 160px;
-  flex: none;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 .puzzle-body .hint {
@@ -574,7 +615,5 @@
     width: 100%;
     flex-direction: row;
     flex-wrap: wrap;
-    border-right: none;
-    border-bottom: 1px solid var(--line);
   }
 }

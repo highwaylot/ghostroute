@@ -27,6 +27,7 @@ function App() {
   const [mode, setMode] = useState<Mode>('route');
   const [code, setCode] = useState(loadSavedCode);
   const [current, setCurrent] = useState(0);
+  const [keyOpen, setKeyOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -47,48 +48,40 @@ function App() {
   const stepLabel = `${Math.min(current + 1, STEPS.length)} / ${STEPS.length}`;
 
   return (
-    <div className="page">
-      <header className="route-header">
+    <div className="app">
+      <header className="topbar">
         <div className="brand-row">
-          <Logo size={22} />
-          <span className="brand-tagline">build your first page</span>
+          <Logo size={20} />
         </div>
-        {mode === 'route' && (
-          <>
-            <RouteTrack current={current} onSelect={setCurrent} />
-            <GhostTip current={current} code={code} onAdvance={handleAdvance} onReset={handleReset} />
-          </>
-        )}
-        {mode === 'puzzles' && (
-          <p className="mode-blurb">
-            Each puzzle starts broken on purpose. Read the code, find what's wrong, and fix it.
-          </p>
-        )}
-        {mode === 'sandbox' && (
-          <p className="mode-blurb">
-            No route, no checks — just a blank page to build whatever you want.
-          </p>
-        )}
+
+        <nav className="tabs">
+          <button className={`tab ${mode === 'route' ? 'active' : ''}`} onClick={() => setMode('route')}>
+            route
+          </button>
+          <button className={`tab ${mode === 'puzzles' ? 'active' : ''}`} onClick={() => setMode('puzzles')}>
+            fix this code
+          </button>
+          <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} onClick={() => setMode('sandbox')}>
+            sandbox
+          </button>
+        </nav>
+
+        <button className="key-toggle" onClick={() => setKeyOpen((v) => !v)}>
+          key index
+        </button>
       </header>
 
-      <div className="body-wrap">
-        <KeySidebar />
+      <div className="workspace">
+        <KeySidebar open={keyOpen} onClose={() => setKeyOpen(false)} />
 
         <main className="main">
-          <div className="tabs">
-            <button className={`tab ${mode === 'route' ? 'active' : ''}`} onClick={() => setMode('route')}>
-              route
-            </button>
-            <button className={`tab ${mode === 'puzzles' ? 'active' : ''}`} onClick={() => setMode('puzzles')}>
-              fix this code
-            </button>
-            <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} onClick={() => setMode('sandbox')}>
-              sandbox
-            </button>
-          </div>
-
           {mode === 'route' && (
             <>
+              <section className="route-panel">
+                <RouteTrack current={current} onSelect={setCurrent} />
+                <GhostTip current={current} code={code} onAdvance={handleAdvance} onReset={handleReset} />
+              </section>
+
               <EditorPanel label="output" className="output-panel">
                 <iframe title="preview" srcDoc={code} />
               </EditorPanel>
@@ -102,8 +95,23 @@ function App() {
             </>
           )}
 
-          {mode === 'puzzles' && <PuzzlePane />}
-          {mode === 'sandbox' && <SandboxPane />}
+          {mode === 'puzzles' && (
+            <>
+              <p className="mode-blurb">
+                Each puzzle starts broken on purpose. Read the code, find what's wrong, and fix it.
+              </p>
+              <PuzzlePane />
+            </>
+          )}
+
+          {mode === 'sandbox' && (
+            <>
+              <p className="mode-blurb">
+                No route, no checks — just a blank page to build whatever you want.
+              </p>
+              <SandboxPane />
+            </>
+          )}
         </main>
       </div>
     </div>
