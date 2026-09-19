@@ -114,6 +114,28 @@
   color: #fff;
 }
 
+.chapter-intro {
+  margin-bottom: 14px;
+}
+
+.chapter-eyebrow {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8f9ada;
+  margin-bottom: 6px;
+}
+
+.chapter-blurb {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #eef0ff;
+  max-width: 72ch;
+}
+
 .track {
   display: flex;
   align-items: center;

@@ -18,7 +18,9 @@ export function GhostTip({ current, code, onAdvance, onReset }: Props) {
     return (
       <div className="ghost-tip">
         <p className="txt">
-          Route complete — you've built a full basic page. Try the Puzzles tab, or edit freely in Sandbox.
+          Route complete — you've written a full page: structure, text, lists, links, media,
+          grouping, and semantic layout. That's real, usable HTML. Try Fix This Code to test what
+          stuck, or build freely in Sandbox.
         </p>
       </div>
     );

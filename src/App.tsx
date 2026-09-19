@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { RouteTrack } from './components/RouteTrack';
 import { GhostTip } from './components/GhostTip';
+import { ChapterIntro } from './components/ChapterIntro';
 import { KeySidebar } from './components/KeySidebar';
 import { StatsPanel } from './components/StatsPanel';
 import { CodeEditor } from './components/CodeEditor';
@@ -78,6 +79,7 @@ function App() {
           {mode === 'route' && (
             <>
               <section className="route-panel">
+                <ChapterIntro current={current} />
                 <RouteTrack current={current} onSelect={setCurrent} />
                 <GhostTip current={current} code={code} onAdvance={handleAdvance} onReset={handleReset} />
               </section>
