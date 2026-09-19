@@ -13,6 +13,7 @@ import { STEPS } from './data/steps';
 import './App.css';
 
 const STORAGE_KEY = 'tagsmiths-code';
+const STEP_KEY = 'tagsmiths-step';
 
 type Mode = 'route' | 'puzzles' | 'sandbox';
 
@@ -24,10 +25,19 @@ function loadSavedCode(): string {
   }
 }
 
+function loadSavedStep(): number {
+  try {
+    const raw = Number(localStorage.getItem(STEP_KEY));
+    return Number.isFinite(raw) && raw >= 0 ? Math.min(raw, STEPS.length) : 0;
+  } catch {
+    return 0;
+  }
+}
+
 function App() {
   const [mode, setMode] = useState<Mode>('route');
   const [code, setCode] = useState(loadSavedCode);
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(loadSavedStep);
   const [keyOpen, setKeyOpen] = useState(false);
 
   useEffect(() => {
@@ -37,6 +47,14 @@ function App() {
       // storage unavailable (private window, etc.) — nothing to do
     }
   }, [code]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STEP_KEY, String(current));
+    } catch {
+      // storage unavailable — nothing to do
+    }
+  }, [current]);
 
   const handleAdvance = () => {
     setCurrent((c) => Math.min(c + 1, STEPS.length));
