@@ -1,21 +1,26 @@
 import CodeMirror from '@uiw/react-codemirror';
 import { html } from '@codemirror/lang-html';
-import { linter, type Diagnostic } from '@codemirror/lint';
+import { linter, lintGutter, type Diagnostic as CMDiagnostic } from '@codemirror/lint';
 import { EditorView } from '@codemirror/view';
-import { findUnclosedTags } from '../lib/htmlCheck';
+import { runDiagnostics } from '../lib/diagnostics';
 
 type Props = {
   value: string;
   onChange: (value: string) => void;
 };
 
-const unclosedTagLinter = linter((view) => {
+// Feeds the full diagnostics engine into CodeMirror's own linter, so every
+// issue gets a colored squiggle (red for errors, amber for warnings), a dot
+// in the gutter, and the same plain-English explanation on hover that the
+// DiagnosticsPanel shows in full below the editor.
+const diagnosticsLinter = linter((view) => {
   const code = view.state.doc.toString();
-  const diagnostics: Diagnostic[] = findUnclosedTags(code).map((tag) => ({
-    from: tag.from,
-    to: tag.to,
-    severity: 'error',
-    message: `<${tag.name}> is never closed`,
+  const docLength = view.state.doc.length;
+  const diagnostics: CMDiagnostic[] = runDiagnostics(code).map((d) => ({
+    from: Math.min(d.from, docLength),
+    to: Math.min(Math.max(d.to, d.from + 1), docLength),
+    severity: d.severity,
+    message: `${d.title} — ${d.explain}`,
   }));
   return diagnostics;
 });
@@ -25,6 +30,8 @@ const theme = EditorView.theme({
   '.cm-scroller': { fontFamily: 'var(--mono)', lineHeight: '1.7' },
   '.cm-content': { padding: '12px 0' },
   '.cm-gutters': { paddingTop: 0 },
+  '.cm-lint-marker-error': { color: '#d6455f' },
+  '.cm-lint-marker-warning': { color: '#c98a1a' },
 });
 
 export function CodeEditor({ value, onChange }: Props) {
@@ -35,7 +42,7 @@ export function CodeEditor({ value, onChange }: Props) {
       theme="light"
       // autoCloseTags off — auto-inserting closing tags as you type was
       // fighting the point of the route, which is writing the tag yourself.
-      extensions={[html({ autoCloseTags: false }), unclosedTagLinter, theme]}
+      extensions={[html({ autoCloseTags: false }), diagnosticsLinter, lintGutter(), theme]}
       onChange={onChange}
       basicSetup={{
         lineNumbers: true,

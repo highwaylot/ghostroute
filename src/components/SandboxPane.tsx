@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { StatsPanel } from './StatsPanel';
+import { DiagnosticsPanel } from './DiagnosticsPanel';
 
 const SANDBOX_KEY = 'tagsmiths-sandbox';
 
@@ -47,6 +48,8 @@ export function SandboxPane() {
       <EditorPanel label="output" className="output-panel">
         <iframe title="sandbox preview" srcDoc={code} />
       </EditorPanel>
+
+      <DiagnosticsPanel code={code} />
     </>
   );
 }

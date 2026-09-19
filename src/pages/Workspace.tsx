@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { InstructionsRail } from '../components/InstructionsRail';
 import { KeySidebar } from '../components/KeySidebar';
 import { StatsPanel } from '../components/StatsPanel';
+import { DiagnosticsPanel } from '../components/DiagnosticsPanel';
 import { CodeEditor } from '../components/CodeEditor';
 import { EditorPanel } from '../components/EditorPanel';
 import { PuzzlePane } from '../components/PuzzlePane';
@@ -138,6 +139,8 @@ export default function Workspace() {
                 <EditorPanel label="output" className="output-panel">
                   <iframe title="preview" srcDoc={code} />
                 </EditorPanel>
+
+                <DiagnosticsPanel code={code} />
               </div>
             </div>
           )}

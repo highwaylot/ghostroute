@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { PROJECTS } from '../data/projects';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
+import { DiagnosticsPanel } from './DiagnosticsPanel';
 
 const STORAGE_KEY = 'tagsmiths-project-bio-page';
 
@@ -56,6 +57,8 @@ export function ProjectPane() {
       <EditorPanel label="output" className="output-panel">
         <iframe title="project preview" srcDoc={code} />
       </EditorPanel>
+
+      <DiagnosticsPanel code={code} />
     </div>
   );
 }

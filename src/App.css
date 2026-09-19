@@ -459,6 +459,12 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  cursor: grab;
+  user-select: none;
+}
+
+.sidebar-head:active {
+  cursor: grabbing;
 }
 
 .sidebar h2 {
@@ -500,6 +506,35 @@
   color: #7783b8;
 }
 
+.key-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.key-cat {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+  padding: 4px 9px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: #9aa4d4;
+  cursor: pointer;
+}
+
+.key-cat:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.key-cat.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
 .key-list {
   display: flex;
   flex-direction: column;
@@ -528,6 +563,19 @@
   margin-top: 3px;
   line-height: 1.45;
   display: block;
+}
+
+.key-example {
+  margin: 8px 0 0;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #a8d8ff;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .key-empty {
@@ -842,4 +890,107 @@
 .checklist-item.done .checklist-dot {
   background: var(--ok);
   border-color: var(--ok);
+}
+
+/* Diagnostics panel */
+.diagnostics-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.diagnostics-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.diagnostics-title {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.diagnostics-summary {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.diagnostics-summary.ok {
+  color: var(--ok);
+}
+
+.count-error {
+  color: var(--error);
+}
+
+.count-warning {
+  color: #b8790f;
+}
+
+.diagnostics-empty {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+.diagnostics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.diagnostic-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+
+.diagnostic-item.error {
+  border-left: 3px solid var(--error);
+}
+
+.diagnostic-item.warning {
+  border-left: 3px solid #c98a1a;
+}
+
+.diagnostic-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.diagnostic-item.error .diagnostic-dot {
+  background: var(--error);
+}
+
+.diagnostic-item.warning .diagnostic-dot {
+  background: #c98a1a;
+}
+
+.diagnostic-title {
+  margin: 0 0 3px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  font-family: var(--mono);
+}
+
+.diagnostic-explain {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-dim);
 }
