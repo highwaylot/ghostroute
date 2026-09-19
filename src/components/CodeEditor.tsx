@@ -1,0 +1,45 @@
+import CodeMirror from '@uiw/react-codemirror';
+import { html } from '@codemirror/lang-html';
+import { linter, type Diagnostic } from '@codemirror/lint';
+import { EditorView } from '@codemirror/view';
+import { findUnclosedTags } from '../lib/htmlCheck';
+
+type Props = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+const unclosedTagLinter = linter((view) => {
+  const code = view.state.doc.toString();
+  const diagnostics: Diagnostic[] = findUnclosedTags(code).map((tag) => ({
+    from: tag.from,
+    to: tag.to,
+    severity: 'error',
+    message: `<${tag.name}> is never closed`,
+  }));
+  return diagnostics;
+});
+
+const theme = EditorView.theme({
+  '&': { fontSize: '13.5px', height: '100%' },
+  '.cm-scroller': { fontFamily: 'var(--mono)', lineHeight: '1.6' },
+  '.cm-content': { padding: '34px 0 14px' },
+  '.cm-gutters': { paddingTop: '34px' },
+});
+
+export function CodeEditor({ value, onChange }: Props) {
+  return (
+    <CodeMirror
+      value={value}
+      height="100%"
+      theme="light"
+      extensions={[html(), unclosedTagLinter, theme]}
+      onChange={onChange}
+      basicSetup={{
+        lineNumbers: true,
+        foldGutter: false,
+        highlightActiveLine: true,
+      }}
+    />
+  );
+}

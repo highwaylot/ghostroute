@@ -1,15 +1,9 @@
+import { countUnclosed } from '../lib/htmlCheck';
+
 type Props = {
   code: string;
   stepLabel: string;
 };
-
-function countUnclosed(code: string): number {
-  const opens = (code.match(/<[a-zA-Z][^/>]*>/g) || []).length;
-  const closes = (code.match(/<\/[a-zA-Z][^>]*>/g) || []).length;
-  const selfClosing = (code.match(/<[a-zA-Z][^>]*\/>/g) || []).length;
-  const voidTags = (code.match(/<(img|br|hr|input|meta|link)[^>]*>/gi) || []).length;
-  return Math.max(0, opens - closes - selfClosing - voidTags);
-}
 
 export function StatsPanel({ code, stepLabel }: Props) {
   const lines = code.split('\n').length;
