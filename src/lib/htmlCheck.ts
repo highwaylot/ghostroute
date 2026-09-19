@@ -41,3 +41,14 @@ export function findUnclosedTags(code: string): UnclosedTag[] {
 export function countUnclosed(code: string): number {
   return findUnclosedTags(code).length;
 }
+
+export function hasImgWithSrcAndAlt(code: string): boolean {
+  const match = code.match(/<img\b[^>]*>/i);
+  if (!match) return false;
+  const tag = match[0];
+  return /\bsrc="[^"]+"/i.test(tag) && /\balt="[^"]*"/i.test(tag);
+}
+
+export function hasAnyAttribute(code: string, attr: string): boolean {
+  return new RegExp(`\\b${attr}="[^"]+"`, 'i').test(code);
+}

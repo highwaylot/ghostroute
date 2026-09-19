@@ -2,14 +2,18 @@ import { useState } from 'react';
 import { PUZZLES } from '../data/puzzles';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
-import { useHintLadder } from '../lib/useHintLadder';
+import { useHintLadder, getHint, type AssistLevel } from '../lib/useHintLadder';
 
-export function PuzzlePane() {
+type Props = {
+  assist: AssistLevel;
+};
+
+export function PuzzlePane({ assist }: Props) {
   const [index, setIndex] = useState(0);
   const puzzle = PUZZLES[index];
   const [code, setCode] = useState(puzzle.broken);
   const [solved, setSolved] = useState(false);
-  const { attempts, registerFail, reset, hintLevel } = useHintLadder(puzzle.id);
+  const { attempts, registerFail, reset } = useHintLadder(puzzle.id);
   const [justFailed, setJustFailed] = useState(false);
 
   const selectPuzzle = (i: number) => {
@@ -37,7 +41,8 @@ export function PuzzlePane() {
     reset();
   };
 
-  const hint = attempts > 0 ? puzzle.hints[hintLevel(puzzle.hints)] : null;
+  const hint = getHint(puzzle.hints, attempts, assist);
+  const showGenericRetry = attempts > 0 && assist === 1;
 
   return (
     <div className="puzzle-pane">
@@ -68,9 +73,10 @@ export function PuzzlePane() {
           <p className="puzzle-solved">Fixed it. Nice debugging.</p>
         ) : (
           <>
-            {hint && (
+            {hint && <p className={`hint ${justFailed ? 'flash' : ''}`}>{hint}</p>}
+            {showGenericRetry && (
               <p className={`hint ${justFailed ? 'flash' : ''}`}>
-                Hint {Math.min(attempts, puzzle.hints.length)}/{puzzle.hints.length}: {hint}
+                Not quite yet — read the code closely and try again.
               </p>
             )}
             <div className="ghost-tip-actions">

@@ -7,14 +7,17 @@ import { CodeEditor } from '../components/CodeEditor';
 import { EditorPanel } from '../components/EditorPanel';
 import { PuzzlePane } from '../components/PuzzlePane';
 import { SandboxPane } from '../components/SandboxPane';
+import { ProjectPane } from '../components/ProjectPane';
 import { Logo } from '../components/Logo';
 import { STEPS } from '../data/steps';
+import type { AssistLevel } from '../lib/useHintLadder';
 import '../App.css';
 
 const STORAGE_KEY = 'tagsmiths-code';
 const STEP_KEY = 'tagsmiths-step';
+const ASSIST_KEY = 'tagsmiths-assist';
 
-type Mode = 'route' | 'puzzles' | 'sandbox';
+type Mode = 'route' | 'puzzles' | 'project' | 'sandbox';
 
 function loadSavedCode(): string {
   try {
@@ -33,10 +36,20 @@ function loadSavedStep(): number {
   }
 }
 
+function loadSavedAssist(): AssistLevel {
+  try {
+    const raw = Number(localStorage.getItem(ASSIST_KEY));
+    return raw === 1 || raw === 2 || raw === 3 ? raw : 2;
+  } catch {
+    return 2;
+  }
+}
+
 export default function Workspace() {
   const [mode, setMode] = useState<Mode>('route');
   const [code, setCode] = useState(loadSavedCode);
   const [current, setCurrent] = useState(loadSavedStep);
+  const [assist, setAssist] = useState<AssistLevel>(loadSavedAssist);
   const [keyOpen, setKeyOpen] = useState(false);
 
   useEffect(() => {
@@ -54,6 +67,14 @@ export default function Workspace() {
       // storage unavailable — nothing to do
     }
   }, [current]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(ASSIST_KEY, String(assist));
+    } catch {
+      // storage unavailable — nothing to do
+    }
+  }, [assist]);
 
   const handleAdvance = () => {
     setCurrent((c) => Math.min(c + 1, STEPS.length));
@@ -79,6 +100,9 @@ export default function Workspace() {
           <button className={`tab ${mode === 'puzzles' ? 'active' : ''}`} onClick={() => setMode('puzzles')}>
             fix this code
           </button>
+          <button className={`tab ${mode === 'project' ? 'active' : ''}`} onClick={() => setMode('project')}>
+            project
+          </button>
           <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} onClick={() => setMode('sandbox')}>
             sandbox
           </button>
@@ -90,17 +114,17 @@ export default function Workspace() {
       </header>
 
       <div className="workspace">
-        <KeySidebar open={keyOpen} onClose={() => setKeyOpen(false)} />
-
         <main className="main">
           {mode === 'route' && (
             <div className="workspace-grid">
               <InstructionsRail
                 current={current}
                 code={code}
+                assist={assist}
                 onSelect={setCurrent}
                 onAdvance={handleAdvance}
                 onReset={handleReset}
+                onAssistChange={setAssist}
               />
 
               <div className="workspace-main">
@@ -123,9 +147,11 @@ export default function Workspace() {
               <p className="mode-blurb">
                 Each puzzle starts broken on purpose. Read the code, find what's wrong, and fix it.
               </p>
-              <PuzzlePane />
+              <PuzzlePane assist={assist} />
             </>
           )}
+
+          {mode === 'project' && <ProjectPane />}
 
           {mode === 'sandbox' && (
             <>
@@ -136,6 +162,8 @@ export default function Workspace() {
             </>
           )}
         </main>
+
+        <KeySidebar open={keyOpen} onClose={() => setKeyOpen(false)} />
       </div>
     </div>
   );

@@ -17,32 +17,33 @@ export function KeySidebar({ open, onClose }: Props) {
     );
   }, [query]);
 
+  if (!open) return null;
+
+  // No scrim, no click-outside-to-close: this is a companion panel meant
+  // to stay open alongside the editor, not a modal that blocks the page.
   return (
-    <>
-      {open && <div className="sidebar-scrim" onClick={onClose} />}
-      <aside className={`sidebar ${open ? 'open' : ''}`}>
-        <div className="sidebar-head">
-          <h2>key index</h2>
-          <button className="sidebar-close" onClick={onClose} aria-label="Close key index">
-            ×
-          </button>
-        </div>
-        <input
-          className="key-search"
-          placeholder="Search a tag or concept…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <div className="key-list">
-          {filtered.map((entry) => (
-            <div className="key-item" key={entry.tag}>
-              <span className="tag">{entry.tag}</span>
-              <span className="desc">{entry.desc}</span>
-            </div>
-          ))}
-          {filtered.length === 0 && <p className="key-empty">No matches.</p>}
-        </div>
-      </aside>
-    </>
+    <aside className="sidebar open">
+      <div className="sidebar-head">
+        <h2>key index</h2>
+        <button className="sidebar-close" onClick={onClose} aria-label="Close key index">
+          ×
+        </button>
+      </div>
+      <input
+        className="key-search"
+        placeholder="Search a tag or concept…"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <div className="key-list">
+        {filtered.map((entry) => (
+          <div className="key-item" key={entry.tag}>
+            <span className="tag">{entry.tag}</span>
+            <span className="desc">{entry.desc}</span>
+          </div>
+        ))}
+        {filtered.length === 0 && <p className="key-empty">No matches.</p>}
+      </div>
+    </aside>
   );
 }

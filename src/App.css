@@ -134,37 +134,92 @@
   top: 76px;
 }
 
-.rail-tabs {
-  display: flex;
-  gap: 4px;
-  margin-top: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+/* Chapter info and step are two distinct, always-visible windows,
+   stacked, not tabs — each gets its own bordered card with a label. */
+.rail-window {
+  margin-top: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.rail-tab {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 12.5px;
-  padding: 8px 4px;
-  margin-right: 14px;
+.rail-window-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: #7783b8;
-  background: none;
+  margin-bottom: 10px;
+}
+
+.rail-window .chapter-intro {
+  margin: 0;
+}
+
+.rail-window .ghost-tip {
+  margin: 0;
   border: none;
-  border-bottom: 2px solid transparent;
+  background: none;
+  padding: 0;
+}
+
+/* Assistance control */
+.assist-control {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.assist-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.assist-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #7783b8;
+}
+
+.assist-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.assist-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: #c8d0ff;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 12px;
   cursor: pointer;
 }
 
-.rail-tab:hover {
-  color: #c8d0ff;
+.assist-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
-.rail-tab.active {
+.assist-btn.active {
+  background: var(--blue);
+  border-color: var(--blue);
   color: #fff;
-  border-bottom-color: var(--blue-bright);
 }
 
-.rail-panel {
-  padding-top: 14px;
+.assist-desc {
+  display: block;
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: #8f9ada;
 }
 
 .workspace-main {
@@ -380,31 +435,23 @@
 }
 
 /* Key index — slide-in overlay, not a layout column */
-.sidebar-scrim {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 14, 30, 0.35);
-  z-index: 29;
-}
-
+/* Companion panel — floats over the corner, never blocks clicks
+   elsewhere on the page (no scrim, no click-outside-to-close), so it
+   can stay open while you keep coding. */
 .sidebar {
   position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 300px;
-  max-width: 85vw;
+  right: 20px;
+  bottom: 20px;
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  max-height: min(70vh, 560px);
   background: var(--navy);
   color: #fff;
   padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(10, 14, 30, 0.4);
   overflow-y: auto;
-  transform: translateX(-100%);
-  transition: transform 0.2s ease;
   z-index: 30;
-}
-
-.sidebar.open {
-  transform: translateX(0);
 }
 
 .sidebar-head {
@@ -722,4 +769,77 @@
     flex-direction: row;
     flex-wrap: wrap;
   }
+}
+
+/* Project pane */
+.project-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.project-brief {
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 18px 20px;
+  color: #fff;
+}
+
+.project-title {
+  margin: 0 0 6px;
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 18px;
+  text-transform: lowercase;
+}
+
+.project-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #c8d0ff;
+}
+
+.project-checklist {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.project-checklist-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--ink-dim);
+}
+
+.checklist-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--ink-dim);
+  flex-shrink: 0;
+}
+
+.checklist-item.done {
+  color: var(--ink);
+}
+
+.checklist-item.done .checklist-dot {
+  background: var(--ok);
+  border-color: var(--ok);
 }

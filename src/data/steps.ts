@@ -1,3 +1,5 @@
+import { hasAnyAttribute, hasImgWithSrcAndAlt } from '../lib/htmlCheck';
+
 export type Step = {
   tag: string;
   chapter: string;
@@ -7,16 +9,6 @@ export type Step = {
 };
 
 const has = (code: string, re: RegExp) => re.test(code);
-
-const hasImgWithSrcAndAlt = (code: string): boolean => {
-  const match = code.match(/<img\b[^>]*>/i);
-  if (!match) return false;
-  const tag = match[0];
-  return /\bsrc="[^"]+"/i.test(tag) && /\balt="[^"]*"/i.test(tag);
-};
-
-const hasAnyAttribute = (code: string, attr: string): boolean =>
-  new RegExp(`\\b${attr}="[^"]+"`, 'i').test(code);
 
 export const STEPS: Step[] = [
   // --- foundations ---

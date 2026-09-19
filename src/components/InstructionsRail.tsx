@@ -1,46 +1,42 @@
-import { useState } from 'react';
 import { RouteTrack } from './RouteTrack';
 import { GhostTip } from './GhostTip';
 import { ChapterIntro } from './ChapterIntro';
+import { AssistanceControl } from './AssistanceControl';
+import type { AssistLevel } from '../lib/useHintLadder';
 
 type Props = {
   current: number;
   code: string;
+  assist: AssistLevel;
   onSelect: (index: number) => void;
   onAdvance: () => void;
   onReset: () => void;
+  onAssistChange: (level: AssistLevel) => void;
 };
 
-type RailTab = 'chapter' | 'step';
-
-export function InstructionsRail({ current, code, onSelect, onAdvance, onReset }: Props) {
-  const [tab, setTab] = useState<RailTab>('step');
-
+export function InstructionsRail({
+  current,
+  code,
+  assist,
+  onSelect,
+  onAdvance,
+  onReset,
+  onAssistChange,
+}: Props) {
   return (
     <div className="instructions-rail">
       <RouteTrack current={current} onSelect={onSelect} />
 
-      <div className="rail-tabs">
-        <button
-          className={`rail-tab ${tab === 'chapter' ? 'active' : ''}`}
-          onClick={() => setTab('chapter')}
-        >
-          chapter info
-        </button>
-        <button
-          className={`rail-tab ${tab === 'step' ? 'active' : ''}`}
-          onClick={() => setTab('step')}
-        >
-          step
-        </button>
+      <AssistanceControl value={assist} onChange={onAssistChange} />
+
+      <div className="rail-window">
+        <span className="rail-window-label">chapter info</span>
+        <ChapterIntro current={current} />
       </div>
 
-      <div className="rail-panel">
-        {tab === 'chapter' ? (
-          <ChapterIntro current={current} />
-        ) : (
-          <GhostTip current={current} code={code} onAdvance={onAdvance} onReset={onReset} />
-        )}
+      <div className="rail-window">
+        <span className="rail-window-label">step</span>
+        <GhostTip current={current} code={code} assist={assist} onAdvance={onAdvance} onReset={onReset} />
       </div>
     </div>
   );
