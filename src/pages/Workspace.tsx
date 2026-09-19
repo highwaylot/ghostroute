@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { RouteTrack } from '../components/RouteTrack';
-import { GhostTip } from '../components/GhostTip';
-import { ChapterIntro } from '../components/ChapterIntro';
+import { InstructionsRail } from '../components/InstructionsRail';
 import { KeySidebar } from '../components/KeySidebar';
 import { StatsPanel } from '../components/StatsPanel';
 import { CodeEditor } from '../components/CodeEditor';
@@ -97,11 +95,13 @@ export default function Workspace() {
         <main className="main">
           {mode === 'route' && (
             <div className="workspace-grid">
-              <aside className="instructions-rail">
-                <ChapterIntro current={current} />
-                <RouteTrack current={current} onSelect={setCurrent} />
-                <GhostTip current={current} code={code} onAdvance={handleAdvance} onReset={handleReset} />
-              </aside>
+              <InstructionsRail
+                current={current}
+                code={code}
+                onSelect={setCurrent}
+                onAdvance={handleAdvance}
+                onReset={handleReset}
+              />
 
               <div className="workspace-main">
                 <div className="lower">

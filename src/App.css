@@ -134,6 +134,39 @@
   top: 76px;
 }
 
+.rail-tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.rail-tab {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 8px 4px;
+  margin-right: 14px;
+  color: #7783b8;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.rail-tab:hover {
+  color: #c8d0ff;
+}
+
+.rail-tab.active {
+  color: #fff;
+  border-bottom-color: var(--blue-bright);
+}
+
+.rail-panel {
+  padding-top: 14px;
+}
+
 .workspace-main {
   display: flex;
   flex-direction: column;
@@ -513,6 +546,15 @@
 
 .code-panel {
   height: 320px;
+}
+
+/* @uiw/react-codemirror wraps the actual editor in an extra
+   .cm-theme-light div with no height of its own — height:100% on
+   .cm-editor alone resolves against that auto-height wrapper, which
+   means "grow to fit content" instead of clip-and-scroll. Both need
+   an explicit height for the scroll container to actually cap. */
+.code-panel .cm-theme-light {
+  height: 100%;
 }
 
 .code-panel .cm-editor {

@@ -33,12 +33,18 @@ export function CodeEditor({ value, onChange }: Props) {
       value={value}
       height="100%"
       theme="light"
-      extensions={[html(), unclosedTagLinter, theme]}
+      // autoCloseTags off — auto-inserting closing tags as you type was
+      // fighting the point of the route, which is writing the tag yourself.
+      extensions={[html({ autoCloseTags: false }), unclosedTagLinter, theme]}
       onChange={onChange}
       basicSetup={{
         lineNumbers: true,
         foldGutter: false,
         highlightActiveLine: true,
+        // Same reasoning: no auto-closing brackets/quotes, no autocomplete
+        // popups taking over what you're typing.
+        closeBrackets: false,
+        autocompletion: false,
       }}
     />
   );
