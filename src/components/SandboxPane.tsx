@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CodeEditor } from './CodeEditor';
 import { StatsPanel } from './StatsPanel';
 
-const SANDBOX_KEY = 'ghost-route-sandbox';
+const SANDBOX_KEY = 'tagsmiths-sandbox';
 
 const STARTER = `<!DOCTYPE html>
 <html>

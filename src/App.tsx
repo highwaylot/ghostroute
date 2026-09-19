@@ -9,7 +9,7 @@ import { SandboxPane } from './components/SandboxPane';
 import { STEPS } from './data/steps';
 import './App.css';
 
-const STORAGE_KEY = 'ghost-route-code';
+const STORAGE_KEY = 'tagsmiths-code';
 
 type Mode = 'route' | 'puzzles' | 'sandbox';
 
@@ -47,7 +47,7 @@ function App() {
   return (
     <div className="page">
       <header className="route-header">
-        <h1>Ghost Route — build your first page</h1>
+        <h1>Tagsmiths — build your first page</h1>
         {mode === 'route' && (
           <>
             <RouteTrack current={current} onSelect={setCurrent} />
