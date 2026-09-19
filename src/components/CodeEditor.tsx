@@ -21,10 +21,10 @@ const unclosedTagLinter = linter((view) => {
 });
 
 const theme = EditorView.theme({
-  '&': { fontSize: '13.5px', height: '100%' },
-  '.cm-scroller': { fontFamily: 'var(--mono)', lineHeight: '1.6' },
-  '.cm-content': { padding: '34px 0 14px' },
-  '.cm-gutters': { paddingTop: '34px' },
+  '&': { fontSize: '14px', height: '100%' },
+  '.cm-scroller': { fontFamily: 'var(--mono)', lineHeight: '1.7' },
+  '.cm-content': { padding: '12px 0' },
+  '.cm-gutters': { paddingTop: 0 },
 });
 
 export function CodeEditor({ value, onChange }: Props) {

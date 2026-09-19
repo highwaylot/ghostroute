@@ -1,15 +1,15 @@
 :root {
-  --blue: #2b5cff;
-  --blue-bright: #4a72ff;
-  --navy: #0a1440;
-  --ink: #12172b;
-  --ink-dim: #5b6178;
-  --line: #dde2f0;
-  --panel: #f5f6fb;
-  --bg: #ffffff;
-  --ghost: #9fb0ff;
-  --error: #d63d5c;
-  --ok: #1a9e6b;
+  --blue: #3b63e8;
+  --blue-bright: #5478f0;
+  --navy: #121a3d;
+  --ink: #1e2440;
+  --ink-dim: #676d8c;
+  --line: #e4e6f0;
+  --panel: #f4f5fa;
+  --bg: #fdfdfe;
+  --ghost: #9aa8e8;
+  --error: #d6455f;
+  --ok: #1f9d6f;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --sans: 'Manrope', system-ui, sans-serif;
 

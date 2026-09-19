@@ -4,8 +4,10 @@ import { GhostTip } from './components/GhostTip';
 import { KeySidebar } from './components/KeySidebar';
 import { StatsPanel } from './components/StatsPanel';
 import { CodeEditor } from './components/CodeEditor';
+import { EditorPanel } from './components/EditorPanel';
 import { PuzzlePane } from './components/PuzzlePane';
 import { SandboxPane } from './components/SandboxPane';
+import { Logo } from './components/Logo';
 import { STEPS } from './data/steps';
 import './App.css';
 
@@ -47,7 +49,10 @@ function App() {
   return (
     <div className="page">
       <header className="route-header">
-        <h1>Tagsmiths — build your first page</h1>
+        <div className="brand-row">
+          <Logo size={22} />
+          <span className="brand-tagline">build your first page</span>
+        </div>
         {mode === 'route' && (
           <>
             <RouteTrack current={current} onSelect={setCurrent} />
@@ -84,16 +89,14 @@ function App() {
 
           {mode === 'route' && (
             <>
-              <div className="output-wrap">
-                <span className="lbl">Output</span>
+              <EditorPanel label="output" className="output-panel">
                 <iframe title="preview" srcDoc={code} />
-              </div>
+              </EditorPanel>
 
               <div className="lower">
-                <div className="editor-wrap">
-                  <span className="lbl">Active coding window</span>
+                <EditorPanel label="active coding window" className="code-panel">
                   <CodeEditor value={code} onChange={setCode} />
-                </div>
+                </EditorPanel>
                 <StatsPanel code={code} stepLabel={stepLabel} />
               </div>
             </>

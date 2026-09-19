@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PUZZLES } from '../data/puzzles';
 import { CodeEditor } from './CodeEditor';
+import { EditorPanel } from './EditorPanel';
 import { useHintLadder } from '../lib/useHintLadder';
 
 export function PuzzlePane() {
@@ -55,14 +56,13 @@ export function PuzzlePane() {
       <div className="puzzle-body">
         <p className="puzzle-prompt">{puzzle.prompt}</p>
 
-        <div className="puzzle-editor-wrap">
+        <EditorPanel label="active coding window" className="code-panel puzzle-editor-wrap">
           <CodeEditor value={code} onChange={setCode} />
-        </div>
+        </EditorPanel>
 
-        <div className="output-wrap puzzle-output">
-          <span className="lbl">Output</span>
+        <EditorPanel label="output" className="output-panel puzzle-output">
           <iframe title="puzzle preview" srcDoc={code} />
-        </div>
+        </EditorPanel>
 
         {solved ? (
           <p className="puzzle-solved">Fixed it. Nice debugging.</p>

@@ -4,21 +4,41 @@
   height: 100vh;
 }
 
-/* Route header */
+/* Header / brand */
 .route-header {
   background: var(--navy);
   color: #fff;
-  padding: 16px 20px 18px;
+  padding: 18px 22px 20px;
   flex-shrink: 0;
 }
 
-.route-header h1 {
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blue-bright);
+}
+
+.wordmark {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.brand-tagline {
   font-size: 13px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin: 0 0 12px;
-  color: #c8d0ff;
-  font-weight: 700;
+  color: #9aa4d4;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .track {
@@ -69,7 +89,7 @@
 
 .label {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--ghost);
   white-space: nowrap;
 }
@@ -97,21 +117,21 @@
 }
 
 .ghost-tip {
-  margin-top: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding: 12px 14px;
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
 .ghost-tip .txt {
-  font-size: 13.5px;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.55;
   max-width: 70ch;
   flex: 1;
 }
@@ -125,7 +145,7 @@
 }
 
 .ghost-tip .target {
-  color: #fff;
+  color: #eef0ff;
 }
 
 .ghost-tip .hint {
@@ -155,7 +175,7 @@
 
 .mode-blurb {
   margin: 4px 0 0;
-  font-size: 13px;
+  font-size: 13.5px;
   color: #b7c0f0;
 }
 
@@ -168,14 +188,14 @@
 }
 
 .ghost-tip button {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  letter-spacing: 0.04em;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 12.5px;
   background: var(--blue);
   color: #fff;
   border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 9px 16px;
+  border-radius: 7px;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -199,7 +219,7 @@
 .body-wrap {
   flex: 1;
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 230px 1fr;
   min-height: 0;
 }
 
@@ -215,30 +235,30 @@
 .sidebar {
   background: var(--navy);
   color: #fff;
-  padding: 16px 14px;
+  padding: 18px 16px;
   overflow-y: auto;
   min-height: 0;
 }
 
 .sidebar h2 {
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #8f9ada;
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   font-weight: 700;
 }
 
 .key-search {
   width: 100%;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 9px 11px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.06);
   color: #fff;
-  font-family: var(--mono);
-  font-size: 12px;
-  margin-bottom: 12px;
+  font-family: var(--sans);
+  font-size: 13px;
+  margin-bottom: 14px;
 }
 
 .key-search::placeholder {
@@ -248,12 +268,12 @@
 .key-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .key-item {
-  padding: 8px;
-  border-radius: 6px;
+  padding: 9px 8px;
+  border-radius: 7px;
 }
 
 .key-item:hover {
@@ -262,22 +282,22 @@
 
 .key-item .tag {
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 13px;
   color: #c8d0ff;
   display: block;
 }
 
 .key-item .desc {
-  font-size: 11.5px;
+  font-size: 12px;
   color: #9aa4d4;
-  margin-top: 2px;
-  line-height: 1.4;
+  margin-top: 3px;
+  line-height: 1.45;
   display: block;
 }
 
 .key-empty {
   color: #7783b8;
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 .main {
@@ -294,10 +314,10 @@
 }
 
 .tab {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  padding: 11px 18px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 20px;
   color: var(--ink-dim);
   cursor: pointer;
   border-bottom: 2px solid transparent;
@@ -318,39 +338,53 @@
   opacity: 0.5;
 }
 
-.output-wrap {
+/* Shared labeled editor/output panel */
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.editor-panel-bar {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+
+.editor-panel-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.output-panel {
   flex: 1.3;
   min-height: 0;
   border-bottom: 1px solid var(--line);
-  position: relative;
 }
 
-.output-wrap .lbl {
-  position: absolute;
-  top: 8px;
-  left: 12px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  background: var(--bg);
-  padding: 2px 6px;
-  border-radius: 4px;
-  z-index: 2;
+.output-panel .editor-panel-body {
+  overflow: auto;
 }
 
-.output-wrap iframe {
+.output-panel iframe {
   width: 100%;
   height: 100%;
   border: none;
   background: #fff;
+  display: block;
 }
 
 .lower {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 220px;
+  grid-template-columns: 1fr 230px;
   min-height: 0;
 }
 
@@ -363,57 +397,40 @@
   }
 }
 
-.editor-wrap {
-  position: relative;
-  min-height: 0;
+.code-panel {
   border-right: 1px solid var(--line);
   overflow: hidden;
 }
 
-.editor-wrap .lbl {
-  position: absolute;
-  top: 8px;
-  left: 12px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  z-index: 2;
-  pointer-events: none;
-}
-
-.editor-wrap .cm-editor,
-.puzzle-editor-wrap .cm-editor {
+.code-panel .cm-editor {
   height: 100%;
 }
 
-.editor-wrap .cm-editor.cm-focused,
-.puzzle-editor-wrap .cm-editor.cm-focused {
+.code-panel .cm-editor.cm-focused {
   outline: none;
 }
 
 .stats {
-  padding: 16px 14px;
+  padding: 18px 16px;
   background: var(--panel);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   overflow-y: auto;
 }
 
 .stat h3 {
   font-size: 10.5px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--ink-dim);
-  margin: 0 0 4px;
+  margin: 0 0 5px;
   font-weight: 600;
 }
 
 .stat .val {
   font-family: var(--mono);
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 600;
 }
 
@@ -433,11 +450,11 @@
 }
 
 .puzzle-list {
-  width: 220px;
+  width: 230px;
   flex-shrink: 0;
   background: var(--panel);
   border-right: 1px solid var(--line);
-  padding: 12px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -447,9 +464,9 @@
 .puzzle-pick {
   text-align: left;
   font-family: var(--sans);
-  font-size: 12.5px;
-  padding: 9px 10px;
-  border-radius: 6px;
+  font-size: 13px;
+  padding: 10px 11px;
+  border-radius: 7px;
   border: none;
   background: none;
   color: var(--ink-dim);
@@ -457,7 +474,7 @@
 }
 
 .puzzle-pick:hover {
-  background: rgba(43, 92, 255, 0.08);
+  background: rgba(59, 99, 232, 0.08);
 }
 
 .puzzle-pick.active {
@@ -470,41 +487,42 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: 16px 20px;
-  gap: 12px;
+  padding: 18px 22px;
+  gap: 14px;
   overflow-y: auto;
 }
 
 .puzzle-prompt {
   margin: 0;
-  font-size: 14px;
+  font-size: 14.5px;
   color: var(--ink);
+  line-height: 1.5;
 }
 
 .puzzle-editor-wrap {
-  height: 180px;
+  height: 200px;
   border: 1px solid var(--line);
-  border-radius: 6px;
-  overflow: hidden;
+  border-radius: 8px;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .puzzle-output {
-  height: 140px;
+  height: 160px;
   flex: none;
   border: 1px solid var(--line);
-  border-radius: 6px;
-  border-bottom: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .puzzle-body .hint {
   margin: 0;
-  font-size: 13px;
-  color: #a35b00;
+  font-size: 13.5px;
+  color: #90540a;
   background: #fff4e0;
   border: 1px solid #ffdca0;
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 8px;
+  padding: 10px 14px;
 }
 
 .puzzle-body .hint.flash {
@@ -513,24 +531,24 @@
 
 .puzzle-solved {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--ok);
   background: #e6f7ef;
   border: 1px solid #b6ecd2;
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 8px;
+  padding: 10px 14px;
 }
 
 .puzzle-body .ghost-tip-actions button {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  letter-spacing: 0.04em;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 12.5px;
   background: var(--blue);
   color: #fff;
   border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 9px 16px;
+  border-radius: 7px;
   cursor: pointer;
 }
 

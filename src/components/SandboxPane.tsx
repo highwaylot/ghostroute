@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CodeEditor } from './CodeEditor';
+import { EditorPanel } from './EditorPanel';
 import { StatsPanel } from './StatsPanel';
 
 const SANDBOX_KEY = 'tagsmiths-sandbox';
@@ -36,16 +37,14 @@ export function SandboxPane() {
 
   return (
     <>
-      <div className="output-wrap">
-        <span className="lbl">Output</span>
+      <EditorPanel label="output" className="output-panel">
         <iframe title="sandbox preview" srcDoc={code} />
-      </div>
+      </EditorPanel>
 
       <div className="lower">
-        <div className="editor-wrap">
-          <span className="lbl">Sandbox — no route, no checks</span>
+        <EditorPanel label="sandbox — no route, no checks" className="code-panel">
           <CodeEditor value={code} onChange={setCode} />
-        </div>
+        </EditorPanel>
         <StatsPanel code={code} stepLabel="free" />
       </div>
     </>
