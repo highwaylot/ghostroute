@@ -37,16 +37,16 @@ export function SandboxPane() {
 
   return (
     <>
-      <EditorPanel label="output" className="output-panel">
-        <iframe title="sandbox preview" srcDoc={code} />
-      </EditorPanel>
-
       <div className="lower">
         <EditorPanel label="sandbox — no route, no checks" className="code-panel">
           <CodeEditor value={code} onChange={setCode} />
         </EditorPanel>
         <StatsPanel code={code} stepLabel="free" />
       </div>
+
+      <EditorPanel label="output" className="output-panel">
+        <iframe title="sandbox preview" srcDoc={code} />
+      </EditorPanel>
     </>
   );
 }

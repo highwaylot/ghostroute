@@ -19,8 +19,10 @@ export function ChapterIntro({ current }: Props) {
   return (
     <div className="chapter-intro">
       <span className="chapter-eyebrow">
-        chapter {chapterNumber} of {CHAPTERS.length} — {chapter.title} · step{' '}
-        {indexInChapter + 1} of {stepsInChapter.length}
+        chapter {chapterNumber} of {CHAPTERS.length} — {chapter.title}
+      </span>
+      <span className="chapter-substep">
+        step {indexInChapter + 1} of {stepsInChapter.length} in this chapter
       </span>
       {indexInChapter === 0 && <p className="chapter-blurb">{chapter.blurb}</p>}
     </div>
