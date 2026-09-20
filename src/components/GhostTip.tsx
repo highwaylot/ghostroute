@@ -14,6 +14,7 @@ export function GhostTip({ current, code, assist, onAdvance, onReset }: Props) {
   const step = STEPS[current];
   const { attempts, registerFail, reset } = useHintLadder(String(current));
   const [justFailed, setJustFailed] = useState(false);
+  const [justSolved, setJustSolved] = useState(false);
 
   if (!step) {
     return (
@@ -31,7 +32,11 @@ export function GhostTip({ current, code, assist, onAdvance, onReset }: Props) {
     if (step.check(code)) {
       setJustFailed(false);
       reset();
-      onAdvance();
+      setJustSolved(true);
+      window.setTimeout(() => {
+        setJustSolved(false);
+        onAdvance();
+      }, 650);
     } else {
       registerFail();
       setJustFailed(true);
@@ -42,7 +47,8 @@ export function GhostTip({ current, code, assist, onAdvance, onReset }: Props) {
   const showGenericRetry = attempts > 0 && assist === 1;
 
   return (
-    <div className="ghost-tip">
+    <div className={`ghost-tip ${justSolved ? 'solved' : ''}`}>
+      {justSolved && <p className="solved-banner">✓ Correct — moving on</p>}
       <div className="txt">
         <p className="target">
           Target: <code>{step.tag}</code> — {step.why}
@@ -63,10 +69,12 @@ export function GhostTip({ current, code, assist, onAdvance, onReset }: Props) {
         )}
       </div>
       <div className="ghost-tip-actions">
-        <button className="secondary" onClick={onReset}>
+        <button className="secondary" onClick={onReset} disabled={justSolved}>
           Reset this step
         </button>
-        <button onClick={handleCheck}>Check my work</button>
+        <button onClick={handleCheck} disabled={justSolved}>
+          Check my work
+        </button>
       </div>
     </div>
   );

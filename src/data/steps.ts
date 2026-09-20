@@ -139,7 +139,7 @@ export const STEPS: Step[] = [
     why: 'The web is pages linking to other pages, plus images that aren\'t just text — the two tags that make a page more than words.',
     hints: [
       'Add a clickable link and an image, each with the right attributes.',
-      '<a> needs href="..."; <img> needs both src="..." and alt="...".',
+      '<a> needs href="..."; <img> needs both src="..." and alt="...". Leave a space between the tag name and the attribute (<a href=, not <ahref=), and wrap every value in matching quotes — a value missing its closing quote won\'t count, even if the browser is forgiving enough to still show the image.',
       'Type:\n<a href="https://example.com">Visit</a>\n<img src="https://placekitten.com/200/200" alt="A kitten">',
     ],
     check: (code) =>
@@ -154,10 +154,10 @@ export const STEPS: Step[] = [
   {
     tag: '<div></div> + <span></span>',
     chapter: 'grouping',
-    why: 'Both exist purely to group things with no meaning of their own — <div> for a whole block, <span> for a few words inline where a <div> wouldn\'t fit.',
+    why: 'Both exist purely to group things with no meaning of their own — <div> for a whole block (like a whole <p>), <span> for a few words inline, sitting inside that block, where a <div> wouldn\'t fit. They render invisibly: no border, no spacing, nothing changes on the page until you target them with CSS or JS later. That\'s the next step (class/id) — this step is just about writing the wrapper correctly.',
     hints: [
-      'Add a <div> wrapping a block of content, and a <span> around a few words inline.',
-      'Neither shows anything on its own — they exist to be grouped and later targeted.',
+      'Add a <div> wrapping a block of content (like a paragraph), and a <span> around a few words inside that block.',
+      'Both need a real closing tag, written the normal way: <div>...</div> and <span>...</span> — not a self-closing shorthand.',
       'Type:\n<div>\n  <p>Some <span>highlighted</span> text.</p>\n</div>',
     ],
     check: (code) =>
@@ -169,7 +169,7 @@ export const STEPS: Step[] = [
     why: 'class labels an element for reuse across many tags; id names exactly one. Worth learning side by side since people mix them up constantly.',
     hints: [
       'Add a class attribute to one tag, and an id attribute to a different tag.',
-      'Both attributes take a name in quotes: class="..." and id="...".',
+      'Both attributes take a name in quotes: class="..." and id="...". They go inside the tag\'s own brackets, right after the tag name — <div class="highlight">, not <div> class="highlight" written after it.',
       'Add class="highlight" to one tag and id="main-heading" to another, like your <h1>.',
     ],
     check: (code) => hasAnyAttribute(code, 'class') && hasAnyAttribute(code, 'id'),
@@ -179,11 +179,11 @@ export const STEPS: Step[] = [
   {
     tag: '<header></header> + <nav></nav>',
     chapter: 'semantic',
-    why: 'Two tags that usually sit together at the top of a page — <header> for the intro/title area, <nav> for the menu of links inside or near it.',
+    why: 'Two tags that usually sit together at the top of a page — <header> for the intro/title area, <nav> for the menu of links inside or near it. Both go inside <body>, near the top, alongside your other visible content — not inside <head>, which never holds anything visitors see.',
     hints: [
-      'Wrap your top content in <header>, and add a <nav> with a link inside it.',
-      'Both need opening and closing tags; <nav> should contain at least one <a>.',
-      'Type:\n<header>\n  <h1>Site Name</h1>\n</header>\n<nav>\n  <a href="#">Home</a>\n</nav>',
+      'Inside <body>, near the top, wrap your intro content in <header>, and add a <nav> with a link inside it.',
+      'Both need opening and closing tags; <nav> should contain at least one <a>. Neither goes in <head>.',
+      'Type, inside <body>:\n<header>\n  <h1>Site Name</h1>\n</header>\n<nav>\n  <a href="#">Home</a>\n</nav>',
     ],
     check: (code) =>
       has(code, /<header[^>]*>[\s\S]*?<\/header>/i) && has(code, /<nav[^>]*>[\s\S]*?<\/nav>/i),

@@ -304,6 +304,29 @@
      being cut off top and bottom. */
   padding: 8px 4px;
   margin: -8px -4px 0;
+  /* Firefox: thin + tinted at rest, never the default fat opaque bar. */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+/* Chrome/Safari default to a slim transparent-track bar that turns fully
+   opaque and thick on hover, cutting into the node glow above/below it.
+   Pin it thin and low-contrast in every state instead. */
+.track::-webkit-scrollbar {
+  height: 5px;
+}
+
+.track::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.track::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+}
+
+.track::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .step-wrap {
@@ -421,6 +444,31 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.ghost-tip.solved {
+  animation: solvedPulse 0.5s ease;
+}
+
+.solved-banner {
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(58, 201, 129, 0.15);
+  border: 1px solid rgba(58, 201, 129, 0.4);
+  color: #5fe0a0;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@keyframes solvedPulse {
+  from {
+    box-shadow: 0 0 0 2px rgba(58, 201, 129, 0.5);
+  }
+  to {
+    box-shadow: 0 0 0 0 rgba(58, 201, 129, 0);
   }
 }
 
