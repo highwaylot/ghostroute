@@ -9,6 +9,7 @@ import { EditorPanel } from '../components/EditorPanel';
 import { PuzzlePane } from '../components/PuzzlePane';
 import { SandboxPane } from '../components/SandboxPane';
 import { ProjectPane } from '../components/ProjectPane';
+import { NestPane } from '../components/NestPane';
 import { PreviewFrame } from '../components/PreviewFrame';
 import { Logo } from '../components/Logo';
 import { STEPS } from '../data/steps';
@@ -19,7 +20,7 @@ const STORAGE_KEY = 'tagsmiths-code';
 const STEP_KEY = 'tagsmiths-step-v2'; // v2: route was condensed from 24 to 14 steps
 const ASSIST_KEY = 'tagsmiths-assist';
 
-type Mode = 'route' | 'puzzles' | 'project' | 'sandbox';
+type Mode = 'route' | 'puzzles' | 'project' | 'sandbox' | 'nest';
 
 function loadSavedCode(): string {
   try {
@@ -108,6 +109,9 @@ export default function Workspace() {
           <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} onClick={() => setMode('sandbox')}>
             sandbox
           </button>
+          <button className={`tab ${mode === 'nest' ? 'active' : ''}`} onClick={() => setMode('nest')}>
+            the nest
+          </button>
         </nav>
 
         <button className="key-toggle" onClick={() => setKeyOpen((v) => !v)}>
@@ -163,6 +167,16 @@ export default function Workspace() {
                 No route, no checks — just a blank page to build whatever you want.
               </p>
               <SandboxPane />
+            </>
+          )}
+
+          {mode === 'nest' && (
+            <>
+              <p className="mode-blurb">
+                The deep dive. Key index is quick lookup; this is where a tag gets explained —
+                what it does, exactly where it goes, and the mistakes people actually make with it.
+              </p>
+              <NestPane />
             </>
           )}
         </main>

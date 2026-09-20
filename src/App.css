@@ -1227,3 +1227,220 @@
   line-height: 1.5;
   color: var(--ink-dim);
 }
+
+/* --- the nest: deep-dive reference, stat-page style --- */
+
+.nest-pane {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.nest-list {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.nest-category {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nest-category-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding: 4px 8px 2px;
+}
+
+.nest-pick {
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 7px 8px;
+  border-radius: 7px;
+  border: none;
+  background: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.nest-pick:hover:not(:disabled) {
+  background: rgba(59, 99, 232, 0.08);
+  color: var(--ink);
+}
+
+.nest-pick.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.nest-pick.stub {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nest-detail {
+  flex: 1;
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 22px 26px;
+}
+
+.nest-empty {
+  color: var(--ink-dim);
+}
+
+.nest-detail-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 3px solid var(--error);
+}
+
+.nest-detail-category {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.nest-detail-tag {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.nest-stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.nest-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.nest-stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.nest-stat-value {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.nest-section {
+  margin-bottom: 20px;
+}
+
+.nest-section h2 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.nest-section p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.nest-example {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--navy);
+  color: #dfe4ff;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.nest-mistakes {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.nest-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.nest-related-chip {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--blue);
+  cursor: pointer;
+}
+
+.nest-related-chip:hover {
+  background: rgba(59, 99, 232, 0.08);
+}
+
+.nest-related-chip.stub {
+  color: var(--ink-dim);
+  cursor: default;
+}
+
+@media (max-width: 700px) {
+  .nest-pane {
+    flex-direction: column;
+  }
+
+  .nest-list {
+    width: 100%;
+    max-height: 200px;
+  }
+
+  .nest-stat-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
