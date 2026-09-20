@@ -1305,6 +1305,13 @@
   color: var(--ink-dim);
 }
 
+.nest-stub-note {
+  margin: 0 0 16px;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--ink-dim);
+}
+
 .nest-detail-head {
   display: flex;
   flex-direction: column;

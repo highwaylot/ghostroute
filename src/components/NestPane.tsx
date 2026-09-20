@@ -19,9 +19,8 @@ export function NestPane() {
                 <button
                   key={k.tag}
                   className={`nest-pick ${activeTag === k.tag ? 'active' : ''} ${!hasDeep ? 'stub' : ''}`}
-                  onClick={() => hasDeep && setActiveTag(k.tag)}
-                  disabled={!hasDeep}
-                  title={hasDeep ? undefined : 'Deep dive coming soon — see key index for now'}
+                  onClick={() => setActiveTag(k.tag)}
+                  title={hasDeep ? undefined : 'Full deep dive coming soon — showing the short version for now'}
                 >
                   {k.tag}
                 </button>
@@ -98,9 +97,24 @@ export function NestPane() {
             </div>
           </div>
         </div>
+      ) : keyEntry ? (
+        <div className="nest-detail nest-stub-detail">
+          <div className="nest-detail-head">
+            <span className="nest-detail-category">{keyEntry.category}</span>
+            <h1 className="nest-detail-tag">{keyEntry.tag}</h1>
+          </div>
+          <p className="nest-stub-note">Full deep dive coming soon — here's the short version for now.</p>
+          <div className="nest-section">
+            <p>{keyEntry.desc}</p>
+          </div>
+          <div className="nest-section">
+            <h2>Example</h2>
+            <pre className="nest-example">{keyEntry.example}</pre>
+          </div>
+        </div>
       ) : (
         <div className="nest-detail nest-empty">
-          <p>{keyEntry?.desc ?? 'Pick a tag from the list.'}</p>
+          <p>Pick a tag from the list.</p>
         </div>
       )}
     </div>
