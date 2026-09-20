@@ -42,6 +42,6 @@ export const PUZZLES: Puzzle[] = [
       'HTML attribute values should be wrapped in quotes.',
       'Fix it to: <a href="https://example.com">Visit</a>',
     ],
-    check: (code) => /<a\s+href="https?:\/\/[^"]+"[^>]*>[^<]*<\/a>/i.test(code),
+    check: (code) => /<a\s+href\s*=\s*"https?:\/\/[^"]+"[^>]*>[^<]*<\/a>/i.test(code),
   },
 ];

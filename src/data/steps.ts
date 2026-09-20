@@ -181,7 +181,7 @@ export const STEPS: Step[] = [
       'The attribute is called href, and its value goes in quotes.',
       'Type: <a href="https://example.com">Visit</a>',
     ],
-    check: (code) => has(code, /<a\s+href="[^"]+"[^>]*>[^<]*<\/a>/i),
+    check: (code) => has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[^<]*<\/a>/i),
   },
   {
     tag: '<img src="" alt="">',

@@ -42,13 +42,16 @@ export function countUnclosed(code: string): number {
   return findUnclosedTags(code).length;
 }
 
+// Browsers accept whitespace around "=" in an attribute (href= "x" parses
+// the same as href="x"), so every check here must too, or valid HTML that
+// just happens to have a space gets wrongly flagged as missing.
 export function hasImgWithSrcAndAlt(code: string): boolean {
   const match = code.match(/<img\b[^>]*>/i);
   if (!match) return false;
   const tag = match[0];
-  return /\bsrc="[^"]+"/i.test(tag) && /\balt="[^"]*"/i.test(tag);
+  return /\bsrc\s*=\s*"[^"]+"/i.test(tag) && /\balt\s*=\s*"[^"]*"/i.test(tag);
 }
 
 export function hasAnyAttribute(code: string, attr: string): boolean {
-  return new RegExp(`\\b${attr}="[^"]+"`, 'i').test(code);
+  return new RegExp(`\\b${attr}\\s*=\\s*"[^"]+"`, 'i').test(code);
 }

@@ -136,7 +136,7 @@ export function runDiagnostics(code: string): Diagnostic[] {
   }
 
   // 6. href/src value with no real destination shape
-  const attrValRe = /\b(href|src)="([^"]*)"/gi;
+  const attrValRe = /\b(href|src)\s*=\s*"([^"]*)"/gi;
   let vm: RegExpExecArray | null;
   while ((vm = attrValRe.exec(code)) !== null) {
     const value = vm[2];

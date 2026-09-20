@@ -17,6 +17,7 @@ function loadCode(starter: string): string {
 export function ProjectPane() {
   const project = PROJECTS[0];
   const [code, setCode] = useState(() => loadCode(project.starter));
+  const [openHint, setOpenHint] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -41,10 +42,19 @@ export function ProjectPane() {
         </span>
         {project.requirements.map((req) => {
           const done = req.check(code);
+          const isOpen = openHint === req.id;
           return (
-            <div key={req.id} className={`checklist-item ${done ? 'done' : ''}`}>
-              <span className="checklist-dot" />
-              <span>{req.desc}</span>
+            <div key={req.id} className={`checklist-row ${done ? 'done' : ''}`}>
+              <button
+                className="checklist-item"
+                onClick={() => setOpenHint(isOpen ? null : req.id)}
+                disabled={done}
+              >
+                <span className="checklist-dot" />
+                <span>{req.desc}</span>
+                {!done && <span className="checklist-hint-toggle">{isOpen ? 'hide hint' : 'need a hint?'}</span>}
+              </button>
+              {isOpen && !done && <pre className="checklist-hint">{req.hint}</pre>}
             </div>
           );
         })}
