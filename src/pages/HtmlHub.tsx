@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Logo } from '../components/Logo';
 import './Home.css';
 
 const TRACKS = [
@@ -35,6 +36,9 @@ const TRACKS = [
 export default function HtmlHub() {
   return (
     <div className="landing">
+      <Link to="/" className="landing-brand">
+        <Logo size={20} />
+      </Link>
       <div className="landing-inner">
         <Link to="/" className="landing-back">
           ← code.

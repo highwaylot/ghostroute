@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Logo } from '../components/Logo';
 import './Home.css';
 
 const LANGUAGES = [
@@ -10,8 +11,10 @@ const LANGUAGES = [
 export default function Home() {
   return (
     <div className="landing">
+      <Link to="/" className="landing-brand">
+        <Logo size={20} />
+      </Link>
       <div className="landing-inner">
-        <span className="landing-eyebrow">tagsmiths</span>
         <h1 className="landing-hero">code.</h1>
         <div className="landing-tiles">
           {LANGUAGES.map((lang) => (

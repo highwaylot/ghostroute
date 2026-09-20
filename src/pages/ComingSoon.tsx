@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Logo } from '../components/Logo';
 import './Home.css';
 
 type Props = {
@@ -10,6 +11,9 @@ type Props = {
 export default function ComingSoon({ title, backTo, backLabel }: Props) {
   return (
     <div className="landing">
+      <Link to="/" className="landing-brand">
+        <Logo size={20} />
+      </Link>
       <div className="landing-inner">
         <Link to={backTo} className="landing-back">
           ← {backLabel}

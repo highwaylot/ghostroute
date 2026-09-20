@@ -1,4 +1,5 @@
 .landing {
+  position: relative;
   min-height: 100vh;
   background: var(--navy);
   color: #fff;
@@ -6,6 +7,14 @@
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
+}
+
+.landing-brand {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  text-decoration: none;
+  color: var(--blue-bright);
 }
 
 .landing-inner {
