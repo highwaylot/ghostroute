@@ -1298,8 +1298,65 @@
 
 .nest-pane {
   display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nest-section-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.nest-section-toggle button {
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: lowercase;
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.nest-section-toggle button.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.nest-tags,
+.nest-blueprints {
+  display: flex;
   gap: 18px;
   align-items: flex-start;
+}
+
+.nest-example-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.nest-example-head h2 {
+  margin: 0;
+}
+
+.nest-copy-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.nest-copy-btn:hover {
+  color: var(--blue);
+  border-color: var(--blue);
 }
 
 .nest-list {
@@ -1520,7 +1577,8 @@
 }
 
 @media (max-width: 700px) {
-  .nest-pane {
+  .nest-tags,
+  .nest-blueprints {
     flex-direction: column;
   }
 

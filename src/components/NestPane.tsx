@@ -1,14 +1,82 @@
 import { useState } from 'react';
 import { KEY_INDEX, KEY_CATEGORIES } from '../data/keyIndex';
 import { NEST, getNestEntry } from '../data/nest';
+import { BLUEPRINTS } from '../data/blueprints';
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // clipboard unavailable — nothing to do
+    }
+  };
+
+  return (
+    <button className="nest-copy-btn" onClick={handleCopy}>
+      {copied ? 'copied!' : 'copy'}
+    </button>
+  );
+}
 
 export function NestPane() {
+  const [section, setSection] = useState<'tags' | 'blueprints'>('tags');
   const [activeTag, setActiveTag] = useState(NEST[0].tag);
+  const [activeBlueprint, setActiveBlueprint] = useState(BLUEPRINTS[0].id);
   const entry = getNestEntry(activeTag);
   const keyEntry = KEY_INDEX.find((k) => k.tag === activeTag);
+  const blueprint = BLUEPRINTS.find((b) => b.id === activeBlueprint);
 
   return (
     <div className="nest-pane">
+      <div className="nest-section-toggle">
+        <button className={section === 'tags' ? 'active' : ''} onClick={() => setSection('tags')}>
+          tags
+        </button>
+        <button className={section === 'blueprints' ? 'active' : ''} onClick={() => setSection('blueprints')}>
+          blueprints
+        </button>
+      </div>
+
+      {section === 'blueprints' ? (
+        <div className="nest-blueprints">
+          <div className="nest-list">
+            {BLUEPRINTS.map((b) => (
+              <button
+                key={b.id}
+                className={`nest-pick ${activeBlueprint === b.id ? 'active' : ''}`}
+                onClick={() => setActiveBlueprint(b.id)}
+              >
+                {b.title}
+              </button>
+            ))}
+          </div>
+
+          {blueprint && (
+            <div className="nest-detail">
+              <div className="nest-detail-head">
+                <span className="nest-detail-category">blueprint</span>
+                <h1 className="nest-detail-tag">{blueprint.title}</h1>
+              </div>
+              <div className="nest-section">
+                <p>{blueprint.desc}</p>
+              </div>
+              <div className="nest-section">
+                <div className="nest-example-head">
+                  <h2>Code</h2>
+                  <CopyButton text={blueprint.code} />
+                </div>
+                <pre className="nest-example">{blueprint.code}</pre>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+      <div className="nest-tags">
       <div className="nest-list">
         {KEY_CATEGORIES.map((cat) => (
           <div key={cat} className="nest-category">
@@ -68,7 +136,10 @@ export function NestPane() {
           </div>
 
           <div className="nest-section">
-            <h2>Example</h2>
+            <div className="nest-example-head">
+              <h2>Example</h2>
+              <CopyButton text={entry.example} />
+            </div>
             <pre className="nest-example">{entry.example}</pre>
           </div>
 
@@ -117,6 +188,8 @@ export function NestPane() {
         <div className="nest-detail nest-empty">
           <p>Pick a tag from the list.</p>
         </div>
+      )}
+      </div>
       )}
     </div>
   );
