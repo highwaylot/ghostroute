@@ -65,6 +65,10 @@ export function ProjectPane() {
           <p className="project-desc">{project.brief}</p>
         </div>
 
+        {allDone && (
+          <p className="solved-banner project-solved-banner">✓ Project complete — every requirement met</p>
+        )}
+
         <div className="project-checklist">
           <span className={`project-checklist-count ${allDone ? 'ok' : ''}`}>
             {allDone ? 'all requirements met' : `${doneCount} / ${project.requirements.length} done`}
