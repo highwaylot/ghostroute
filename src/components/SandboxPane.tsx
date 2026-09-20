@@ -36,10 +36,24 @@ export function SandboxPane() {
     }
   }, [code]);
 
+  const handleClear = () => {
+    if (code.trim() === '' || window.confirm('Clear everything in the sandbox? This can\'t be undone.')) {
+      setCode('');
+    }
+  };
+
   return (
     <>
       <div className="lower">
-        <EditorPanel label="sandbox — no route, no checks" className="code-panel">
+        <EditorPanel
+          label="sandbox — no route, no checks"
+          className="code-panel"
+          actions={
+            <button className="editor-panel-bar-clear" onClick={handleClear}>
+              clear all
+            </button>
+          }
+        >
           <CodeEditor value={code} onChange={setCode} />
         </EditorPanel>
         <StatsPanel code={code} stepLabel="free" />

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { html } from '@codemirror/lang-html';
 import { linter, lintGutter, type Diagnostic as CMDiagnostic } from '@codemirror/lint';
@@ -35,6 +36,26 @@ const theme = EditorView.theme({
 });
 
 export function CodeEditor({ value, onChange }: Props) {
+  const viewRef = useRef<EditorView | null>(null);
+
+  // @uiw/react-codemirror can silently fail to push an external `value`
+  // change into the view once the user has typed in it themselves — the
+  // prop updates, but the visible document doesn't (confirmed: "Reset this
+  // step" and Sandbox's "clear all" both left old text on screen while the
+  // underlying value was already correct). Bypassing the wrapper's own
+  // diffing and dispatching the change directly against the real
+  // EditorView fixes it at the source, for every consumer.
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    const current = view.state.doc.toString();
+    if (current !== value) {
+      view.dispatch({
+        changes: { from: 0, to: current.length, insert: value },
+      });
+    }
+  }, [value]);
+
   return (
     <CodeMirror
       value={value}
@@ -44,6 +65,9 @@ export function CodeEditor({ value, onChange }: Props) {
       // fighting the point of the route, which is writing the tag yourself.
       extensions={[html({ autoCloseTags: false }), diagnosticsLinter, lintGutter(), theme]}
       onChange={onChange}
+      onCreateEditor={(view) => {
+        viewRef.current = view;
+      }}
       basicSetup={{
         lineNumbers: true,
         foldGutter: false,

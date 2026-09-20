@@ -631,6 +631,10 @@
 
 .editor-panel-bar {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   padding: 8px 14px;
   font-family: var(--mono);
   font-size: 10.5px;
@@ -639,6 +643,23 @@
   color: var(--ink-dim);
   background: var(--panel);
   border-bottom: 1px solid var(--line);
+}
+
+.editor-panel-bar-clear {
+  font-family: var(--sans);
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--error);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.editor-panel-bar-clear:hover {
+  text-decoration: underline;
 }
 
 .editor-panel-body {

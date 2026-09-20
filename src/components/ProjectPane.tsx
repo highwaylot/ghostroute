@@ -90,7 +90,22 @@ export function ProjectPane() {
           })}
         </div>
 
-        <EditorPanel label="active coding window" className="code-panel project-editor">
+        <EditorPanel
+          label="active coding window"
+          className="code-panel project-editor"
+          actions={
+            <button
+              className="editor-panel-bar-clear"
+              onClick={() => {
+                if (window.confirm('Reset back to the starting template? This can\'t be undone.')) {
+                  setCode(project.starter);
+                }
+              }}
+            >
+              reset to starter
+            </button>
+          }
+        >
           <CodeEditor value={code} onChange={setCode} />
         </EditorPanel>
 
