@@ -25,8 +25,10 @@ export function RouteTrack({ current, onSelect }: Props) {
           {i > 0 && <div className={`connector ${i <= current ? 'done' : ''}`} />}
           <button
             ref={i === current ? currentRef : undefined}
-            className={`node ${i < current ? 'done' : i === current ? 'current' : ''}`}
-            onClick={() => onSelect(i)}
+            className={`node ${i < current ? 'done' : i === current ? 'current' : 'locked'}`}
+            onClick={() => i <= current && onSelect(i)}
+            disabled={i > current}
+            title={i > current ? 'Finish the current step first' : undefined}
           >
             <span className="dot" />
             <span className="label">{step.tag}</span>

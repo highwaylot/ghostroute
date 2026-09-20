@@ -384,6 +384,11 @@
   font-weight: 600;
 }
 
+.node.locked {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
 .connector {
   width: 34px;
   height: 2px;
