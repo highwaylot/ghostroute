@@ -3,6 +3,7 @@ import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { StatsPanel } from './StatsPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
+import { PreviewFrame } from './PreviewFrame';
 
 const SANDBOX_KEY = 'tagsmiths-sandbox';
 
@@ -60,7 +61,7 @@ export function SandboxPane() {
       </div>
 
       <EditorPanel label="output" className="output-panel">
-        <iframe title="sandbox preview" srcDoc={code} />
+        <PreviewFrame code={code} title="sandbox preview" />
       </EditorPanel>
 
       <DiagnosticsPanel code={code} />

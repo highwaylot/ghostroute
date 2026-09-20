@@ -3,6 +3,7 @@ import { PROJECTS } from '../data/projects';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
+import { PreviewFrame } from './PreviewFrame';
 
 const STORAGE_PREFIX = 'tagsmiths-project-';
 
@@ -110,7 +111,7 @@ export function ProjectPane() {
         </EditorPanel>
 
         <EditorPanel label="output" className="output-panel">
-          <iframe title="project preview" srcDoc={code} />
+          <PreviewFrame code={code} title="project preview" />
         </EditorPanel>
 
         <DiagnosticsPanel code={code} />

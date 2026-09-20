@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { PUZZLES } from '../data/puzzles';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
+import { PreviewFrame } from './PreviewFrame';
 import { useHintLadder, getHint, type AssistLevel } from '../lib/useHintLadder';
 
 type Props = {
@@ -66,7 +67,7 @@ export function PuzzlePane({ assist }: Props) {
         </EditorPanel>
 
         <EditorPanel label="output" className="output-panel puzzle-output">
-          <iframe title="puzzle preview" srcDoc={code} />
+          <PreviewFrame code={code} title="puzzle preview" />
         </EditorPanel>
 
         {solved ? (

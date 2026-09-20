@@ -9,6 +9,7 @@ import { EditorPanel } from '../components/EditorPanel';
 import { PuzzlePane } from '../components/PuzzlePane';
 import { SandboxPane } from '../components/SandboxPane';
 import { ProjectPane } from '../components/ProjectPane';
+import { PreviewFrame } from '../components/PreviewFrame';
 import { Logo } from '../components/Logo';
 import { STEPS } from '../data/steps';
 import type { AssistLevel } from '../lib/useHintLadder';
@@ -137,7 +138,7 @@ export default function Workspace() {
                 </div>
 
                 <EditorPanel label="output" className="output-panel">
-                  <iframe title="preview" srcDoc={code} />
+                  <PreviewFrame code={code} title="preview" />
                 </EditorPanel>
 
                 <DiagnosticsPanel code={code} />
