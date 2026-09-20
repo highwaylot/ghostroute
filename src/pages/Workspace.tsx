@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { InstructionsRail } from '../components/InstructionsRail';
 import { KeySidebar } from '../components/KeySidebar';
 import { StatsPanel } from '../components/StatsPanel';
@@ -21,6 +21,12 @@ const STEP_KEY = 'tagsmiths-step-v2'; // v2: route was condensed from 24 to 14 s
 const ASSIST_KEY = 'tagsmiths-assist';
 
 type Mode = 'route' | 'puzzles' | 'project' | 'sandbox' | 'nest';
+
+const MODES: Mode[] = ['route', 'puzzles', 'project', 'sandbox', 'nest'];
+
+function isMode(value: string | undefined): value is Mode {
+  return MODES.includes(value as Mode);
+}
 
 function loadSavedCode(): string {
   try {
@@ -49,7 +55,10 @@ function loadSavedAssist(): AssistLevel {
 }
 
 export default function Workspace() {
-  const [mode, setMode] = useState<Mode>('route');
+  const { mode: modeParam } = useParams<{ mode?: string }>();
+  const navigate = useNavigate();
+  const mode: Mode = isMode(modeParam) ? modeParam : 'route';
+  const setMode = (m: Mode) => navigate(`/html/website/${m}`);
   const [code, setCode] = useState(loadSavedCode);
   const [current, setCurrent] = useState(loadSavedStep);
   const [assist, setAssist] = useState<AssistLevel>(loadSavedAssist);
