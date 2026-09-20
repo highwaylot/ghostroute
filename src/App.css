@@ -424,6 +424,24 @@
   }
 }
 
+.ghost-tip .step-fact {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #9aa0b4;
+  font-size: 12.5px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.ghost-tip .step-fact-source {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-style: normal;
+  color: #6b7086;
+}
+
 .ghost-tip-actions {
   display: flex;
   gap: 8px;

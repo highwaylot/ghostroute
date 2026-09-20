@@ -6,6 +6,10 @@ export type Step = {
   why: string;
   hints: string[];
   check: (code: string) => boolean;
+  fact?: {
+    text: string;
+    source: string;
+  };
 };
 
 const has = (code: string, re: RegExp) => re.test(code);
@@ -140,6 +144,10 @@ export const STEPS: Step[] = [
     ],
     check: (code) =>
       has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[^<]*<\/a>/i) && hasImgWithSrcAndAlt(code),
+    fact: {
+      text: 'Target got sued in 2006 because their website didn\'t work with screen readers — missing alt text was part of it. They settled for $6 million.',
+      source: 'Nat\'l Fed\'n of the Blind v. Target Corp., 2006',
+    },
   },
 
   // --- grouping & attributes ---

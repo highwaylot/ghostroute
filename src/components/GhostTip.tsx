@@ -55,6 +55,12 @@ export function GhostTip({ current, code, assist, onAdvance, onReset }: Props) {
             Not quite yet — look closely at the target above and try again.
           </p>
         )}
+        {step.fact && (
+          <p className="step-fact">
+            {step.fact.text}
+            <span className="step-fact-source"> — {step.fact.source}</span>
+          </p>
+        )}
       </div>
       <div className="ghost-tip-actions">
         <button className="secondary" onClick={onReset}>
