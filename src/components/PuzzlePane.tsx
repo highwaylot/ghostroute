@@ -4,6 +4,7 @@ import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { PreviewFrame } from './PreviewFrame';
 import { useHintLadder, getHint, type AssistLevel } from '../lib/useHintLadder';
+import { useSuccessFlash } from '../lib/useSuccessFlash';
 
 type Props = {
   assist: AssistLevel;
@@ -16,6 +17,7 @@ export function PuzzlePane({ assist }: Props) {
   const [solved, setSolved] = useState(false);
   const { attempts, registerFail, reset } = useHintLadder(puzzle.id);
   const [justFailed, setJustFailed] = useState(false);
+  const [flash, triggerFlash] = useSuccessFlash();
 
   const selectPuzzle = (i: number) => {
     setIndex(i);
@@ -29,6 +31,7 @@ export function PuzzlePane({ assist }: Props) {
       setSolved(true);
       setJustFailed(false);
       reset();
+      triggerFlash();
     } else {
       registerFail();
       setJustFailed(true);
@@ -62,7 +65,10 @@ export function PuzzlePane({ assist }: Props) {
       <div className="puzzle-body">
         <p className="puzzle-prompt">{puzzle.prompt}</p>
 
-        <EditorPanel label="active coding window" className="code-panel puzzle-editor-wrap">
+        <EditorPanel
+          label="active coding window"
+          className={`code-panel puzzle-editor-wrap ${flash ? 'flash-success' : ''}`}
+        >
           <CodeEditor value={code} onChange={setCode} />
         </EditorPanel>
 

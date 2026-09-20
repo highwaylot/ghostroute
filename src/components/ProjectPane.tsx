@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PROJECTS } from '../data/projects';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
 import { PreviewFrame } from './PreviewFrame';
+import { useSuccessFlash } from '../lib/useSuccessFlash';
 
 const STORAGE_PREFIX = 'tagsmiths-project-';
 
@@ -20,11 +21,14 @@ export function ProjectPane() {
   const project = PROJECTS[index];
   const [code, setCode] = useState(() => loadCode(project.id, project.starter));
   const [openHint, setOpenHint] = useState<string | null>(null);
+  const [flash, triggerFlash] = useSuccessFlash();
+  const wasDone = useRef(false);
 
   const selectProject = (i: number) => {
     setIndex(i);
     setCode(loadCode(PROJECTS[i].id, PROJECTS[i].starter));
     setOpenHint(null);
+    wasDone.current = false;
   };
 
   useEffect(() => {
@@ -37,6 +41,13 @@ export function ProjectPane() {
 
   const doneCount = project.requirements.filter((r) => r.check(code)).length;
   const allDone = doneCount === project.requirements.length;
+
+  useEffect(() => {
+    if (allDone && !wasDone.current) {
+      triggerFlash();
+    }
+    wasDone.current = allDone;
+  }, [allDone, triggerFlash]);
 
   return (
     <div className="project-pane">
@@ -97,7 +108,7 @@ export function ProjectPane() {
 
         <EditorPanel
           label="active coding window"
-          className="code-panel project-editor"
+          className={`code-panel project-editor ${flash ? 'flash-success' : ''}`}
           actions={
             <button
               className="editor-panel-bar-clear"

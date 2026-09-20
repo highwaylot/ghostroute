@@ -8,9 +8,10 @@ type Props = {
   assist: AssistLevel;
   onAdvance: () => void;
   onReset: () => void;
+  onSuccess: () => void;
 };
 
-export function GhostTip({ current, code, assist, onAdvance, onReset }: Props) {
+export function GhostTip({ current, code, assist, onAdvance, onReset, onSuccess }: Props) {
   const step = STEPS[current];
   const { attempts, registerFail, reset } = useHintLadder(String(current));
   const [justFailed, setJustFailed] = useState(false);
@@ -33,6 +34,7 @@ export function GhostTip({ current, code, assist, onAdvance, onReset }: Props) {
       setJustFailed(false);
       reset();
       setJustSolved(true);
+      onSuccess();
       window.setTimeout(() => {
         setJustSolved(false);
         onAdvance();

@@ -14,6 +14,7 @@ import { PreviewFrame } from '../components/PreviewFrame';
 import { Logo } from '../components/Logo';
 import { STEPS } from '../data/steps';
 import type { AssistLevel } from '../lib/useHintLadder';
+import { useSuccessFlash } from '../lib/useSuccessFlash';
 import '../App.css';
 
 const STORAGE_KEY = 'tagsmiths-code';
@@ -63,6 +64,7 @@ export default function Workspace() {
   const [current, setCurrent] = useState(loadSavedStep);
   const [assist, setAssist] = useState<AssistLevel>(loadSavedAssist);
   const [keyOpen, setKeyOpen] = useState(false);
+  const [flash, triggerFlash] = useSuccessFlash();
 
   useEffect(() => {
     try {
@@ -139,12 +141,16 @@ export default function Workspace() {
                 onSelect={setCurrent}
                 onAdvance={handleAdvance}
                 onReset={handleReset}
+                onSuccess={triggerFlash}
                 onAssistChange={setAssist}
               />
 
               <div className="workspace-main">
                 <div className="lower">
-                  <EditorPanel label="active coding window" className="code-panel">
+                  <EditorPanel
+                    label="active coding window"
+                    className={`code-panel ${flash ? 'flash-success' : ''}`}
+                  >
                     <CodeEditor value={code} onChange={setCode} />
                   </EditorPanel>
                   <StatsPanel code={code} stepLabel={stepLabel} />

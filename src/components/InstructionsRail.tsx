@@ -11,6 +11,7 @@ type Props = {
   onSelect: (index: number) => void;
   onAdvance: () => void;
   onReset: () => void;
+  onSuccess: () => void;
   onAssistChange: (level: AssistLevel) => void;
 };
 
@@ -21,6 +22,7 @@ export function InstructionsRail({
   onSelect,
   onAdvance,
   onReset,
+  onSuccess,
   onAssistChange,
 }: Props) {
   return (
@@ -36,7 +38,14 @@ export function InstructionsRail({
 
       <div className="rail-window">
         <span className="rail-window-label">step</span>
-        <GhostTip current={current} code={code} assist={assist} onAdvance={onAdvance} onReset={onReset} />
+        <GhostTip
+          current={current}
+          code={code}
+          assist={assist}
+          onAdvance={onAdvance}
+          onReset={onReset}
+          onSuccess={onSuccess}
+        />
       </div>
     </div>
   );
