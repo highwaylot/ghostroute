@@ -822,8 +822,71 @@
 /* Project pane */
 .project-pane {
   display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.project-list {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.project-pick {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 10px 11px;
+  border-radius: 7px;
+  border: none;
+  background: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+  text-transform: lowercase;
+}
+
+.project-pick:hover {
+  background: rgba(59, 99, 232, 0.08);
+}
+
+.project-pick.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.project-pick-progress {
+  font-family: var(--mono);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.project-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+@media (max-width: 700px) {
+  .project-pane {
+    flex-direction: column;
+  }
+  .project-list {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
 }
 
 .project-brief {
@@ -865,6 +928,11 @@
   text-transform: uppercase;
   color: var(--ink-dim);
   margin-bottom: 4px;
+}
+
+.project-checklist-count.ok {
+  color: var(--ok);
+  font-weight: 700;
 }
 
 .checklist-row {

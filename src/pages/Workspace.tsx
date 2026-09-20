@@ -15,7 +15,7 @@ import type { AssistLevel } from '../lib/useHintLadder';
 import '../App.css';
 
 const STORAGE_KEY = 'tagsmiths-code';
-const STEP_KEY = 'tagsmiths-step';
+const STEP_KEY = 'tagsmiths-step-v2'; // v2: route was condensed from 24 to 14 steps
 const ASSIST_KEY = 'tagsmiths-assist';
 
 type Mode = 'route' | 'puzzles' | 'project' | 'sandbox';

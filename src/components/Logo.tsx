@@ -4,31 +4,25 @@ type Props = {
   className?: string;
 };
 
-// A tag shape (the thing this whole product teaches) with a hammered notch
-// at the top standing in for "smith" — a simple, literal, ownable mark
-// instead of an abstract swoosh.
+// A clean price-tag silhouette with a punched hole — legible at 16px,
+// carries the "tagsmiths" pun without needing extra detail (an earlier
+// version added a hammer accent that just read as noise at small sizes).
 export function Logo({ size = 22, withWordmark = true, className }: Props) {
   return (
     <span className={`logo ${className ?? ''}`}>
       <svg
         width={size}
         height={size}
-        viewBox="0 0 32 32"
+        viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
       >
         <path
-          d="M18 4H8a2 2 0 0 0-2 2v10c0 .53.21 1.04.59 1.41l10 10a2 2 0 0 0 2.82 0l8-8a2 2 0 0 0 0-2.82l-10-10A2 2 0 0 0 18 4Z"
+          d="M11.28 2.5H19a2.5 2.5 0 0 1 2.5 2.5v7.72a2.5 2.5 0 0 1-.73 1.77l-8.5 8.5a2.5 2.5 0 0 1-3.54 0l-7.72-7.72a2.5 2.5 0 0 1 0-3.54l8.5-8.5a2.5 2.5 0 0 1 1.77-.73Z"
           fill="currentColor"
-          className="logo-tag"
         />
-        <circle cx="12" cy="10" r="2.4" fill="var(--navy)" />
-        <path
-          d="M14 4.5 18 2l1 2.2-3.4 2.1z"
-          fill="currentColor"
-          className="logo-hammer"
-        />
+        <circle cx="16" cy="8" r="2" fill="var(--navy)" />
       </svg>
       {withWordmark && <span className="wordmark">tagsmiths</span>}
     </span>
