@@ -155,7 +155,38 @@ export function runDiagnostics(code: string): Diagnostic[] {
     }
   }
 
-  // 7. Anything after </html>
+  // 7. Elements that don't belong inside <head> — browsers silently pull
+  //    them out and drop them at the top of <body> instead, which is
+  //    exactly the kind of quiet auto-correction that makes code feel
+  //    "stuck" when it's actually just being moved without telling you.
+  const HEAD_ALLOWED = new Set(['title', 'meta', 'link', 'style', 'script', 'base', 'noscript']);
+  const headMatch = code.match(/<head\b[^>]*>/i);
+  if (headMatch && headMatch.index !== undefined) {
+    const headStart = headMatch.index + headMatch[0].length;
+    const headCloseMatch = code.slice(headStart).match(/<\/head\s*>/i);
+    if (headCloseMatch && headCloseMatch.index !== undefined) {
+      const headEnd = headStart + headCloseMatch.index;
+      const headBody = code.slice(headStart, headEnd);
+      const tagRe = /<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g;
+      let hm: RegExpExecArray | null;
+      while ((hm = tagRe.exec(headBody)) !== null) {
+        const name = hm[1].toLowerCase();
+        if (!HEAD_ALLOWED.has(name)) {
+          const from = headStart + hm.index;
+          diagnostics.push({
+            from,
+            to: from + hm[0].length,
+            line: lineOf(code, from),
+            severity: 'error',
+            title: `<${name}> isn't allowed inside <head>`,
+            explain: `<head> can only hold page info like <title>, <meta>, <link>, and <script> — nothing visible. Browsers quietly move a <${name}> like this to the top of <body> instead of showing an error, so it can look like your code isn't doing what you wrote.`,
+          });
+        }
+      }
+    }
+  }
+
+  // 8. Anything after </html>
   const htmlCloseMatch = code.match(/<\/html\s*>/i);
   if (htmlCloseMatch && htmlCloseMatch.index !== undefined) {
     const closeEnd = htmlCloseMatch.index + htmlCloseMatch[0].length;
