@@ -1266,6 +1266,10 @@
 }
 
 .nest-pick {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
   text-align: left;
   font-family: var(--sans);
   font-size: 13px;
@@ -1277,7 +1281,7 @@
   cursor: pointer;
 }
 
-.nest-pick:hover:not(:disabled) {
+.nest-pick:hover {
   background: rgba(59, 99, 232, 0.08);
   color: var(--ink);
 }
@@ -1287,9 +1291,21 @@
   color: #fff;
 }
 
-.nest-pick.stub {
-  opacity: 0.4;
-  cursor: not-allowed;
+.nest-pick-soon {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  background: var(--line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}
+
+.nest-pick.active .nest-pick-soon {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
 }
 
 .nest-detail {

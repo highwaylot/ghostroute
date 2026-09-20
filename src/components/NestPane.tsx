@@ -18,11 +18,12 @@ export function NestPane() {
               return (
                 <button
                   key={k.tag}
-                  className={`nest-pick ${activeTag === k.tag ? 'active' : ''} ${!hasDeep ? 'stub' : ''}`}
+                  className={`nest-pick ${activeTag === k.tag ? 'active' : ''}`}
                   onClick={() => setActiveTag(k.tag)}
                   title={hasDeep ? undefined : 'Full deep dive coming soon — showing the short version for now'}
                 >
                   {k.tag}
+                  {!hasDeep && <span className="nest-pick-soon">soon</span>}
                 </button>
               );
             })}
