@@ -18,7 +18,9 @@ export function PreviewFrame({ code, title }: Props) {
   const [debounced, setDebounced] = useState(code);
   const [fullscreen, setFullscreen] = useState(false);
   const [popupBlocked, setPopupBlocked] = useState(false);
+  const [popupSuspectedBlocked, setPopupSuspectedBlocked] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
+  const popupCheckTimeout = useRef<number | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const scrollPos = useRef(0);
   const popupWinRef = useRef<Window | null>(null);
@@ -64,6 +66,30 @@ export function PreviewFrame({ code, title }: Props) {
     popupWinRef.current = null;
     popupIframeRef.current = null;
     setPopupOpen(false);
+    setPopupSuspectedBlocked(false);
+    if (popupCheckTimeout.current) window.clearTimeout(popupCheckTimeout.current);
+  };
+
+  // window.open() succeeding and the popup actually showing real content
+  // are two different things — a strict popup/ad blocker can let the
+  // window open and then silently strip the injected iframe's content,
+  // which window.open()'s return value has no way to tell us about. The
+  // shell here has no network fetch to wait on (it's inline content, not
+  // a page load), so under any normal circumstance — slow connection
+  // included — this check should already have real content well before
+  // 2s. If it doesn't, that's a real signal, not a false alarm.
+  const scheduleBlockedCheck = () => {
+    if (popupCheckTimeout.current) window.clearTimeout(popupCheckTimeout.current);
+    popupCheckTimeout.current = window.setTimeout(() => {
+      const win = popupWinRef.current;
+      const inner = popupIframeRef.current;
+      if (!win || win.closed || !inner) return;
+      const innerBody = inner.contentDocument?.body;
+      const gotContent = Boolean(innerBody && innerBody.children.length > 0);
+      if (!gotContent && debounced.trim().length > 0) {
+        setPopupSuspectedBlocked(true);
+      }
+    }, 2000);
   };
 
   const handlePopupInnerLoad = () => {
@@ -73,9 +99,13 @@ export function PreviewFrame({ code, title }: Props) {
     innerWin.addEventListener('scroll', () => {
       popupScrollPos.current = innerWin.scrollY;
     });
+    // A real load happened — whatever the 2s check might have flagged no
+    // longer applies.
+    setPopupSuspectedBlocked(false);
   };
 
   const openPopup = () => {
+    setPopupSuspectedBlocked(false);
     const win = window.open('', '_blank', 'width=900,height=700');
     if (!win) {
       setPopupBlocked(true);
@@ -97,6 +127,7 @@ export function PreviewFrame({ code, title }: Props) {
       innerFrame.srcdoc = debounced;
     }
     setPopupOpen(true);
+    scheduleBlockedCheck();
   };
 
   const togglePopup = () => {
@@ -144,6 +175,15 @@ export function PreviewFrame({ code, title }: Props) {
 
   return (
     <div className="preview-frame-wrap">
+      {popupSuspectedBlocked && (
+        <div className="preview-blocked-banner">
+          Pop-out didn't load? A strict ad/popup blocker can silently block it — try disabling extensions for this
+          site, or use fullscreen instead.
+          <button onClick={() => setPopupSuspectedBlocked(false)} aria-label="Dismiss">
+            ×
+          </button>
+        </div>
+      )}
       <div className="preview-frame-actions">
         {popupBlocked && <span className="preview-popup-blocked">Popup blocked — allow popups for this site</span>}
         <button className="preview-expand-btn" onClick={togglePopup}>
