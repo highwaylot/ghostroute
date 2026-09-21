@@ -9,6 +9,7 @@ import { EditorPanel } from '../components/EditorPanel';
 import { PuzzlePane } from '../components/PuzzlePane';
 import { SandboxPane } from '../components/SandboxPane';
 import { ProjectPane } from '../components/ProjectPane';
+import { MyProjectsPane } from '../components/MyProjectsPane';
 import { NestPane } from '../components/NestPane';
 import { PreviewFrame } from '../components/PreviewFrame';
 import { Logo } from '../components/Logo';
@@ -21,7 +22,7 @@ const STORAGE_KEY = 'tagsmiths-code';
 const STEP_KEY = 'tagsmiths-step-v2'; // v2: route was condensed from 24 to 14 steps
 const ASSIST_KEY = 'tagsmiths-assist';
 
-type Mode = 'route' | 'solve' | 'sandbox' | 'nest';
+type Mode = 'route' | 'solve' | 'sandbox' | 'myprojects' | 'nest';
 type SolveSection = 'puzzles' | 'project';
 
 // 'puzzles' and 'project' used to be their own top-level tabs, now merged
@@ -29,7 +30,13 @@ type SolveSection = 'puzzles' | 'project';
 // correctly, just landing on the matching sub-section instead of 404ing.
 function resolveMode(modeParam: string | undefined): Mode {
   if (modeParam === 'puzzles' || modeParam === 'project') return 'solve';
-  if (modeParam === 'route' || modeParam === 'solve' || modeParam === 'sandbox' || modeParam === 'nest') {
+  if (
+    modeParam === 'route' ||
+    modeParam === 'solve' ||
+    modeParam === 'sandbox' ||
+    modeParam === 'myprojects' ||
+    modeParam === 'nest'
+  ) {
     return modeParam;
   }
   return 'route';
@@ -130,14 +137,16 @@ export default function Workspace() {
           <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} onClick={() => setMode('sandbox')}>
             sandbox
           </button>
+          <button
+            className={`tab ${mode === 'myprojects' ? 'active' : ''}`}
+            onClick={() => setMode('myprojects')}
+          >
+            my projects
+          </button>
           <button className={`tab ${mode === 'nest' ? 'active' : ''}`} onClick={() => setMode('nest')}>
             the nest
           </button>
         </nav>
-
-        <button className="key-toggle" onClick={() => setKeyOpen((v) => !v)}>
-          key index
-        </button>
       </header>
 
       <div className="workspace">
@@ -188,7 +197,7 @@ export default function Workspace() {
                   className={solveSection === 'project' ? 'active' : ''}
                   onClick={() => setSolveSection('project')}
                 >
-                  project
+                  build this code
                 </button>
               </div>
 
@@ -214,6 +223,16 @@ export default function Workspace() {
             </>
           )}
 
+          {mode === 'myprojects' && (
+            <>
+              <p className="mode-blurb">
+                Your own saved projects — name them, come back to them, delete them. Start blank here,
+                or save a copy over from Sandbox.
+              </p>
+              <MyProjectsPane />
+            </>
+          )}
+
           {mode === 'nest' && (
             <>
               <p className="mode-blurb">
@@ -226,6 +245,15 @@ export default function Workspace() {
         </main>
 
         <KeySidebar open={keyOpen} onClose={() => setKeyOpen(false)} />
+
+        <button
+          className={`key-fab ${keyOpen ? 'open' : ''}`}
+          onClick={() => setKeyOpen((v) => !v)}
+          aria-label="Toggle key index"
+          title="Key index"
+        >
+          🔑
+        </button>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { EditorPanel } from './EditorPanel';
 import { StatsPanel } from './StatsPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
 import { PreviewFrame } from './PreviewFrame';
+import { saveAsMyProject } from './MyProjectsPane';
 
 const SANDBOX_KEY = 'tagsmiths-sandbox';
 
@@ -28,6 +29,7 @@ function loadSandbox(): string {
 
 export function SandboxPane() {
   const [code, setCode] = useState(loadSandbox);
+  const [justSaved, setJustSaved] = useState(false);
 
   useEffect(() => {
     try {
@@ -43,6 +45,14 @@ export function SandboxPane() {
     }
   };
 
+  const handleSaveAsProject = () => {
+    const name = window.prompt('Save this sandbox as a project named:', 'My project');
+    if (!name) return;
+    saveAsMyProject(name, code);
+    setJustSaved(true);
+    window.setTimeout(() => setJustSaved(false), 1800);
+  };
+
   return (
     <>
       <div className="lower">
@@ -50,9 +60,14 @@ export function SandboxPane() {
           label="sandbox — no route, no checks"
           className="code-panel"
           actions={
-            <button className="editor-panel-bar-clear" onClick={handleClear}>
-              clear all
-            </button>
+            <>
+              <button className="editor-panel-bar-action" onClick={handleSaveAsProject}>
+                {justSaved ? 'saved to my projects ✓' : 'save to my projects'}
+              </button>
+              <button className="editor-panel-bar-clear" onClick={handleClear}>
+                clear all
+              </button>
+            </>
           }
         >
           <CodeEditor value={code} onChange={setCode} />
