@@ -97,7 +97,7 @@ export function KeySidebar({ open, onClose }: Props) {
             <span className="desc">{entry.desc}</span>
             <div className="key-example-wrap">
               <pre className="key-example">{entry.example}</pre>
-              <CopyButton text={entry.example} className="key-copy-btn" />
+              <CopyButton text={entry.example} className="key-copy-btn" iconOnly />
             </div>
           </div>
         ))}

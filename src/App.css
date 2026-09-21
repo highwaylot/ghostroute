@@ -92,34 +92,61 @@
   background: rgba(59, 99, 232, 0.35);
 }
 
-/* Floating key-index trigger — bottom-left, deliberately across the
-   screen from the KeySidebar panel itself (which opens bottom-right), so
-   the two never overlap. */
-.key-fab {
-  position: fixed;
-  left: 20px;
-  bottom: 20px;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: none;
-  background: var(--navy);
-  color: #fff;
-  font-size: 22px;
+/* Top-right utility cluster: My Projects + Key Index. Pulled out of the
+   scrolling main tab row since both are "find your own stuff" actions,
+   not steps in the learning flow, and need to stay visible and obvious
+   rather than competing for space with the tabs. */
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.topbar-action {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(10, 14, 30, 0.35);
-  z-index: 25;
+  white-space: nowrap;
 }
 
-.key-fab:hover {
-  background: var(--blue);
+.topbar-action:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.32);
 }
 
-.key-fab.open {
+.topbar-action.active {
   background: var(--blue);
+  border-color: var(--blue);
+}
+
+.topbar-action-key {
+  border-color: var(--error);
+  color: #ffd6dd;
+}
+
+.topbar-action-key:hover {
+  background: rgba(214, 69, 95, 0.2);
+}
+
+.topbar-action-key.active {
+  background: var(--error);
+  border-color: var(--error);
+  color: #fff;
+}
+
+@media (max-width: 700px) {
+  .topbar-action span {
+    display: none;
+  }
 }
 
 /* Workspace */
@@ -144,31 +171,56 @@
   color: var(--ink-dim);
 }
 
-.solve-toggle {
-  display: inline-flex;
-  gap: 4px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  padding: 4px;
-  margin-bottom: 16px;
+.solve-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.solve-toggle button {
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 7px 16px;
-  border-radius: 6px;
-  border: none;
-  background: none;
-  color: var(--ink-dim);
+.solve-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--panel);
   cursor: pointer;
 }
 
-.solve-toggle button.active {
-  background: var(--blue);
-  color: #fff;
+.solve-card:hover {
+  border-color: var(--blue);
+}
+
+.solve-card.active {
+  border-color: var(--blue);
+  background: rgba(59, 99, 232, 0.06);
+}
+
+.solve-card-title {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ink);
+  text-transform: lowercase;
+}
+
+.solve-card.active .solve-card-title {
+  color: var(--blue);
+}
+
+.solve-card-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+@media (max-width: 600px) {
+  .solve-picker {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Two-column workspace: instructions rail stays beside the editor
@@ -724,15 +776,29 @@
   word-break: break-word;
 }
 
+.copy-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+/* Hidden until you hover the code block itself — a quiet affordance
+   instead of a button sitting there all the time. */
 .key-copy-btn {
   position: absolute;
   top: 6px;
   right: 6px;
-  font-size: 9.5px;
-  padding: 2px 7px;
   border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
   color: #9aa4d4;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.key-example-wrap:hover .key-copy-btn,
+.key-copy-btn:focus-visible {
+  opacity: 1;
 }
 
 .key-copy-btn:hover {
@@ -829,6 +895,30 @@
 
 .editor-panel-bar-clear:hover {
   text-decoration: underline;
+}
+
+.sandbox-inline-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sandbox-inline-form input {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--blue);
+  background: #fff;
+  color: var(--ink);
+  width: 150px;
+}
+
+.sandbox-inline-warn {
+  font-size: 11px;
+  color: var(--error);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .editor-panel-body {
@@ -1231,6 +1321,89 @@
   color: var(--ink-dim);
   line-height: 1.5;
   padding: 4px 4px 0;
+}
+
+.myprojects-new-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 4px;
+}
+
+.myprojects-new-form input,
+.myprojects-rename-input {
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 7px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--blue);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.myprojects-new-form-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.myprojects-confirm,
+.myprojects-cancel {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 0;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.myprojects-confirm {
+  background: var(--blue);
+  color: #fff;
+}
+
+.myprojects-confirm:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.myprojects-cancel {
+  background: var(--line);
+  color: var(--ink-dim);
+}
+
+.myprojects-rename-input {
+  flex: 1;
+  min-width: 0;
+  margin: 2px;
+}
+
+.myprojects-confirm-delete {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  color: var(--error);
+}
+
+.myprojects-confirm-delete button {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background: var(--line);
+  color: var(--ink);
+}
+
+.myprojects-confirm-delete button:first-of-type {
+  background: var(--error);
+  color: #fff;
 }
 
 .myprojects-item {

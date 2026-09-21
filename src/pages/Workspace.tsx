@@ -18,6 +18,34 @@ import type { AssistLevel } from '../lib/useHintLadder';
 import { useSuccessFlash } from '../lib/useSuccessFlash';
 import '../App.css';
 
+function FolderIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M2.5 6a1.5 1.5 0 0 1 1.5-1.5h3.5l1.6 1.6H16A1.5 1.5 0 0 1 17.5 7.6v7.9A1.5 1.5 0 0 1 16 17H4A1.5 1.5 0 0 1 2.5 15.5V6Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function KeyIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="7" cy="13" r="3.2" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="m9.2 10.8 6.3-6.3m0 0 2 2m-2-2-2.4 2.4m0 0 1.7 1.7"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 const STORAGE_KEY = 'tagsmiths-code';
 const STEP_KEY = 'tagsmiths-step-v2'; // v2: route was condensed from 24 to 14 steps
 const ASSIST_KEY = 'tagsmiths-assist';
@@ -137,16 +165,27 @@ export default function Workspace() {
           <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} onClick={() => setMode('sandbox')}>
             sandbox
           </button>
-          <button
-            className={`tab ${mode === 'myprojects' ? 'active' : ''}`}
-            onClick={() => setMode('myprojects')}
-          >
-            my projects
-          </button>
           <button className={`tab ${mode === 'nest' ? 'active' : ''}`} onClick={() => setMode('nest')}>
             the nest
           </button>
         </nav>
+
+        <div className="topbar-actions">
+          <button
+            className={`topbar-action ${mode === 'myprojects' ? 'active' : ''}`}
+            onClick={() => setMode('myprojects')}
+          >
+            <FolderIcon />
+            <span>my projects</span>
+          </button>
+          <button
+            className={`topbar-action topbar-action-key ${keyOpen ? 'active' : ''}`}
+            onClick={() => setKeyOpen((v) => !v)}
+          >
+            <KeyIcon />
+            <span>key index</span>
+          </button>
+        </div>
       </header>
 
       <div className="workspace">
@@ -186,31 +225,28 @@ export default function Workspace() {
 
           {mode === 'solve' && (
             <>
-              <div className="solve-toggle">
+              <div className="solve-picker">
                 <button
-                  className={solveSection === 'puzzles' ? 'active' : ''}
+                  className={`solve-card ${solveSection === 'puzzles' ? 'active' : ''}`}
                   onClick={() => setSolveSection('puzzles')}
                 >
-                  fix this code
+                  <span className="solve-card-title">fix this code</span>
+                  <span className="solve-card-desc">
+                    Broken HTML, on purpose. Find what's wrong and repair it.
+                  </span>
                 </button>
                 <button
-                  className={solveSection === 'project' ? 'active' : ''}
+                  className={`solve-card ${solveSection === 'project' ? 'active' : ''}`}
                   onClick={() => setSolveSection('project')}
                 >
-                  build this code
+                  <span className="solve-card-title">build this code</span>
+                  <span className="solve-card-desc">
+                    A brief and a checklist. Build the page yourself, in any order.
+                  </span>
                 </button>
               </div>
 
-              {solveSection === 'puzzles' ? (
-                <>
-                  <p className="mode-blurb">
-                    Each puzzle starts broken on purpose. Read the code, find what's wrong, and fix it.
-                  </p>
-                  <PuzzlePane assist={assist} />
-                </>
-              ) : (
-                <ProjectPane />
-              )}
+              {solveSection === 'puzzles' ? <PuzzlePane assist={assist} /> : <ProjectPane />}
             </>
           )}
 
@@ -245,15 +281,6 @@ export default function Workspace() {
         </main>
 
         <KeySidebar open={keyOpen} onClose={() => setKeyOpen(false)} />
-
-        <button
-          className={`key-fab ${keyOpen ? 'open' : ''}`}
-          onClick={() => setKeyOpen((v) => !v)}
-          aria-label="Toggle key index"
-          title="Key index"
-        >
-          🔑
-        </button>
       </div>
     </div>
   );

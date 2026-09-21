@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { StatsPanel } from './StatsPanel';
@@ -27,9 +27,14 @@ function loadSandbox(): string {
   }
 }
 
+type PendingAction = 'save' | 'clear' | null;
+
 export function SandboxPane() {
   const [code, setCode] = useState(loadSandbox);
   const [justSaved, setJustSaved] = useState(false);
+  const [pending, setPending] = useState<PendingAction>(null);
+  const [nameDraft, setNameDraft] = useState('');
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try {
@@ -39,18 +44,27 @@ export function SandboxPane() {
     }
   }, [code]);
 
-  const handleClear = () => {
-    if (code.trim() === '' || window.confirm('Clear everything in the sandbox? This can\'t be undone.')) {
-      setCode('');
-    }
+  useEffect(() => {
+    if (pending === 'save') nameInputRef.current?.focus();
+  }, [pending]);
+
+  const startSave = () => {
+    setNameDraft('');
+    setPending('save');
   };
 
-  const handleSaveAsProject = () => {
-    const name = window.prompt('Save this sandbox as a project named:', 'My project');
+  const confirmSave = () => {
+    const name = nameDraft.trim();
     if (!name) return;
     saveAsMyProject(name, code);
+    setPending(null);
     setJustSaved(true);
     window.setTimeout(() => setJustSaved(false), 1800);
+  };
+
+  const confirmClear = () => {
+    setCode('');
+    setPending(null);
   };
 
   return (
@@ -60,14 +74,48 @@ export function SandboxPane() {
           label="sandbox — no route, no checks"
           className="code-panel"
           actions={
-            <>
-              <button className="editor-panel-bar-action" onClick={handleSaveAsProject}>
-                {justSaved ? 'saved to my projects ✓' : 'save to my projects'}
-              </button>
-              <button className="editor-panel-bar-clear" onClick={handleClear}>
-                clear all
-              </button>
-            </>
+            pending === 'save' ? (
+              <div className="sandbox-inline-form">
+                <input
+                  ref={nameInputRef}
+                  value={nameDraft}
+                  onChange={(e) => setNameDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') confirmSave();
+                    if (e.key === 'Escape') setPending(null);
+                  }}
+                  placeholder="Project name…"
+                />
+                <button className="editor-panel-bar-action" onClick={confirmSave} disabled={!nameDraft.trim()}>
+                  save
+                </button>
+                <button className="editor-panel-bar-clear" onClick={() => setPending(null)}>
+                  cancel
+                </button>
+              </div>
+            ) : pending === 'clear' ? (
+              <div className="sandbox-inline-form">
+                <span className="sandbox-inline-warn">Clear everything? Can't be undone.</span>
+                <button className="editor-panel-bar-clear" onClick={confirmClear}>
+                  yes, clear
+                </button>
+                <button className="editor-panel-bar-action" onClick={() => setPending(null)}>
+                  cancel
+                </button>
+              </div>
+            ) : (
+              <>
+                <button className="editor-panel-bar-action" onClick={startSave}>
+                  {justSaved ? 'saved to my projects ✓' : 'save to my projects'}
+                </button>
+                <button
+                  className="editor-panel-bar-clear"
+                  onClick={() => (code.trim() === '' ? setCode('') : setPending('clear'))}
+                >
+                  clear all
+                </button>
+              </>
+            )
           }
         >
           <CodeEditor value={code} onChange={setCode} />

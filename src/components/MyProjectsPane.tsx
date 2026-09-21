@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { PreviewFrame } from './PreviewFrame';
@@ -12,17 +12,6 @@ export type SavedProject = {
   code: string;
   savedAt: number;
 };
-
-const BLANK_STARTER = `<!DOCTYPE html>
-<html>
-  <head>
-    <title>My Project</title>
-  </head>
-  <body>
-    <h1>New project</h1>
-  </body>
-</html>
-`;
 
 export function loadMyProjects(): SavedProject[] {
   try {
@@ -58,35 +47,62 @@ export function saveAsMyProject(name: string, code: string): void {
 export function MyProjectsPane() {
   const [projects, setProjects] = useState<SavedProject[]>(loadMyProjects);
   const [activeId, setActiveId] = useState<string | null>(() => loadMyProjects()[0]?.id ?? null);
+  const [creating, setCreating] = useState(false);
+  const [nameDraft, setNameDraft] = useState('');
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState('');
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const newInputRef = useRef<HTMLInputElement>(null);
+  const renameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     saveMyProjects(projects);
   }, [projects]);
 
+  useEffect(() => {
+    if (creating) newInputRef.current?.focus();
+  }, [creating]);
+
+  useEffect(() => {
+    if (renamingId) renameInputRef.current?.focus();
+  }, [renamingId]);
+
   const active = projects.find((p) => p.id === activeId) ?? null;
 
-  const handleNew = () => {
-    const name = window.prompt('Name this project:', 'Untitled project');
-    if (!name) return;
-    const proj: SavedProject = { id: newId(), name, code: BLANK_STARTER, savedAt: Date.now() };
-    setProjects((prev) => [proj, ...prev]);
-    setActiveId(proj.id);
+  const startCreate = () => {
+    setCreating(true);
+    setNameDraft('');
   };
 
-  const handleRename = (id: string) => {
-    const proj = projects.find((p) => p.id === id);
-    if (!proj) return;
-    const name = window.prompt('Rename project:', proj.name);
+  // Starts genuinely blank — no boilerplate template — so it's the user's
+  // page from the first character, not a fill-in-the-blank of ours.
+  const confirmCreate = () => {
+    const name = nameDraft.trim();
     if (!name) return;
-    setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, name } : p)));
+    const proj: SavedProject = { id: newId(), name, code: '', savedAt: Date.now() };
+    setProjects((prev) => [proj, ...prev]);
+    setActiveId(proj.id);
+    setCreating(false);
+  };
+
+  const startRename = (id: string, currentName: string) => {
+    setRenamingId(id);
+    setRenameDraft(currentName);
+    setConfirmDeleteId(null);
+  };
+
+  const confirmRename = () => {
+    const name = renameDraft.trim();
+    if (name && renamingId) {
+      setProjects((prev) => prev.map((p) => (p.id === renamingId ? { ...p, name } : p)));
+    }
+    setRenamingId(null);
   };
 
   const handleDelete = (id: string) => {
-    const proj = projects.find((p) => p.id === id);
-    if (!proj) return;
-    if (!window.confirm(`Delete "${proj.name}"? This can't be undone.`)) return;
     setProjects((prev) => prev.filter((p) => p.id !== id));
     if (activeId === id) setActiveId(null);
+    setConfirmDeleteId(null);
   };
 
   const handleCodeChange = (code: string) => {
@@ -97,27 +113,74 @@ export function MyProjectsPane() {
   return (
     <div className="myprojects-pane">
       <div className="myprojects-list">
-        <button className="myprojects-new" onClick={handleNew}>
-          + new project
-        </button>
-        {projects.length === 0 && (
+        {creating ? (
+          <div className="myprojects-new-form">
+            <input
+              ref={newInputRef}
+              value={nameDraft}
+              onChange={(e) => setNameDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') confirmCreate();
+                if (e.key === 'Escape') setCreating(false);
+              }}
+              placeholder="Project name…"
+            />
+            <div className="myprojects-new-form-actions">
+              <button className="myprojects-confirm" onClick={confirmCreate} disabled={!nameDraft.trim()}>
+                create
+              </button>
+              <button className="myprojects-cancel" onClick={() => setCreating(false)}>
+                cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button className="myprojects-new" onClick={startCreate}>
+            + new project
+          </button>
+        )}
+
+        {projects.length === 0 && !creating && (
           <p className="myprojects-empty">
             Nothing saved yet. Create one here, or use "save to my projects" from Sandbox.
           </p>
         )}
+
         {projects.map((p) => (
           <div key={p.id} className={`myprojects-item ${activeId === p.id ? 'active' : ''}`}>
-            <button className="myprojects-item-name" onClick={() => setActiveId(p.id)}>
-              {p.name}
-            </button>
-            <div className="myprojects-item-actions">
-              <button onClick={() => handleRename(p.id)} title="Rename">
-                ✎
-              </button>
-              <button onClick={() => handleDelete(p.id)} title="Delete">
-                ×
-              </button>
-            </div>
+            {renamingId === p.id ? (
+              <input
+                ref={renameInputRef}
+                className="myprojects-rename-input"
+                value={renameDraft}
+                onChange={(e) => setRenameDraft(e.target.value)}
+                onBlur={confirmRename}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') confirmRename();
+                  if (e.key === 'Escape') setRenamingId(null);
+                }}
+              />
+            ) : confirmDeleteId === p.id ? (
+              <div className="myprojects-confirm-delete">
+                <span>Delete?</span>
+                <button onClick={() => handleDelete(p.id)}>yes</button>
+                <button onClick={() => setConfirmDeleteId(null)}>no</button>
+              </div>
+            ) : (
+              <>
+                <button className="myprojects-item-name" onClick={() => setActiveId(p.id)}>
+                  {p.name}
+                </button>
+                <div className="myprojects-item-actions">
+                  <button onClick={() => startRename(p.id, p.name)} title="Rename">
+                    ✎
+                  </button>
+                  <button onClick={() => setConfirmDeleteId(p.id)} title="Delete">
+                    ×
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>
