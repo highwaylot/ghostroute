@@ -22,7 +22,7 @@ export const PUZZLES: Puzzle[] = [
       'Every opening tag needs a closing tag with a slash, like </h1>.',
       'Add </h1> right after "Welcome to my site".',
     ],
-    check: (code) => /<h1[^>]*>[^<]*<\/h1>/i.test(code),
+    check: (code) => /<h1[^>]*>[\s\S]*?<\/h1>/i.test(code),
   },
   {
     id: 'wrong-nesting',
@@ -35,7 +35,7 @@ export const PUZZLES: Puzzle[] = [
       '<a> opened after <p>, so </a> must close before </p>.',
       'Fix it to: <p>Check out <a href="#">this link</a></p>',
     ],
-    check: (code) => /<p[^>]*>[^<]*<a[^>]*>[^<]*<\/a>\s*<\/p>/i.test(code),
+    check: (code) => /<p[^>]*>[\s\S]*?<a[^>]*>[\s\S]*?<\/a>\s*<\/p>/i.test(code),
   },
   {
     id: 'missing-quotes',
@@ -48,7 +48,7 @@ export const PUZZLES: Puzzle[] = [
       'HTML attribute values should be wrapped in quotes.',
       'Fix it to: <a href="https://example.com">Visit</a>',
     ],
-    check: (code) => /<a\s+href\s*=\s*"https?:\/\/[^"]+"[^>]*>[^<]*<\/a>/i.test(code),
+    check: (code) => /<a\s+href\s*=\s*"https?:\/\/[^"]+"[^>]*>[\s\S]*?<\/a>/i.test(code),
   },
   {
     id: 'missing-alt',
@@ -121,8 +121,8 @@ export const PUZZLES: Puzzle[] = [
     check: (code) => {
       const headMatch = code.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
       const bodyMatch = code.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-      const inHead = Boolean(headMatch && /<title[^>]*>[^<]*<\/title>/i.test(headMatch[1]));
-      const inBody = Boolean(bodyMatch && /<title[^>]*>[^<]*<\/title>/i.test(bodyMatch[1]));
+      const inHead = Boolean(headMatch && /<title[^>]*>[\s\S]*?<\/title>/i.test(headMatch[1]));
+      const inBody = Boolean(bodyMatch && /<title[^>]*>[\s\S]*?<\/title>/i.test(bodyMatch[1]));
       return inHead && !inBody;
     },
   },

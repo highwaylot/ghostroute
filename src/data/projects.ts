@@ -38,27 +38,27 @@ export const PROJECTS: Project[] = [
         id: 'heading',
         desc: 'A heading with your name or a title',
         hint: '<h1>Your Name</h1>',
-        check: (code) => has(code, /<h1[^>]*>[^<]*<\/h1>/i),
+        check: (code) => has(code, /<h1[^>]*>[\s\S]*?<\/h1>/i),
       },
       {
         id: 'paragraph',
         desc: 'At least one paragraph of text',
         hint: '<p>A sentence or two about yourself.</p>',
-        check: (code) => has(code, /<p[^>]*>[^<]*<\/p>/i),
+        check: (code) => has(code, /<p[^>]*>[\s\S]*?<\/p>/i),
       },
       {
         id: 'list',
         desc: 'A list of things (interests, skills, whatever)',
         hint: '<ul>\n  <li>Reading</li>\n  <li>Hiking</li>\n</ul>',
         check: (code) =>
-          has(code, /<ul[^>]*>[\s\S]*?<li[^>]*>[^<]*<\/li>[\s\S]*?<\/ul>/i) ||
-          has(code, /<ol[^>]*>[\s\S]*?<li[^>]*>[^<]*<\/li>[\s\S]*?<\/ol>/i),
+          has(code, /<ul[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>[\s\S]*?<\/ul>/i) ||
+          has(code, /<ol[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>[\s\S]*?<\/ol>/i),
       },
       {
         id: 'link',
         desc: 'A link to somewhere (a social profile, a project, anything)',
         hint: '<a href="https://github.com">My GitHub</a>',
-        check: (code) => has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[^<]*<\/a>/i),
+        check: (code) => has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[\s\S]*?<\/a>/i),
       },
       {
         id: 'image',
@@ -104,7 +104,7 @@ export const PROJECTS: Project[] = [
         id: 'heading',
         desc: 'A heading with the recipe name',
         hint: '<h1>Grandma\'s Pancakes</h1>',
-        check: (code) => has(code, /<h1[^>]*>[^<]*<\/h1>/i),
+        check: (code) => has(code, /<h1[^>]*>[\s\S]*?<\/h1>/i),
       },
       {
         id: 'image',
@@ -116,13 +116,13 @@ export const PROJECTS: Project[] = [
         id: 'ingredients',
         desc: 'An ingredients list (unordered — order doesn\'t matter)',
         hint: '<ul>\n  <li>2 eggs</li>\n  <li>1 cup flour</li>\n</ul>',
-        check: (code) => has(code, /<ul[^>]*>[\s\S]*?<li[^>]*>[^<]*<\/li>[\s\S]*?<\/ul>/i),
+        check: (code) => has(code, /<ul[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>[\s\S]*?<\/ul>/i),
       },
       {
         id: 'steps',
         desc: 'The cooking steps as a numbered list',
         hint: '<ol>\n  <li>Mix the batter.</li>\n  <li>Cook on a griddle.</li>\n</ol>',
-        check: (code) => has(code, /<ol[^>]*>[\s\S]*?<li[^>]*>[^<]*<\/li>[\s\S]*?<\/ol>/i),
+        check: (code) => has(code, /<ol[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>[\s\S]*?<\/ol>/i),
       },
       {
         id: 'semantic',
@@ -135,7 +135,7 @@ export const PROJECTS: Project[] = [
         id: 'link',
         desc: 'A link — credit the original source, or link to something related',
         hint: '<a href="https://example.com">Original recipe</a>',
-        check: (code) => has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[^<]*<\/a>/i),
+        check: (code) => has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[\s\S]*?<\/a>/i),
       },
     ],
   },
@@ -159,7 +159,7 @@ export const PROJECTS: Project[] = [
         id: 'header',
         desc: 'A <header> containing your name or a title',
         hint: '<header>\n  <h1>Jane Doe</h1>\n</header>',
-        check: (code) => has(code, /<header[^>]*>[\s\S]*?<h1[^>]*>[^<]*<\/h1>[\s\S]*?<\/header>/i),
+        check: (code) => has(code, /<header[^>]*>[\s\S]*?<h1[^>]*>[\s\S]*?<\/h1>[\s\S]*?<\/header>/i),
       },
       {
         id: 'nav',
@@ -183,8 +183,8 @@ export const PROJECTS: Project[] = [
         desc: 'A list of projects or skills',
         hint: '<ul>\n  <li>Built a portfolio site</li>\n  <li>Learned HTML</li>\n</ul>',
         check: (code) =>
-          has(code, /<ul[^>]*>[\s\S]*?<li[^>]*>[^<]*<\/li>[\s\S]*?<\/ul>/i) ||
-          has(code, /<ol[^>]*>[\s\S]*?<li[^>]*>[^<]*<\/li>[\s\S]*?<\/ol>/i),
+          has(code, /<ul[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>[\s\S]*?<\/ul>/i) ||
+          has(code, /<ol[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>[\s\S]*?<\/ol>/i),
       },
       {
         id: 'footer',

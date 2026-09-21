@@ -55,7 +55,7 @@ export const STEPS: Step[] = [
     check: (code) =>
       has(code, /<head[^>]*>/i) &&
       has(code, /<\/head>/i) &&
-      has(code, /<title[^>]*>[^<]*<\/title>/i),
+      has(code, /<title[^>]*>[\s\S]*?<\/title>/i),
   },
   {
     tag: '<body></body>',
@@ -80,7 +80,7 @@ export const STEPS: Step[] = [
       'Type:\n<h1>Hello, world.</h1>\n<p>This is my first paragraph.</p>',
     ],
     check: (code) =>
-      has(code, /<h1[^>]*>[^<]*<\/h1>/i) && has(code, /<p[^>]*>[^<]*<\/p>/i),
+      has(code, /<h1[^>]*>[\s\S]*?<\/h1>/i) && has(code, /<p[^>]*>[\s\S]*?<\/p>/i),
   },
   {
     tag: '<h2></h2>',
@@ -91,7 +91,7 @@ export const STEPS: Step[] = [
       'It has an opening and closing form: <h2> ... </h2>.',
       'Type: <h2>About this page</h2>',
     ],
-    check: (code) => has(code, /<h2[^>]*>[^<]*<\/h2>/i),
+    check: (code) => has(code, /<h2[^>]*>[\s\S]*?<\/h2>/i),
   },
   {
     tag: '<strong></strong> + <em></em>',
@@ -103,7 +103,7 @@ export const STEPS: Step[] = [
       'Type: This is <strong>important</strong> and this is <em>emphasized</em>.',
     ],
     check: (code) =>
-      has(code, /<strong[^>]*>[^<]*<\/strong>/i) && has(code, /<em[^>]*>[^<]*<\/em>/i),
+      has(code, /<strong[^>]*>[\s\S]*?<\/strong>/i) && has(code, /<em[^>]*>[\s\S]*?<\/em>/i),
   },
   {
     tag: '<br> + <hr>',
@@ -128,8 +128,8 @@ export const STEPS: Step[] = [
       'Type:\n<ul>\n  <li>Bullet item</li>\n</ul>\n<ol>\n  <li>Numbered item</li>\n</ol>',
     ],
     check: (code) =>
-      has(code, /<ul[^>]*>[\s\S]*?<li[^>]*>[^<]*<\/li>[\s\S]*?<\/ul>/i) &&
-      has(code, /<ol[^>]*>[\s\S]*?<li[^>]*>[^<]*<\/li>[\s\S]*?<\/ol>/i),
+      has(code, /<ul[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>[\s\S]*?<\/ul>/i) &&
+      has(code, /<ol[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>[\s\S]*?<\/ol>/i),
   },
 
   // --- links & media ---
@@ -143,7 +143,7 @@ export const STEPS: Step[] = [
       'Type:\n<a href="https://example.com">Visit</a>\n<img src="https://placekitten.com/200/200" alt="A kitten">',
     ],
     check: (code) =>
-      has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[^<]*<\/a>/i) && hasImgWithSrcAndAlt(code),
+      has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[\s\S]*?<\/a>/i) && hasImgWithSrcAndAlt(code),
     fact: {
       text: 'Target got sued in 2006 because their website didn\'t work with screen readers — missing alt text was part of it. They settled for $6 million.',
       source: 'Nat\'l Fed\'n of the Blind v. Target Corp., 2006',
@@ -161,7 +161,7 @@ export const STEPS: Step[] = [
       'Type:\n<div>\n  <p>Some <span>highlighted</span> text.</p>\n</div>',
     ],
     check: (code) =>
-      has(code, /<div[^>]*>[\s\S]*?<\/div>/i) && has(code, /<span[^>]*>[^<]*<\/span>/i),
+      has(code, /<div[^>]*>[\s\S]*?<\/div>/i) && has(code, /<span[^>]*>[\s\S]*?<\/span>/i),
   },
   {
     tag: 'class="" + id=""',

@@ -628,8 +628,13 @@
   padding: 16px;
   border-radius: 14px;
   box-shadow: 0 12px 40px rgba(10, 14, 30, 0.4);
-  overflow-y: auto;
   z-index: 30;
+  /* Only the results list scrolls — the header (with the close button),
+     search box, and category filters stay put above it, always visible
+     and always reachable, instead of scrolling away with the results. */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .sidebar-head {
@@ -639,6 +644,7 @@
   margin-bottom: 12px;
   cursor: grab;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .sidebar-head:active {
@@ -678,6 +684,7 @@
   font-family: var(--sans);
   font-size: 13px;
   margin-bottom: 14px;
+  flex-shrink: 0;
 }
 
 .key-search::placeholder {
@@ -689,6 +696,7 @@
   flex-wrap: wrap;
   gap: 5px;
   margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .key-cat {
@@ -717,6 +725,9 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .key-item {

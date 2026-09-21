@@ -18,11 +18,12 @@ export function PreviewFrame({ code, title }: Props) {
   const [debounced, setDebounced] = useState(code);
   const [fullscreen, setFullscreen] = useState(false);
   const [popupBlocked, setPopupBlocked] = useState(false);
+  const [popupOpen, setPopupOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const scrollPos = useRef(0);
-  const popupRef = useRef<Window | null>(null);
+  const popupWinRef = useRef<Window | null>(null);
+  const popupIframeRef = useRef<HTMLIFrameElement | null>(null);
   const popupScrollPos = useRef(0);
-  const [, forceRerender] = useState(0);
 
   useEffect(() => {
     const id = window.setTimeout(() => setDebounced(code), 250);
@@ -52,58 +53,80 @@ export function PreviewFrame({ code, title }: Props) {
 
   // A real, separate browser window — draggable to a second monitor,
   // resizable and zoomable with the browser's own native controls, unlike
-  // the in-page fullscreen. Pushed to via document.write on every debounced
-  // update, same scroll-preserving approach as the iframe.
-  const writeToPopup = (win: Window) => {
-    try {
-      win.document.open();
-      win.document.write(debounced);
-      win.document.close();
-      win.document.title = title;
-      win.scrollTo(0, popupScrollPos.current);
-      win.addEventListener('scroll', () => {
-        popupScrollPos.current = win.scrollY;
-      });
-    } catch {
-      popupRef.current = null;
-      forceRerender((n) => n + 1);
-    }
+  // the in-page fullscreen. Writing raw HTML into the popup's document
+  // directly (document.write) on every keystroke turned out unreliable in
+  // real use — instead, the popup gets one tiny static shell (written once)
+  // holding its own <iframe>, and that inner iframe's srcDoc is what
+  // actually updates on every debounced change. Same proven mechanism as
+  // the in-page preview above, just relocated into the popup window.
+  const closePopup = () => {
+    popupWinRef.current?.close();
+    popupWinRef.current = null;
+    popupIframeRef.current = null;
+    setPopupOpen(false);
   };
 
-  useEffect(() => {
-    const win = popupRef.current;
-    if (!win || win.closed) return;
-    writeToPopup(win);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debounced]);
+  const handlePopupInnerLoad = () => {
+    const innerWin = popupIframeRef.current?.contentWindow;
+    if (!innerWin) return;
+    innerWin.scrollTo(0, popupScrollPos.current);
+    innerWin.addEventListener('scroll', () => {
+      popupScrollPos.current = innerWin.scrollY;
+    });
+  };
 
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      if (popupRef.current?.closed) {
-        popupRef.current = null;
-        forceRerender((n) => n + 1);
-      }
-    }, 600);
-    return () => window.clearInterval(id);
-  }, []);
-
-  const togglePopup = () => {
-    if (popupRef.current && !popupRef.current.closed) {
-      popupRef.current.close();
-      popupRef.current = null;
-      forceRerender((n) => n + 1);
-      return;
-    }
+  const openPopup = () => {
     const win = window.open('', '_blank', 'width=900,height=700');
     if (!win) {
       setPopupBlocked(true);
       window.setTimeout(() => setPopupBlocked(false), 3000);
       return;
     }
-    popupRef.current = win;
-    writeToPopup(win);
-    forceRerender((n) => n + 1);
+    win.document.open();
+    win.document.write(
+      '<!DOCTYPE html><html><head><style>html,body{margin:0;height:100%;overflow:hidden}iframe{width:100%;height:100%;border:0;display:block}</style></head><body><iframe id="preview"></iframe></body></html>',
+    );
+    win.document.close();
+    win.document.title = title;
+
+    const innerFrame = win.document.getElementById('preview') as HTMLIFrameElement | null;
+    popupWinRef.current = win;
+    popupIframeRef.current = innerFrame;
+    if (innerFrame) {
+      innerFrame.onload = handlePopupInnerLoad;
+      innerFrame.srcdoc = debounced;
+    }
+    setPopupOpen(true);
   };
+
+  const togglePopup = () => {
+    if (popupWinRef.current && !popupWinRef.current.closed) {
+      closePopup();
+    } else {
+      openPopup();
+    }
+  };
+
+  // Push every debounced update into the popup's inner iframe.
+  useEffect(() => {
+    const win = popupWinRef.current;
+    const inner = popupIframeRef.current;
+    if (!win || win.closed || !inner) return;
+    inner.srcdoc = debounced;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debounced]);
+
+  // Detect the user closing the popup window directly (not via our button).
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      if (popupWinRef.current?.closed) {
+        popupWinRef.current = null;
+        popupIframeRef.current = null;
+        setPopupOpen(false);
+      }
+    }, 600);
+    return () => window.clearInterval(id);
+  }, []);
 
   const frame = <iframe ref={iframeRef} title={title} srcDoc={debounced} onLoad={handleLoad} />;
 
@@ -118,8 +141,6 @@ export function PreviewFrame({ code, title }: Props) {
       </div>
     );
   }
-
-  const popupOpen = Boolean(popupRef.current && !popupRef.current.closed);
 
   return (
     <div className="preview-frame-wrap">
