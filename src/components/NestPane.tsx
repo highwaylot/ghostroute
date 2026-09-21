@@ -37,8 +37,14 @@ export function NestPane() {
   const [section, setSection] = useState<'tags' | 'blueprints'>('tags');
   const [activeTag, setActiveTag] = useState(NEST[0].tag);
   const [activeBlueprint, setActiveBlueprint] = useState(BLUEPRINTS[0].id);
+  const [query, setQuery] = useState('');
   const entry = getNestEntry(activeTag);
   const blueprint = BLUEPRINTS.find((b) => b.id === activeBlueprint);
+
+  const q = query.trim().toLowerCase();
+  const filteredBlueprints = BLUEPRINTS.filter(
+    (b) => !q || b.title.toLowerCase().includes(q) || b.desc.toLowerCase().includes(q),
+  );
 
   const flatIndex = ORDERED_TAGS.indexOf(activeTag);
   const chapterNum = entry ? KEY_CATEGORIES.indexOf(entry.category) + 1 : 0;
@@ -52,7 +58,7 @@ export function NestPane() {
   return (
     <div className="nest-book">
       <div className="nest-spine">
-        <h1 className="nest-spine-title">The Nest</h1>
+        <h1 className="nest-spine-title">Nest</h1>
         <span className="nest-spine-sub">{section === 'tags' ? 'the html book' : 'the workshop'}</span>
 
         <div className="nest-spine-tabs">
@@ -64,27 +70,43 @@ export function NestPane() {
           </button>
         </div>
 
+        <input
+          className="nest-spine-search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={section === 'tags' ? 'Search tags…' : 'Search blueprints…'}
+        />
+
         {section === 'tags' ? (
-          KEY_CATEGORIES.map((cat, i) => (
-            <div key={cat} className="nest-chapter">
-              <span className="nest-chapter-head">
-                Ch. {i + 1} — {cat}
-              </span>
-              {KEY_INDEX.filter((k) => k.category === cat).map((k) => (
-                <button
-                  key={k.tag}
-                  className={`nest-chapter-item ${activeTag === k.tag ? 'active' : ''}`}
-                  onClick={() => setActiveTag(k.tag)}
-                >
-                  {k.tag}
-                </button>
-              ))}
-            </div>
-          ))
+          <>
+            {KEY_CATEGORIES.map((cat, i) => {
+              const items = KEY_INDEX.filter((k) => k.category === cat && (!q || k.tag.toLowerCase().includes(q)));
+              if (q && items.length === 0) return null;
+              return (
+                <div key={cat} className="nest-chapter">
+                  <span className="nest-chapter-head">
+                    Ch. {i + 1} — {cat}
+                  </span>
+                  {items.map((k) => (
+                    <button
+                      key={k.tag}
+                      className={`nest-chapter-item ${activeTag === k.tag ? 'active' : ''}`}
+                      onClick={() => setActiveTag(k.tag)}
+                    >
+                      {k.tag}
+                    </button>
+                  ))}
+                </div>
+              );
+            })}
+            {q && KEY_INDEX.every((k) => !k.tag.toLowerCase().includes(q)) && (
+              <p className="nest-spine-empty">No tags match "{query}".</p>
+            )}
+          </>
         ) : (
           <div className="nest-chapter">
             <span className="nest-chapter-head">Full page skeletons</span>
-            {BLUEPRINTS.map((b) => (
+            {filteredBlueprints.map((b) => (
               <button
                 key={b.id}
                 className={`nest-chapter-item ${activeBlueprint === b.id ? 'active' : ''}`}
@@ -93,6 +115,7 @@ export function NestPane() {
                 {b.title}
               </button>
             ))}
+            {filteredBlueprints.length === 0 && <p className="nest-spine-empty">No blueprints match "{query}".</p>}
           </div>
         )}
       </div>

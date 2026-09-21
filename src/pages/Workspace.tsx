@@ -166,7 +166,7 @@ export default function Workspace() {
             sandbox
           </button>
           <button className={`tab ${mode === 'nest' ? 'active' : ''}`} onClick={() => setMode('nest')}>
-            the nest
+            nest
           </button>
         </nav>
 
@@ -179,7 +179,7 @@ export default function Workspace() {
             <span>my projects</span>
           </button>
           <button
-            className={`topbar-action topbar-action-key ${keyOpen ? 'active' : ''}`}
+            className={`topbar-action ${keyOpen ? 'active' : ''}`}
             onClick={() => setKeyOpen((v) => !v)}
           >
             <KeyIcon />

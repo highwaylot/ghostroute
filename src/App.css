@@ -128,21 +128,6 @@
   border-color: var(--blue);
 }
 
-.topbar-action-key {
-  border-color: var(--error);
-  color: #ffd6dd;
-}
-
-.topbar-action-key:hover {
-  background: rgba(214, 69, 95, 0.2);
-}
-
-.topbar-action-key.active {
-  background: var(--error);
-  border-color: var(--error);
-  color: #fff;
-}
-
 @media (max-width: 700px) {
   .topbar-action span {
     display: none;
@@ -1761,6 +1746,34 @@
 .nest-spine-tabs button.active {
   background: var(--blue);
   color: #fff;
+}
+
+.nest-spine-search {
+  display: block;
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.nest-spine-search::placeholder {
+  color: #7783b8;
+}
+
+.nest-spine-search:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
+.nest-spine-empty {
+  font-size: 12px;
+  color: #7783b8;
+  padding: 4px 8px;
 }
 
 .nest-chapter {
