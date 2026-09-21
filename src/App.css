@@ -1321,12 +1321,6 @@
 
 /* --- the nest: deep-dive reference, book/chapters style --- */
 
-.nest-pane {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
 .nest-book {
   display: flex;
   gap: 0;
@@ -1356,7 +1350,34 @@
   font-family: var(--mono);
   font-size: 10.5px;
   color: #9aa8e8;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
+}
+
+.nest-spine-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+
+.nest-spine-tabs button {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  text-transform: lowercase;
+  padding: 7px 0;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: #9aa8e8;
+  cursor: pointer;
+}
+
+.nest-spine-tabs button.active {
+  background: var(--blue);
+  color: #fff;
 }
 
 .nest-chapter {
@@ -1485,36 +1506,6 @@
   cursor: default;
 }
 
-.nest-section-toggle {
-  display: flex;
-  gap: 6px;
-}
-
-.nest-section-toggle button {
-  font-family: var(--mono);
-  font-size: 12px;
-  text-transform: lowercase;
-  padding: 6px 14px;
-  border-radius: 7px;
-  border: 1px solid var(--line);
-  background: var(--bg);
-  color: var(--ink-dim);
-  cursor: pointer;
-}
-
-.nest-section-toggle button.active {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: #fff;
-}
-
-.nest-tags,
-.nest-blueprints {
-  display: flex;
-  gap: 18px;
-  align-items: flex-start;
-}
-
 .nest-example-head {
   display: flex;
   align-items: center;
@@ -1540,123 +1531,6 @@
 .nest-copy-btn:hover {
   color: var(--blue);
   border-color: var(--blue);
-}
-
-.nest-list {
-  width: 220px;
-  flex-shrink: 0;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 12px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.nest-category {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.nest-category-label {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  padding: 4px 8px 2px;
-}
-
-.nest-pick {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  text-align: left;
-  font-family: var(--sans);
-  font-size: 13px;
-  padding: 7px 8px;
-  border-radius: 7px;
-  border: none;
-  background: none;
-  color: var(--ink-dim);
-  cursor: pointer;
-}
-
-.nest-pick:hover {
-  background: rgba(59, 99, 232, 0.08);
-  color: var(--ink);
-}
-
-.nest-pick.active {
-  background: var(--blue);
-  color: #fff;
-}
-
-.nest-pick-soon {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  background: var(--line);
-  border-radius: 4px;
-  padding: 1px 5px;
-  flex-shrink: 0;
-}
-
-.nest-pick.active .nest-pick-soon {
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
-}
-
-.nest-detail {
-  flex: 1;
-  min-width: 0;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 22px 26px;
-}
-
-.nest-empty {
-  color: var(--ink-dim);
-}
-
-.nest-stub-note {
-  margin: 0 0 16px;
-  font-size: 12.5px;
-  font-style: italic;
-  color: var(--ink-dim);
-}
-
-.nest-detail-head {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-bottom: 14px;
-  margin-bottom: 18px;
-  border-bottom: 3px solid var(--error);
-}
-
-.nest-detail-category {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.nest-detail-tag {
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--ink);
 }
 
 .nest-stat-row {
@@ -1754,21 +1628,7 @@
   background: rgba(59, 99, 232, 0.08);
 }
 
-.nest-related-chip.stub {
-  color: var(--ink-dim);
-  cursor: default;
-}
-
 @media (max-width: 700px) {
-  .nest-blueprints {
-    flex-direction: column;
-  }
-
-  .nest-list {
-    width: 100%;
-    max-height: 200px;
-  }
-
   .nest-book {
     flex-direction: column;
   }
