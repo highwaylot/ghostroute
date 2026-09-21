@@ -136,6 +136,33 @@
   color: var(--ink-dim);
 }
 
+.solve-toggle {
+  display: inline-flex;
+  gap: 4px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 4px;
+  margin-bottom: 16px;
+}
+
+.solve-toggle button {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.solve-toggle button.active {
+  background: var(--blue);
+  color: #fff;
+}
+
 /* Two-column workspace: instructions rail stays beside the editor
    instead of stacked above the output, so the thing telling you what
    to do sits next to the thing you're typing into. */

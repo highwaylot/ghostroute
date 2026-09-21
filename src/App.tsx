@@ -11,6 +11,7 @@ function App() {
       <Route path="/html" element={<HtmlHub />} />
       <Route path="/html/website" element={<Workspace />} />
       <Route path="/html/website/:mode" element={<Workspace />} />
+      <Route path="/html/website/:mode/:sub" element={<Workspace />} />
       <Route
         path="/html/email"
         element={<ComingSoon title="html — email template" backTo="/html" backLabel="html" />}

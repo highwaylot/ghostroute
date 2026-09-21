@@ -21,12 +21,23 @@ const STORAGE_KEY = 'tagsmiths-code';
 const STEP_KEY = 'tagsmiths-step-v2'; // v2: route was condensed from 24 to 14 steps
 const ASSIST_KEY = 'tagsmiths-assist';
 
-type Mode = 'route' | 'puzzles' | 'project' | 'sandbox' | 'nest';
+type Mode = 'route' | 'solve' | 'sandbox' | 'nest';
+type SolveSection = 'puzzles' | 'project';
 
-const MODES: Mode[] = ['route', 'puzzles', 'project', 'sandbox', 'nest'];
+// 'puzzles' and 'project' used to be their own top-level tabs, now merged
+// under "solve this code" — old bookmarks/links to them still resolve
+// correctly, just landing on the matching sub-section instead of 404ing.
+function resolveMode(modeParam: string | undefined): Mode {
+  if (modeParam === 'puzzles' || modeParam === 'project') return 'solve';
+  if (modeParam === 'route' || modeParam === 'solve' || modeParam === 'sandbox' || modeParam === 'nest') {
+    return modeParam;
+  }
+  return 'route';
+}
 
-function isMode(value: string | undefined): value is Mode {
-  return MODES.includes(value as Mode);
+function resolveSolveSection(modeParam: string | undefined, subParam: string | undefined): SolveSection {
+  if (modeParam === 'project' || subParam === 'project') return 'project';
+  return 'puzzles';
 }
 
 function loadSavedCode(): string {
@@ -56,10 +67,12 @@ function loadSavedAssist(): AssistLevel {
 }
 
 export default function Workspace() {
-  const { mode: modeParam } = useParams<{ mode?: string }>();
+  const { mode: modeParam, sub: subParam } = useParams<{ mode?: string; sub?: string }>();
   const navigate = useNavigate();
-  const mode: Mode = isMode(modeParam) ? modeParam : 'route';
+  const mode: Mode = resolveMode(modeParam);
+  const solveSection: SolveSection = resolveSolveSection(modeParam, subParam);
   const setMode = (m: Mode) => navigate(`/html/website/${m}`);
+  const setSolveSection = (s: SolveSection) => navigate(`/html/website/solve/${s}`);
   const [code, setCode] = useState(loadSavedCode);
   const [current, setCurrent] = useState(loadSavedStep);
   const [assist, setAssist] = useState<AssistLevel>(loadSavedAssist);
@@ -111,11 +124,8 @@ export default function Workspace() {
           <button className={`tab ${mode === 'route' ? 'active' : ''}`} onClick={() => setMode('route')}>
             route
           </button>
-          <button className={`tab ${mode === 'puzzles' ? 'active' : ''}`} onClick={() => setMode('puzzles')}>
-            fix this code
-          </button>
-          <button className={`tab ${mode === 'project' ? 'active' : ''}`} onClick={() => setMode('project')}>
-            project
+          <button className={`tab ${mode === 'solve' ? 'active' : ''}`} onClick={() => setMode('solve')}>
+            solve this code
           </button>
           <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} onClick={() => setMode('sandbox')}>
             sandbox
@@ -165,16 +175,35 @@ export default function Workspace() {
             </div>
           )}
 
-          {mode === 'puzzles' && (
+          {mode === 'solve' && (
             <>
-              <p className="mode-blurb">
-                Each puzzle starts broken on purpose. Read the code, find what's wrong, and fix it.
-              </p>
-              <PuzzlePane assist={assist} />
+              <div className="solve-toggle">
+                <button
+                  className={solveSection === 'puzzles' ? 'active' : ''}
+                  onClick={() => setSolveSection('puzzles')}
+                >
+                  fix this code
+                </button>
+                <button
+                  className={solveSection === 'project' ? 'active' : ''}
+                  onClick={() => setSolveSection('project')}
+                >
+                  project
+                </button>
+              </div>
+
+              {solveSection === 'puzzles' ? (
+                <>
+                  <p className="mode-blurb">
+                    Each puzzle starts broken on purpose. Read the code, find what's wrong, and fix it.
+                  </p>
+                  <PuzzlePane assist={assist} />
+                </>
+              ) : (
+                <ProjectPane />
+              )}
             </>
           )}
-
-          {mode === 'project' && <ProjectPane />}
 
           {mode === 'sandbox' && (
             <>
