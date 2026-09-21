@@ -6,8 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>tagsmiths</title>
     <meta name="description" content="tagsmiths — learn to code by building, one real tag at a time." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://tagsmiths.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tagsmiths.com/" />
     <meta property="og:title" content="tagsmiths" />
     <meta property="og:description" content="learn to code by building, one real tag at a time." />
+    <meta property="og:image" content="https://tagsmiths.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="tagsmiths" />
+    <meta name="twitter:description" content="learn to code by building, one real tag at a time." />
+    <meta name="twitter:image" content="https://tagsmiths.com/og-image.png" />
+
     <meta name="theme-color" content="#0a1440" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -16,7 +30,25 @@
     />
   </head>
   <body>
-    <div id="root"></div>
+    <!--
+      This is real content, not a loading placeholder — it's replaced the
+      instant React mounts, but until then (a crawler without JS, a slow
+      connection, JS disabled) it's what actually renders. Using semantic
+      tags here isn't optional on a site that teaches people to use them.
+    -->
+    <div id="root">
+      <header>
+        <h1>tagsmiths</h1>
+        <p>Learn to code by building, one real tag at a time.</p>
+      </header>
+      <main>
+        <p>
+          tagsmiths is a live-code HTML learning tool: write real markup in an
+          in-browser editor and see it render instantly, with guided steps,
+          debugging puzzles, and a full HTML reference.
+        </p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
