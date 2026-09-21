@@ -621,8 +621,15 @@
   right: 20px;
   bottom: 20px;
   width: 320px;
-  max-width: calc(100vw - 40px);
-  max-height: min(70vh, 560px);
+  height: min(70vh, 560px);
+  /* Resizable, but only within a modest range — enough to nudge it to taste,
+     not enough to take over the screen. Native browser resize handle
+     (bottom-right corner), no custom drag logic needed. */
+  min-width: 260px;
+  max-width: 480px;
+  min-height: 280px;
+  max-height: min(85vh, 720px);
+  resize: both;
   background: var(--navy);
   color: #fff;
   padding: 16px;
@@ -635,6 +642,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    resize: none;
+  }
 }
 
 .sidebar-head {
