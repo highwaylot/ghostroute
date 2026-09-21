@@ -2,26 +2,7 @@ import { useState } from 'react';
 import { KEY_INDEX, KEY_CATEGORIES } from '../data/keyIndex';
 import { NEST, getNestEntry } from '../data/nest';
 import { BLUEPRINTS } from '../data/blueprints';
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // clipboard unavailable — nothing to do
-    }
-  };
-
-  return (
-    <button className="nest-copy-btn" onClick={handleCopy}>
-      {copied ? 'copied!' : 'copy'}
-    </button>
-  );
-}
+import { CopyButton } from './CopyButton';
 
 // Flat, ordered list of every tag the way the spine displays them —
 // category by category, in KEY_CATEGORIES order — used for page numbers

@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { KEY_INDEX, KEY_CATEGORIES } from '../data/keyIndex';
+import { CopyButton } from './CopyButton';
 
 type Props = {
   open: boolean;
@@ -94,7 +95,10 @@ export function KeySidebar({ open, onClose }: Props) {
           <div className="key-item" key={entry.tag}>
             <span className="tag">{entry.tag}</span>
             <span className="desc">{entry.desc}</span>
-            <pre className="key-example">{entry.example}</pre>
+            <div className="key-example-wrap">
+              <pre className="key-example">{entry.example}</pre>
+              <CopyButton text={entry.example} className="key-copy-btn" />
+            </div>
           </div>
         ))}
         {filtered.length === 0 && <p className="key-empty">No matches.</p>}

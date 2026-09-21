@@ -28,3 +28,26 @@ export function playSuccessChime() {
     // Web Audio unavailable — the visual flash still carries the moment.
   }
 }
+
+// A single, quiet tick for copy actions — deliberately much smaller than
+// the success chime, just enough to register that something happened.
+export function playCopyTick() {
+  try {
+    const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 900;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.05, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.15);
+    window.setTimeout(() => ctx.close(), 300);
+  } catch {
+    // Web Audio unavailable — the visual bounce still carries the moment.
+  }
+}
