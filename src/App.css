@@ -933,11 +933,28 @@
   height: 100%;
 }
 
-.preview-expand-btn {
+.preview-frame-actions {
   position: absolute;
   top: 8px;
   right: 8px;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview-popup-blocked {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--error);
+  background: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--error);
+  white-space: nowrap;
+}
+
+.preview-expand-btn {
   font-family: var(--mono);
   font-size: 11px;
   padding: 5px 9px;
@@ -946,6 +963,7 @@
   background: rgba(255, 255, 255, 0.9);
   color: var(--ink-dim);
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .preview-expand-btn:hover {

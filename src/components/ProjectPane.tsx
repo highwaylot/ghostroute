@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PROJECTS } from '../data/projects';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
@@ -17,18 +18,36 @@ function loadCode(projectId: string, starter: string): string {
 }
 
 export function ProjectPane() {
-  const [index, setIndex] = useState(0);
+  const { item } = useParams<{ item?: string }>();
+  const navigate = useNavigate();
+  const urlIndex = PROJECTS.findIndex((p) => p.id === item);
+  const [index, setIndex] = useState(urlIndex >= 0 ? urlIndex : 0);
   const project = PROJECTS[index];
   const [code, setCode] = useState(() => loadCode(project.id, project.starter));
   const [openHint, setOpenHint] = useState<string | null>(null);
   const [flash, triggerFlash] = useSuccessFlash();
   const wasDone = useRef(false);
 
+  // Keep the URL and the active project in sync both ways: picking a new
+  // project updates the URL (so refresh/back/forward/sharing all land on
+  // the right one), and a URL that already names a project (e.g. from a
+  // direct link) selects it on load.
+  useEffect(() => {
+    if (urlIndex >= 0 && urlIndex !== index) {
+      setIndex(urlIndex);
+      setCode(loadCode(PROJECTS[urlIndex].id, PROJECTS[urlIndex].starter));
+      setOpenHint(null);
+      wasDone.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item]);
+
   const selectProject = (i: number) => {
     setIndex(i);
     setCode(loadCode(PROJECTS[i].id, PROJECTS[i].starter));
     setOpenHint(null);
     wasDone.current = false;
+    navigate(`/html/website/solve/project/${PROJECTS[i].id}`);
   };
 
   useEffect(() => {

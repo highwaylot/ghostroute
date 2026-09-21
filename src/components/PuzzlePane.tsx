@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PUZZLES, type Difficulty } from '../data/puzzles';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
@@ -16,16 +17,41 @@ const TIERS: { id: Difficulty; label: string }[] = [
   { id: 'hard', label: 'hard' },
 ];
 
+function findPuzzle(id: string | undefined) {
+  return id ? PUZZLES.find((p) => p.id === id) : undefined;
+}
+
 export function PuzzlePane({ assist }: Props) {
-  const [tier, setTier] = useState<Difficulty>('basic');
+  const { item } = useParams<{ item?: string }>();
+  const navigate = useNavigate();
+  const urlPuzzle = findPuzzle(item);
+
+  const [tier, setTier] = useState<Difficulty>(urlPuzzle?.difficulty ?? 'basic');
   const tierPuzzles = PUZZLES.filter((p) => p.difficulty === tier);
-  const [index, setIndex] = useState(0);
+  const urlIndex = urlPuzzle ? tierPuzzles.findIndex((p) => p.id === urlPuzzle.id) : -1;
+  const [index, setIndex] = useState(urlIndex >= 0 ? urlIndex : 0);
   const puzzle = tierPuzzles[index];
   const [code, setCode] = useState(puzzle?.broken ?? '');
   const [solved, setSolved] = useState(false);
   const { attempts, registerFail, reset } = useHintLadder(puzzle?.id ?? tier);
   const [justFailed, setJustFailed] = useState(false);
   const [flash, triggerFlash] = useSuccessFlash();
+
+  // A direct link to a specific puzzle (e.g. /solve/puzzles/missing-alt)
+  // selects its tier and itself on load, or when navigated to directly.
+  useEffect(() => {
+    const p = findPuzzle(item);
+    if (!p) return;
+    if (p.difficulty !== tier) setTier(p.difficulty);
+    const i = PUZZLES.filter((x) => x.difficulty === p.difficulty).findIndex((x) => x.id === p.id);
+    if (i >= 0 && (i !== index || p.difficulty !== tier)) {
+      setIndex(i);
+      setCode(p.broken);
+      setSolved(false);
+      setJustFailed(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item]);
 
   const selectTier = (t: Difficulty) => {
     setTier(t);
@@ -34,6 +60,7 @@ export function PuzzlePane({ assist }: Props) {
     setCode(first?.broken ?? '');
     setSolved(false);
     setJustFailed(false);
+    if (first) navigate(`/html/website/solve/puzzles/${first.id}`);
   };
 
   const selectPuzzle = (i: number) => {
@@ -41,6 +68,7 @@ export function PuzzlePane({ assist }: Props) {
     setCode(tierPuzzles[i].broken);
     setSolved(false);
     setJustFailed(false);
+    navigate(`/html/website/solve/puzzles/${tierPuzzles[i].id}`);
   };
 
   const handleCheck = () => {
