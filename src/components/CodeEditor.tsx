@@ -45,9 +45,18 @@ export function CodeEditor({ value, onChange }: Props) {
   // underlying value was already correct). Bypassing the wrapper's own
   // diffing and dispatching the change directly against the real
   // EditorView fixes it at the source, for every consumer.
+  //
+  // This effect still runs on every keystroke, though, since `value` is the
+  // same prop the user's own typing updates. Skipping the dispatch whenever
+  // the view is focused matters: a full from-0 replace resets scroll and
+  // cursor position even when the text ends up identical, which is exactly
+  // what was happening — the editor snapping back to the top on every
+  // keystroke while scrolled down. Only genuine external changes (Reset,
+  // Clear) happen while the editor isn't focused, so gating on focus keeps
+  // the fix for those while leaving normal typing alone.
   useEffect(() => {
     const view = viewRef.current;
-    if (!view) return;
+    if (!view || view.hasFocus) return;
     const current = view.state.doc.toString();
     if (current !== value) {
       view.dispatch({
