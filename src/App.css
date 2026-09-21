@@ -1101,6 +1101,62 @@
   color: #fff;
 }
 
+.puzzle-tier-picker {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: 8px;
+}
+
+.puzzle-tier-picker button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: lowercase;
+  padding: 6px 0;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.puzzle-tier-picker button.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.puzzle-tier-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  opacity: 0.75;
+}
+
+.puzzle-tier-empty {
+  font-size: 12px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+  padding: 6px 4px;
+}
+
+.puzzle-empty-body {
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--ink-dim);
+  background: var(--panel);
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+}
+
 .puzzle-body {
   flex: 1;
   min-width: 0;
