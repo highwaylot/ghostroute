@@ -1319,12 +1319,170 @@
   color: var(--ink-dim);
 }
 
-/* --- the nest: deep-dive reference, stat-page style --- */
+/* --- the nest: deep-dive reference, book/chapters style --- */
 
 .nest-pane {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.nest-book {
+  display: flex;
+  gap: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  min-height: 70vh;
+}
+
+.nest-spine {
+  width: 250px;
+  flex-shrink: 0;
+  background: var(--navy);
+  color: #fff;
+  padding: 22px 16px;
+  overflow-y: auto;
+  max-height: 78vh;
+}
+
+.nest-spine-title {
+  margin: 0 0 2px;
+  font-size: 18px;
+}
+
+.nest-spine-sub {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: #9aa8e8;
+  margin-bottom: 22px;
+}
+
+.nest-chapter {
+  margin-bottom: 4px;
+}
+
+.nest-chapter-head {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6f79b8;
+  padding: 10px 8px 4px;
+}
+
+.nest-chapter-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: none;
+  background: none;
+  color: #cdd3f5;
+  font-family: var(--sans);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.nest-chapter-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.nest-chapter-item.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.nest-page {
+  flex: 1;
+  min-width: 0;
+  padding: 30px 40px;
+  overflow-y: auto;
+  max-height: 78vh;
+  background: var(--bg);
+}
+
+.nest-crumb {
+  margin: 0 0 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.nest-page-title {
+  display: inline-block;
+  margin: 0 0 24px;
+  font-family: var(--mono);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ink);
+  border-bottom: 3px solid var(--error);
+  padding-bottom: 12px;
+}
+
+.nest-lede {
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+
+.nest-diagram {
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.9;
+  color: var(--ink-dim);
+  overflow-x: auto;
+}
+
+.nest-diagram-hl {
+  background: rgba(59, 99, 232, 0.12);
+  color: var(--blue);
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 0 4px;
+  margin: 0 -4px;
+}
+
+.nest-page-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.nest-page-nav button {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  max-width: 48%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nest-page-nav button:hover:not(:disabled) {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.nest-page-nav button:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .nest-section-toggle {
@@ -1602,7 +1760,6 @@
 }
 
 @media (max-width: 700px) {
-  .nest-tags,
   .nest-blueprints {
     flex-direction: column;
   }
@@ -1610,6 +1767,20 @@
   .nest-list {
     width: 100%;
     max-height: 200px;
+  }
+
+  .nest-book {
+    flex-direction: column;
+  }
+
+  .nest-spine {
+    width: 100%;
+    max-height: 200px;
+  }
+
+  .nest-page {
+    max-height: none;
+    padding: 20px;
   }
 
   .nest-stat-row {
