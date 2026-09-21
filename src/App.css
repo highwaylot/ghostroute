@@ -644,7 +644,28 @@
   overflow: hidden;
 }
 
+.sidebar-resize-hint {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 13px;
+  height: 13px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--blue-bright) 0px,
+    var(--blue-bright) 1.5px,
+    transparent 1.5px,
+    transparent 4.5px
+  );
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  opacity: 0.85;
+}
+
 @media (max-width: 480px) {
+  .sidebar-resize-hint {
+    display: none;
+  }
   .sidebar {
     resize: none;
   }
