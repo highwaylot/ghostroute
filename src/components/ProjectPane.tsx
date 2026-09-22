@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PROJECTS, type Difficulty } from '../data/projects';
+import type { Project, Difficulty } from '../data/projects';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
@@ -15,7 +15,12 @@ const TIERS: { id: Difficulty; label: string }[] = [
   { id: 'hard', label: 'hard' },
 ];
 
-export function ProjectPane() {
+type Props = {
+  projects: Project[];
+  basePath: string;
+};
+
+export function ProjectPane({ projects: PROJECTS, basePath }: Props) {
   const { item } = useParams<{ item?: string }>();
   const navigate = useNavigate();
   const urlIndex = PROJECTS.findIndex((p) => p.id === item);
@@ -48,7 +53,7 @@ export function ProjectPane() {
     setOpenHint(null);
     setConfirmingReset(false);
     wasDone.current = false;
-    navigate(`/html/website/solve/project/${PROJECTS[i].id}`);
+    navigate(`${basePath}/${PROJECTS[i].id}`);
   };
 
   useEffect(() => {

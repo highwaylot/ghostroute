@@ -17,8 +17,12 @@ import { STEPS } from '../data/steps';
 import { CHAPTERS } from '../data/chapters';
 import { CSS_STEPS, CSS_STARTER } from '../data/cssSteps';
 import { CSS_CHAPTERS } from '../data/cssChapters';
+import { EMAIL_STEPS, EMAIL_STARTER } from '../data/emailSteps';
+import { EMAIL_CHAPTERS } from '../data/emailChapters';
 import { PUZZLES } from '../data/puzzles';
 import { PROJECTS } from '../data/projects';
+import { EMAIL_PUZZLES } from '../data/emailPuzzles';
+import { EMAIL_PROJECTS } from '../data/emailProjects';
 import type { AssistLevel } from '../lib/useHintLadder';
 import { useSuccessFlash } from '../lib/useSuccessFlash';
 import { loadSolvedPuzzles } from '../lib/puzzleProgress';
@@ -80,16 +84,50 @@ const ASSIST_KEY = 'tagsmiths-assist';
 
 type Mode = 'route' | 'solve' | 'sandbox' | 'myprojects' | 'nest';
 type SolveSection = 'puzzles' | 'project';
-type Track = 'html' | 'css';
+type Track = 'html' | 'css' | 'email';
 
-// Each track keeps its own Route progress — separate storage keys so
-// switching between /html/website and /css/website never mixes them up.
-function codeKey(track: Track) {
-  return track === 'css' ? 'tagsmiths-css-code' : 'tagsmiths-code';
-}
-function stepKey(track: Track) {
-  // v2: HTML's route was condensed from 24 to 14 steps
-  return track === 'css' ? 'tagsmiths-css-step' : 'tagsmiths-step-v2';
+// One place per track for everything that varies by track — its Route
+// content, its starter code, its storage keys, its puzzle/project sets
+// (when it has them), and the URL prefix it lives under. Adding a track
+// (JS, eventually) means adding one entry here, not touching logic
+// scattered through the component.
+const TRACK_CONFIG = {
+  html: {
+    basePath: '/html/website',
+    steps: STEPS,
+    chapters: CHAPTERS,
+    starter: '',
+    codeKey: 'tagsmiths-code',
+    stepKey: 'tagsmiths-step-v2', // v2: route was condensed from 24 to 14 steps
+    puzzles: PUZZLES,
+    projects: PROJECTS,
+  },
+  css: {
+    basePath: '/css/website',
+    steps: CSS_STEPS,
+    chapters: CSS_CHAPTERS,
+    starter: CSS_STARTER,
+    codeKey: 'tagsmiths-css-code',
+    stepKey: 'tagsmiths-css-step',
+    puzzles: null,
+    projects: null,
+  },
+  email: {
+    basePath: '/html/email',
+    steps: EMAIL_STEPS,
+    chapters: EMAIL_CHAPTERS,
+    starter: EMAIL_STARTER,
+    codeKey: 'tagsmiths-email-code',
+    stepKey: 'tagsmiths-email-step',
+    puzzles: EMAIL_PUZZLES,
+    projects: EMAIL_PROJECTS,
+  },
+} as const;
+
+function trackFromPath(pathname: string): Track {
+  if (pathname.startsWith('/css')) return 'css';
+  if (pathname.startsWith('/html/email')) return 'email';
+  return 'html';
 }
 
 // 'puzzles' and 'project' used to be their own top-level tabs, now merged
@@ -115,19 +153,19 @@ function resolveSolveSection(modeParam: string | undefined, subParam: string | u
 }
 
 function loadSavedCode(track: Track): string {
-  const fallback = track === 'css' ? CSS_STARTER : '';
+  const cfg = TRACK_CONFIG[track];
   try {
-    return localStorage.getItem(codeKey(track)) ?? fallback;
+    return localStorage.getItem(cfg.codeKey) ?? cfg.starter;
   } catch {
-    return fallback;
+    return cfg.starter;
   }
 }
 
 function loadSavedStep(track: Track): number {
-  const stepsLength = track === 'css' ? CSS_STEPS.length : STEPS.length;
+  const cfg = TRACK_CONFIG[track];
   try {
-    const raw = Number(localStorage.getItem(stepKey(track)));
-    return Number.isFinite(raw) && raw >= 0 ? Math.min(raw, stepsLength) : 0;
+    const raw = Number(localStorage.getItem(cfg.stepKey));
+    return Number.isFinite(raw) && raw >= 0 ? Math.min(raw, cfg.steps.length) : 0;
   } catch {
     return 0;
   }
@@ -146,10 +184,13 @@ export default function Workspace() {
   const { mode: modeParam, sub: subParam } = useParams<{ mode?: string; sub?: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const track: Track = location.pathname.startsWith('/css') ? 'css' : 'html';
-  const basePath = track === 'css' ? '/css/website' : '/html/website';
-  const steps = track === 'css' ? CSS_STEPS : STEPS;
-  const chapters = track === 'css' ? CSS_CHAPTERS : CHAPTERS;
+  const track: Track = trackFromPath(location.pathname);
+  const trackConfig = TRACK_CONFIG[track];
+  const basePath = trackConfig.basePath;
+  const steps = trackConfig.steps;
+  const chapters = trackConfig.chapters;
+  const trackPuzzles = trackConfig.puzzles;
+  const trackProjects = trackConfig.projects;
   const mode: Mode = resolveMode(modeParam);
   const solveSection: SolveSection = resolveSolveSection(modeParam, subParam);
   const setMode = (m: Mode) => navigate(`${basePath}/${m}`);
@@ -205,26 +246,27 @@ export default function Workspace() {
   // finer-grained invalidation, and it's the header stat, not something
   // you're staring at mid-solve.
   useEffect(() => {
-    if (mode !== 'solve') return;
-    setPuzzlesSolved(loadSolvedPuzzles().size);
-    setProjectsDone(countCompletedProjects().done);
-  }, [mode, expandedSection]);
+    if (mode !== 'solve' || !trackPuzzles || !trackProjects) return;
+    const solved = loadSolvedPuzzles();
+    setPuzzlesSolved(trackPuzzles.filter((p) => solved.has(p.id)).length);
+    setProjectsDone(countCompletedProjects(trackProjects).done);
+  }, [mode, expandedSection, trackPuzzles, trackProjects]);
 
   useEffect(() => {
     try {
-      localStorage.setItem(codeKey(track), code);
+      localStorage.setItem(trackConfig.codeKey, code);
     } catch {
       // storage unavailable (private window, etc.) — nothing to do
     }
-  }, [code, track]);
+  }, [code, trackConfig.codeKey]);
 
   useEffect(() => {
     try {
-      localStorage.setItem(stepKey(track), String(current));
+      localStorage.setItem(trackConfig.stepKey, String(current));
     } catch {
       // storage unavailable — nothing to do
     }
-  }, [current, track]);
+  }, [current, trackConfig.stepKey]);
 
   useEffect(() => {
     try {
@@ -239,7 +281,7 @@ export default function Workspace() {
   };
 
   const handleReset = () => {
-    setCode(track === 'css' ? CSS_STARTER : '');
+    setCode(trackConfig.starter);
   };
 
   const stepLabel = `${Math.min(current + 1, steps.length)} / ${steps.length}`;
@@ -247,7 +289,9 @@ export default function Workspace() {
   const routeCompleteMessage =
     track === 'css'
       ? "Route complete for now — more CSS chapters are on the way. Try Sandbox to keep styling freely in the meantime."
-      : "Route complete — you've written a full page: structure, text, lists, links, media, grouping, and semantic layout. That's real, usable HTML. Try Fix This Code to test what stuck, the Project to build something from scratch, or Sandbox to build freely.";
+      : track === 'email'
+        ? "Route complete — you've hardened a small promo email against the way real clients render. Try Fix This Code to test what stuck, or the Project to build one from scratch."
+        : "Route complete — you've written a full page: structure, text, lists, links, media, grouping, and semantic layout. That's real, usable HTML. Try Fix This Code to test what stuck, the Project to build something from scratch, or Sandbox to build freely.";
 
   return (
     <div className="app">
@@ -327,14 +371,14 @@ export default function Workspace() {
             </div>
           )}
 
-          {mode === 'solve' && track === 'css' && (
+          {mode === 'solve' && (!trackPuzzles || !trackProjects) && (
             <p className="mode-blurb">
-              No CSS puzzles or projects yet — this track is just the Route for now. Try Sandbox to
-              practice freely, or check the roadmap for what's coming.
+              No puzzles or projects yet for this track. Try Sandbox to practice freely, or check
+              the roadmap for what's coming.
             </p>
           )}
 
-          {mode === 'solve' && track === 'html' && (
+          {mode === 'solve' && trackPuzzles && trackProjects && (
             <>
               <div className="solve-mini-hub">
                 <span className="solve-mini-hub-label">your progress</span>
@@ -342,12 +386,12 @@ export default function Workspace() {
                   <span
                     className="solve-mini-hub-bar-fill"
                     style={{
-                      width: `${((puzzlesSolved + projectsDone) / (PUZZLES.length + PROJECTS.length)) * 100}%`,
+                      width: `${((puzzlesSolved + projectsDone) / (trackPuzzles.length + trackProjects.length)) * 100}%`,
                     }}
                   />
                 </span>
                 <span className="solve-mini-hub-stat">
-                  {puzzlesSolved + projectsDone}/{PUZZLES.length + PROJECTS.length} solved
+                  {puzzlesSolved + projectsDone}/{trackPuzzles.length + trackProjects.length} solved
                 </span>
               </div>
 
@@ -374,7 +418,7 @@ export default function Workspace() {
                   </span>
                   <span className="accordion-header-stat">
                     <span className="accordion-header-stat-num">
-                      {puzzlesSolved}/{PUZZLES.length}
+                      {puzzlesSolved}/{trackPuzzles.length}
                     </span>
                     <span className="accordion-header-stat-lbl">solved</span>
                   </span>
@@ -390,7 +434,12 @@ export default function Workspace() {
                 </button>
                 <div className="accordion-body">
                   <div className="accordion-body-inner">
-                    <PuzzlePane assist={assist} onAssistChange={setAssist} />
+                    <PuzzlePane
+                      puzzles={trackPuzzles}
+                      basePath={`${basePath}/solve/puzzles`}
+                      assist={assist}
+                      onAssistChange={setAssist}
+                    />
                   </div>
                 </div>
               </div>
@@ -411,7 +460,7 @@ export default function Workspace() {
                     </span>
                   </span>
                   <span className="accordion-header-stat">
-                    <span className="accordion-header-stat-num">{projectsDone}/{PROJECTS.length}</span>
+                    <span className="accordion-header-stat-num">{projectsDone}/{trackProjects.length}</span>
                     <span className="accordion-header-stat-lbl">done</span>
                   </span>
                   <svg className="accordion-chev" width="12" height="12" viewBox="0 0 10 10" fill="none">
@@ -426,7 +475,7 @@ export default function Workspace() {
                 </button>
                 <div className="accordion-body">
                   <div className="accordion-body-inner">
-                    <ProjectPane />
+                    <ProjectPane projects={trackProjects} basePath={`${basePath}/solve/project`} />
                   </div>
                 </div>
               </div>

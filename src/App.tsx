@@ -20,10 +20,11 @@ function App() {
       <Route path="/css/website/:mode" element={<Workspace />} />
       <Route path="/css/website/:mode/:sub" element={<Workspace />} />
       <Route path="/css/website/:mode/:sub/:item" element={<Workspace />} />
-      <Route
-        path="/html/email"
-        element={<ComingSoon title="html — email template" backTo="/html" backLabel="html" />}
-      />
+      {/* Email track — same Workspace, same reasoning as CSS above. */}
+      <Route path="/html/email" element={<Workspace />} />
+      <Route path="/html/email/:mode" element={<Workspace />} />
+      <Route path="/html/email/:mode/:sub" element={<Workspace />} />
+      <Route path="/html/email/:mode/:sub/:item" element={<Workspace />} />
       <Route
         path="/css"
         element={<ComingSoon title="css" backTo="/" backLabel="code." previewTo="/css/website/route" />}

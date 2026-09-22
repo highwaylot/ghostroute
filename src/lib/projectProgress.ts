@@ -1,4 +1,4 @@
-import { PROJECTS } from '../data/projects';
+import type { Project } from '../data/projects';
 
 export const PROJECT_STORAGE_PREFIX = 'tagsmiths-project-';
 
@@ -10,11 +10,11 @@ export function loadProjectCode(id: string, starter: string): string {
   }
 }
 
-export function countCompletedProjects(): { done: number; total: number } {
+export function countCompletedProjects(projects: Project[]): { done: number; total: number } {
   let done = 0;
-  for (const p of PROJECTS) {
+  for (const p of projects) {
     const code = loadProjectCode(p.id, p.starter);
     if (p.requirements.every((r) => r.check(code))) done++;
   }
-  return { done, total: PROJECTS.length };
+  return { done, total: projects.length };
 }

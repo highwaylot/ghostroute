@@ -15,7 +15,7 @@ const TRACKS = [
     label: 'email template',
     desc: 'Table layouts, inline styles, and client quirks — a genuinely different ruleset.',
     to: '/html/email',
-    ready: false,
+    ready: true,
   },
 ];
 

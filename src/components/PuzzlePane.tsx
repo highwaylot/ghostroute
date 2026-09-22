@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PUZZLES, type Difficulty } from '../data/puzzles';
+import type { Puzzle, Difficulty } from '../data/puzzles';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { PreviewFrame } from './PreviewFrame';
@@ -11,6 +11,8 @@ import { DIFFICULTY_VAR } from '../lib/difficulty';
 import { AssistanceControl } from './AssistanceControl';
 
 type Props = {
+  puzzles: Puzzle[];
+  basePath: string;
   assist: AssistLevel;
   onAssistChange: (level: AssistLevel) => void;
 };
@@ -21,10 +23,6 @@ const TIERS: { id: Difficulty; label: string }[] = [
   { id: 'hard', label: 'hard' },
 ];
 
-function findPuzzle(id: string | undefined) {
-  return id ? PUZZLES.find((p) => p.id === id) : undefined;
-}
-
 // A one-line taste of the broken tag itself, not just the puzzle's title —
 // gives the list something to actually look at instead of plain text.
 function snippet(broken: string): string {
@@ -33,13 +31,14 @@ function snippet(broken: string): string {
   return trimmed.length > 34 ? trimmed.slice(0, 34) + '…' : trimmed;
 }
 
-export function PuzzlePane({ assist, onAssistChange }: Props) {
+export function PuzzlePane({ puzzles, basePath, assist, onAssistChange }: Props) {
   const { item } = useParams<{ item?: string }>();
   const navigate = useNavigate();
+  const findPuzzle = (id: string | undefined) => (id ? puzzles.find((p) => p.id === id) : undefined);
   const urlPuzzle = findPuzzle(item);
 
-  const [selectedId, setSelectedId] = useState(urlPuzzle?.id ?? PUZZLES[0]?.id);
-  const puzzle = PUZZLES.find((p) => p.id === selectedId);
+  const [selectedId, setSelectedId] = useState(urlPuzzle?.id ?? puzzles[0]?.id);
+  const puzzle = puzzles.find((p) => p.id === selectedId);
   const [code, setCode] = useState(puzzle?.broken ?? '');
   const [solved, setSolved] = useState(false);
   const { attempts, registerFail, reset } = useHintLadder(puzzle?.id ?? 'none');
@@ -59,12 +58,12 @@ export function PuzzlePane({ assist, onAssistChange }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item]);
 
-  const selectPuzzle = (p: (typeof PUZZLES)[number]) => {
+  const selectPuzzle = (p: Puzzle) => {
     setSelectedId(p.id);
     setCode(p.broken);
     setSolved(false);
     setJustFailed(false);
-    navigate(`/html/website/solve/puzzles/${p.id}`);
+    navigate(`${basePath}/${p.id}`);
   };
 
   const handleCheck = () => {
@@ -97,7 +96,7 @@ export function PuzzlePane({ assist, onAssistChange }: Props) {
     <div className="puzzle-pane">
       <div className="puzzle-list">
         {TIERS.map((t) => {
-          const tPuzzles = PUZZLES.filter((p) => p.difficulty === t.id);
+          const tPuzzles = puzzles.filter((p) => p.difficulty === t.id);
           const tSolved = tPuzzles.filter((p) => solvedIds.has(p.id)).length;
           return (
             <div
