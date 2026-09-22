@@ -409,48 +409,67 @@
   padding: 0;
 }
 
-/* Assistance control */
+/* Assistance control — one row (label, three level buttons, active level
+   name), theme-aware via CSS variables so the same markup works on both
+   the dark Route rail and a light background (e.g. inside a puzzle)
+   just by adding .light, instead of needing two separate components. */
 .assist-control {
+  --assist-label: #7783b8;
+  --assist-btn-bg: rgba(255, 255, 255, 0.05);
+  --assist-btn-border: rgba(255, 255, 255, 0.16);
+  --assist-btn-fg: #c8d0ff;
+  --assist-btn-hover: rgba(255, 255, 255, 0.12);
+  --assist-desc: #8f9ada;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.assist-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+.assist-control.light {
+  --assist-label: var(--ink-dim);
+  --assist-btn-bg: var(--panel);
+  --assist-btn-border: var(--line);
+  --assist-btn-fg: var(--ink-dim);
+  --assist-btn-hover: var(--line);
+  --assist-desc: var(--ink-dim);
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 .assist-label {
+  flex-shrink: 0;
   font-family: var(--mono);
   font-size: 10.5px;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #7783b8;
+  color: var(--assist-label);
 }
 
 .assist-buttons {
   display: flex;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .assist-btn {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.05);
-  color: #c8d0ff;
+  border: 1px solid var(--assist-btn-border);
+  background: var(--assist-btn-bg);
+  color: var(--assist-btn-fg);
   font-family: var(--mono);
   font-weight: 700;
-  font-size: 12px;
+  font-size: 11.5px;
   cursor: pointer;
 }
 
 .assist-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--assist-btn-hover);
 }
 
 .assist-btn.active {
@@ -460,10 +479,9 @@
 }
 
 .assist-desc {
-  display: block;
-  margin-top: 6px;
   font-size: 11.5px;
-  color: #8f9ada;
+  color: var(--assist-desc);
+  text-transform: lowercase;
 }
 
 .workspace-main {
@@ -1477,11 +1495,29 @@
   gap: 14px;
 }
 
+.puzzle-prompt-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.puzzle-prompt-row .assist-control {
+  flex-shrink: 0;
+}
+
 .puzzle-prompt {
   margin: 0;
   font-size: 14.5px;
   color: var(--ink);
   line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .puzzle-prompt-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .puzzle-editor-wrap {

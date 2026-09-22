@@ -8,9 +8,11 @@ import { useHintLadder, getHint, type AssistLevel } from '../lib/useHintLadder';
 import { useSuccessFlash } from '../lib/useSuccessFlash';
 import { loadSolvedPuzzles, markPuzzleSolved } from '../lib/puzzleProgress';
 import { DIFFICULTY_VAR } from '../lib/difficulty';
+import { AssistanceControl } from './AssistanceControl';
 
 type Props = {
   assist: AssistLevel;
+  onAssistChange: (level: AssistLevel) => void;
 };
 
 const TIERS: { id: Difficulty; label: string }[] = [
@@ -31,7 +33,7 @@ function snippet(broken: string): string {
   return trimmed.length > 34 ? trimmed.slice(0, 34) + '…' : trimmed;
 }
 
-export function PuzzlePane({ assist }: Props) {
+export function PuzzlePane({ assist, onAssistChange }: Props) {
   const { item } = useParams<{ item?: string }>();
   const navigate = useNavigate();
   const urlPuzzle = findPuzzle(item);
@@ -141,7 +143,10 @@ export function PuzzlePane({ assist }: Props) {
 
       {puzzle ? (
         <div className="puzzle-body">
-          <p className="puzzle-prompt">{puzzle.prompt}</p>
+          <div className="puzzle-prompt-row">
+            <p className="puzzle-prompt">{puzzle.prompt}</p>
+            <AssistanceControl value={assist} onChange={onAssistChange} light />
+          </div>
 
           <EditorPanel
             label="active coding window"

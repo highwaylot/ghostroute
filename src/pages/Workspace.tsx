@@ -348,7 +348,7 @@ export default function Workspace() {
                 </button>
                 <div className="accordion-body">
                   <div className="accordion-body-inner">
-                    <PuzzlePane assist={assist} />
+                    <PuzzlePane assist={assist} onAssistChange={setAssist} />
                   </div>
                 </div>
               </div>
