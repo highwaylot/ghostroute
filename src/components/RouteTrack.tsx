@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { STEPS } from '../data/steps';
+import type { Step } from '../data/steps';
 
 type Props = {
+  steps: Step[];
   current: number;
   onSelect: (index: number) => void;
 };
 
-export function RouteTrack({ current, onSelect }: Props) {
+export function RouteTrack({ steps, current, onSelect }: Props) {
   const trackRef = useRef<HTMLDivElement>(null);
   const currentRef = useRef<HTMLButtonElement>(null);
 
@@ -20,7 +21,7 @@ export function RouteTrack({ current, onSelect }: Props) {
 
   return (
     <div className="track" ref={trackRef}>
-      {STEPS.map((step, i) => (
+      {steps.map((step, i) => (
         <div className="step-wrap" key={step.tag}>
           {i > 0 && <div className={`connector ${i <= current ? 'done' : ''}`} />}
           <button

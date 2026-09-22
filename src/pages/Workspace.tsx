@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { InstructionsRail } from '../components/InstructionsRail';
 import { KeySidebar } from '../components/KeySidebar';
 import { StatsPanel } from '../components/StatsPanel';
@@ -14,6 +14,9 @@ import { NestPane } from '../components/NestPane';
 import { PreviewFrame } from '../components/PreviewFrame';
 import { Logo } from '../components/Logo';
 import { STEPS } from '../data/steps';
+import { CHAPTERS } from '../data/chapters';
+import { CSS_STEPS, CSS_STARTER } from '../data/cssSteps';
+import { CSS_CHAPTERS } from '../data/cssChapters';
 import { PUZZLES } from '../data/puzzles';
 import { PROJECTS } from '../data/projects';
 import type { AssistLevel } from '../lib/useHintLadder';
@@ -73,12 +76,21 @@ function KeyIcon() {
   );
 }
 
-const STORAGE_KEY = 'tagsmiths-code';
-const STEP_KEY = 'tagsmiths-step-v2'; // v2: route was condensed from 24 to 14 steps
 const ASSIST_KEY = 'tagsmiths-assist';
 
 type Mode = 'route' | 'solve' | 'sandbox' | 'myprojects' | 'nest';
 type SolveSection = 'puzzles' | 'project';
+type Track = 'html' | 'css';
+
+// Each track keeps its own Route progress — separate storage keys so
+// switching between /html/website and /css/website never mixes them up.
+function codeKey(track: Track) {
+  return track === 'css' ? 'tagsmiths-css-code' : 'tagsmiths-code';
+}
+function stepKey(track: Track) {
+  // v2: HTML's route was condensed from 24 to 14 steps
+  return track === 'css' ? 'tagsmiths-css-step' : 'tagsmiths-step-v2';
+}
 
 // 'puzzles' and 'project' used to be their own top-level tabs, now merged
 // under "solve this code" — old bookmarks/links to them still resolve
@@ -102,18 +114,20 @@ function resolveSolveSection(modeParam: string | undefined, subParam: string | u
   return 'puzzles';
 }
 
-function loadSavedCode(): string {
+function loadSavedCode(track: Track): string {
+  const fallback = track === 'css' ? CSS_STARTER : '';
   try {
-    return localStorage.getItem(STORAGE_KEY) ?? '';
+    return localStorage.getItem(codeKey(track)) ?? fallback;
   } catch {
-    return '';
+    return fallback;
   }
 }
 
-function loadSavedStep(): number {
+function loadSavedStep(track: Track): number {
+  const stepsLength = track === 'css' ? CSS_STEPS.length : STEPS.length;
   try {
-    const raw = Number(localStorage.getItem(STEP_KEY));
-    return Number.isFinite(raw) && raw >= 0 ? Math.min(raw, STEPS.length) : 0;
+    const raw = Number(localStorage.getItem(stepKey(track)));
+    return Number.isFinite(raw) && raw >= 0 ? Math.min(raw, stepsLength) : 0;
   } catch {
     return 0;
   }
@@ -131,12 +145,25 @@ function loadSavedAssist(): AssistLevel {
 export default function Workspace() {
   const { mode: modeParam, sub: subParam } = useParams<{ mode?: string; sub?: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const track: Track = location.pathname.startsWith('/css') ? 'css' : 'html';
+  const basePath = track === 'css' ? '/css/website' : '/html/website';
+  const steps = track === 'css' ? CSS_STEPS : STEPS;
+  const chapters = track === 'css' ? CSS_CHAPTERS : CHAPTERS;
   const mode: Mode = resolveMode(modeParam);
   const solveSection: SolveSection = resolveSolveSection(modeParam, subParam);
-  const setMode = (m: Mode) => navigate(`/html/website/${m}`);
-  const [code, setCode] = useState(loadSavedCode);
-  const [current, setCurrent] = useState(loadSavedStep);
+  const setMode = (m: Mode) => navigate(`${basePath}/${m}`);
+  const [code, setCode] = useState(() => loadSavedCode(track));
+  const [current, setCurrent] = useState(() => loadSavedStep(track));
   const [assist, setAssist] = useState<AssistLevel>(loadSavedAssist);
+  const prevTrack = useRef(track);
+  useEffect(() => {
+    if (track === prevTrack.current) return;
+    prevTrack.current = track;
+    setCode(loadSavedCode(track));
+    setCurrent(loadSavedStep(track));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [track]);
   const [keyOpen, setKeyOpen] = useState(false);
   const [flash, triggerFlash] = useSuccessFlash();
   const [puzzlesSolved, setPuzzlesSolved] = useState(0);
@@ -166,10 +193,10 @@ export default function Workspace() {
   const toggleSection = (s: SolveSection) => {
     if (expandedSection === s) {
       setExpandedSection(null);
-      navigate('/html/website/solve');
+      navigate(`${basePath}/solve`);
     } else {
       setExpandedSection(s);
-      navigate(`/html/website/solve/${s}`);
+      navigate(`${basePath}/solve/${s}`);
     }
   };
 
@@ -185,19 +212,19 @@ export default function Workspace() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, code);
+      localStorage.setItem(codeKey(track), code);
     } catch {
       // storage unavailable (private window, etc.) — nothing to do
     }
-  }, [code]);
+  }, [code, track]);
 
   useEffect(() => {
     try {
-      localStorage.setItem(STEP_KEY, String(current));
+      localStorage.setItem(stepKey(track), String(current));
     } catch {
       // storage unavailable — nothing to do
     }
-  }, [current]);
+  }, [current, track]);
 
   useEffect(() => {
     try {
@@ -208,14 +235,19 @@ export default function Workspace() {
   }, [assist]);
 
   const handleAdvance = () => {
-    setCurrent((c) => Math.min(c + 1, STEPS.length));
+    setCurrent((c) => Math.min(c + 1, steps.length));
   };
 
   const handleReset = () => {
-    setCode('');
+    setCode(track === 'css' ? CSS_STARTER : '');
   };
 
-  const stepLabel = `${Math.min(current + 1, STEPS.length)} / ${STEPS.length}`;
+  const stepLabel = `${Math.min(current + 1, steps.length)} / ${steps.length}`;
+
+  const routeCompleteMessage =
+    track === 'css'
+      ? "Route complete for now — more CSS chapters are on the way. Try Sandbox to keep styling freely in the meantime."
+      : "Route complete — you've written a full page: structure, text, lists, links, media, grouping, and semantic layout. That's real, usable HTML. Try Fix This Code to test what stuck, the Project to build something from scratch, or Sandbox to build freely.";
 
   return (
     <div className="app">
@@ -262,6 +294,9 @@ export default function Workspace() {
           {mode === 'route' && (
             <div className="workspace-grid">
               <InstructionsRail
+                steps={steps}
+                chapters={chapters}
+                completeMessage={routeCompleteMessage}
                 current={current}
                 code={code}
                 assist={assist}
@@ -292,7 +327,14 @@ export default function Workspace() {
             </div>
           )}
 
-          {mode === 'solve' && (
+          {mode === 'solve' && track === 'css' && (
+            <p className="mode-blurb">
+              No CSS puzzles or projects yet — this track is just the Route for now. Try Sandbox to
+              practice freely, or check the roadmap for what's coming.
+            </p>
+          )}
+
+          {mode === 'solve' && track === 'html' && (
             <>
               <div className="solve-mini-hub">
                 <span className="solve-mini-hub-label">your progress</span>

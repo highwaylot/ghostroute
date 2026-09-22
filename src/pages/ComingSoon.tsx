@@ -6,9 +6,10 @@ type Props = {
   title: string;
   backTo: string;
   backLabel: string;
+  previewTo?: string;
 };
 
-export default function ComingSoon({ title, backTo, backLabel }: Props) {
+export default function ComingSoon({ title, backTo, backLabel, previewTo }: Props) {
   return (
     <div className="landing">
       <Link to="/" className="landing-brand">
@@ -20,7 +21,16 @@ export default function ComingSoon({ title, backTo, backLabel }: Props) {
         </Link>
         <span className="landing-eyebrow">{title}</span>
         <h1 className="landing-hero landing-hero-sub">coming soon.</h1>
-        <p className="landing-blurb">This track isn't built yet — html/website is the only live one right now.</p>
+        <p className="landing-blurb">
+          {previewTo
+            ? "Not finished, but there's an early draft of the Route to poke at."
+            : 'This track isn\'t built yet — html/website is the only live one right now.'}
+        </p>
+        {previewTo && (
+          <Link to={previewTo} className="landing-back" style={{ marginTop: 8 }}>
+            try the early draft →
+          </Link>
+        )}
       </div>
     </div>
   );

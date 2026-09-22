@@ -13,6 +13,13 @@ function App() {
       <Route path="/html/website/:mode" element={<Workspace />} />
       <Route path="/html/website/:mode/:sub" element={<Workspace />} />
       <Route path="/html/website/:mode/:sub/:item" element={<Workspace />} />
+      {/* CSS track — same Workspace component, same everything, just a
+          different URL prefix so Workspace knows which data set to load.
+          No new pages were built for this; see Workspace's `track`. */}
+      <Route path="/css/website" element={<Workspace />} />
+      <Route path="/css/website/:mode" element={<Workspace />} />
+      <Route path="/css/website/:mode/:sub" element={<Workspace />} />
+      <Route path="/css/website/:mode/:sub/:item" element={<Workspace />} />
       <Route
         path="/html/email"
         element={<ComingSoon title="html — email template" backTo="/html" backLabel="html" />}
@@ -25,7 +32,10 @@ function App() {
         path="/html/forms"
         element={<ComingSoon title="html — forms" backTo="/html" backLabel="html" />}
       />
-      <Route path="/css" element={<ComingSoon title="css" backTo="/" backLabel="code." />} />
+      <Route
+        path="/css"
+        element={<ComingSoon title="css" backTo="/" backLabel="code." previewTo="/css/website/route" />}
+      />
       <Route
         path="/javascript"
         element={<ComingSoon title="javascript" backTo="/" backLabel="code." />}

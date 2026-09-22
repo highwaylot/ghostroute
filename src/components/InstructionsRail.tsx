@@ -3,8 +3,13 @@ import { GhostTip } from './GhostTip';
 import { ChapterIntro } from './ChapterIntro';
 import { AssistanceControl } from './AssistanceControl';
 import type { AssistLevel } from '../lib/useHintLadder';
+import type { Step } from '../data/steps';
+import type { Chapter } from '../data/chapters';
 
 type Props = {
+  steps: Step[];
+  chapters: Chapter[];
+  completeMessage: string;
   current: number;
   code: string;
   assist: AssistLevel;
@@ -31,6 +36,9 @@ function LifeRingIcon() {
 }
 
 export function InstructionsRail({
+  steps,
+  chapters,
+  completeMessage,
   current,
   code,
   assist,
@@ -43,22 +51,24 @@ export function InstructionsRail({
   return (
     <div className="rail-column">
       <div className="instructions-rail">
-        <RouteTrack current={current} onSelect={onSelect} />
+        <RouteTrack steps={steps} current={current} onSelect={onSelect} />
 
         <div className="rail-window">
           <span className="rail-window-label">chapter info</span>
-          <ChapterIntro current={current} />
+          <ChapterIntro chapters={chapters} steps={steps} current={current} />
         </div>
 
         <div className="rail-window">
           <span className="rail-window-label">step</span>
           <GhostTip
+            steps={steps}
             current={current}
             code={code}
             assist={assist}
             onAdvance={onAdvance}
             onReset={onReset}
             onSuccess={onSuccess}
+            completeMessage={completeMessage}
           />
         </div>
       </div>

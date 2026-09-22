@@ -1,18 +1,20 @@
 import { useState } from 'react';
-import { STEPS } from '../data/steps';
+import type { Step } from '../data/steps';
 import { useHintLadder, getHint, type AssistLevel } from '../lib/useHintLadder';
 
 type Props = {
+  steps: Step[];
   current: number;
   code: string;
   assist: AssistLevel;
   onAdvance: () => void;
   onReset: () => void;
   onSuccess: () => void;
+  completeMessage: string;
 };
 
-export function GhostTip({ current, code, assist, onAdvance, onReset, onSuccess }: Props) {
-  const step = STEPS[current];
+export function GhostTip({ steps, current, code, assist, onAdvance, onReset, onSuccess, completeMessage }: Props) {
+  const step = steps[current];
   const { attempts, registerFail, reset } = useHintLadder(String(current));
   const [justFailed, setJustFailed] = useState(false);
   const [justSolved, setJustSolved] = useState(false);
@@ -20,11 +22,7 @@ export function GhostTip({ current, code, assist, onAdvance, onReset, onSuccess 
   if (!step) {
     return (
       <div className="ghost-tip">
-        <p className="txt">
-          Route complete — you've written a full page: structure, text, lists, links, media,
-          grouping, and semantic layout. That's real, usable HTML. Try Fix This Code to test what
-          stuck, the Project to build something from scratch, or Sandbox to build freely.
-        </p>
+        <p className="txt">{completeMessage}</p>
       </div>
     );
   }
