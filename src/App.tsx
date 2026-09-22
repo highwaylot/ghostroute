@@ -25,14 +25,6 @@ function App() {
         element={<ComingSoon title="html — email template" backTo="/html" backLabel="html" />}
       />
       <Route
-        path="/html/document"
-        element={<ComingSoon title="html — document / resume" backTo="/html" backLabel="html" />}
-      />
-      <Route
-        path="/html/forms"
-        element={<ComingSoon title="html — forms" backTo="/html" backLabel="html" />}
-      />
-      <Route
         path="/css"
         element={<ComingSoon title="css" backTo="/" backLabel="code." previewTo="/css/website/route" />}
       />

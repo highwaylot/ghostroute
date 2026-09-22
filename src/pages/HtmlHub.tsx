@@ -13,22 +13,8 @@ const TRACKS = [
   {
     id: 'email',
     label: 'email template',
-    desc: 'HTML email has its own rules — a separate track.',
+    desc: 'Table layouts, inline styles, and client quirks — a genuinely different ruleset.',
     to: '/html/email',
-    ready: false,
-  },
-  {
-    id: 'document',
-    label: 'document / resume',
-    desc: 'A styled personal page or resume.',
-    to: '/html/document',
-    ready: false,
-  },
-  {
-    id: 'forms',
-    label: 'forms',
-    desc: 'Inputs, labels, and validation as their own focused track.',
-    to: '/html/forms',
     ready: false,
   },
 ];
