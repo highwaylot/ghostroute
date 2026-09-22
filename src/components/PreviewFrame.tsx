@@ -166,7 +166,9 @@ export function PreviewFrame({ code, title }: Props) {
       <div className="preview-fullscreen">
         <div className="preview-fullscreen-bar">
           <span>real-scale view — Esc to exit</span>
-          <button onClick={() => setFullscreen(false)}>Exit fullscreen</button>
+          <button className="btn btn-secondary btn-on-dark btn-sm" onClick={() => setFullscreen(false)}>
+            Exit fullscreen
+          </button>
         </div>
         {frame}
       </div>
@@ -179,17 +181,25 @@ export function PreviewFrame({ code, title }: Props) {
         <div className="preview-blocked-banner">
           Pop-out didn't load? A strict ad/popup blocker can silently block it — try disabling extensions for this
           site, or use fullscreen instead.
-          <button onClick={() => setPopupSuspectedBlocked(false)} aria-label="Dismiss">
+          <button
+            className="btn-icon btn-on-dark"
+            onClick={() => setPopupSuspectedBlocked(false)}
+            aria-label="Dismiss"
+          >
             ×
           </button>
         </div>
       )}
       <div className="preview-frame-actions">
         {popupBlocked && <span className="preview-popup-blocked">Popup blocked — allow popups for this site</span>}
-        <button className="preview-expand-btn" onClick={togglePopup}>
+        <button className="btn btn-secondary btn-sm" onClick={togglePopup}>
           {popupOpen ? '✕ close pop-out' : '⤢ pop out'}
         </button>
-        <button className="preview-expand-btn" onClick={() => setFullscreen(true)} title="View at real scale">
+        <button
+          className="btn btn-secondary btn-sm"
+          onClick={() => setFullscreen(true)}
+          title="View at real scale"
+        >
           ⤢ fullscreen
         </button>
       </div>

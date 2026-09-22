@@ -71,10 +71,10 @@ export function GhostTip({ current, code, assist, onAdvance, onReset, onSuccess 
         )}
       </div>
       <div className="ghost-tip-actions">
-        <button className="secondary" onClick={onReset} disabled={justSolved}>
+        <button className="btn btn-secondary btn-on-dark" onClick={onReset} disabled={justSolved}>
           Reset this step
         </button>
-        <button onClick={handleCheck} disabled={justSolved}>
+        <button className="btn btn-primary" onClick={handleCheck} disabled={justSolved}>
           Check my work
         </button>
       </div>

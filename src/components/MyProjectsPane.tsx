@@ -126,10 +126,10 @@ export function MyProjectsPane() {
               placeholder="Project name…"
             />
             <div className="myprojects-new-form-actions">
-              <button className="myprojects-confirm" onClick={confirmCreate} disabled={!nameDraft.trim()}>
+              <button className="btn btn-primary btn-sm" onClick={confirmCreate} disabled={!nameDraft.trim()}>
                 create
               </button>
-              <button className="myprojects-cancel" onClick={() => setCreating(false)}>
+              <button className="btn btn-secondary btn-sm" onClick={() => setCreating(false)}>
                 cancel
               </button>
             </div>
@@ -163,8 +163,12 @@ export function MyProjectsPane() {
             ) : confirmDeleteId === p.id ? (
               <div className="myprojects-confirm-delete">
                 <span>Delete?</span>
-                <button onClick={() => handleDelete(p.id)}>yes</button>
-                <button onClick={() => setConfirmDeleteId(null)}>no</button>
+                <button className="btn btn-destructive btn-sm" onClick={() => handleDelete(p.id)}>
+                  yes
+                </button>
+                <button className="btn btn-secondary btn-sm" onClick={() => setConfirmDeleteId(null)}>
+                  no
+                </button>
               </div>
             ) : (
               <>
@@ -172,10 +176,18 @@ export function MyProjectsPane() {
                   {p.name}
                 </button>
                 <div className="myprojects-item-actions">
-                  <button onClick={() => startRename(p.id, p.name)} title="Rename">
+                  <button
+                    className={`btn-icon ${activeId === p.id ? 'btn-on-dark' : ''}`}
+                    onClick={() => startRename(p.id, p.name)}
+                    title="Rename"
+                  >
                     ✎
                   </button>
-                  <button onClick={() => setConfirmDeleteId(p.id)} title="Delete">
+                  <button
+                    className={`btn-icon ${activeId === p.id ? 'btn-on-dark' : ''}`}
+                    onClick={() => setConfirmDeleteId(p.id)}
+                    title="Delete"
+                  >
                     ×
                   </button>
                 </div>

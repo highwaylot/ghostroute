@@ -86,30 +86,30 @@ export function SandboxPane() {
                   }}
                   placeholder="Project name…"
                 />
-                <button className="editor-panel-bar-action" onClick={confirmSave} disabled={!nameDraft.trim()}>
+                <button className="btn btn-primary btn-sm" onClick={confirmSave} disabled={!nameDraft.trim()}>
                   save
                 </button>
-                <button className="editor-panel-bar-clear" onClick={() => setPending(null)}>
+                <button className="btn btn-secondary btn-sm" onClick={() => setPending(null)}>
                   cancel
                 </button>
               </div>
             ) : pending === 'clear' ? (
               <div className="sandbox-inline-form">
                 <span className="sandbox-inline-warn">Clear everything? Can't be undone.</span>
-                <button className="editor-panel-bar-clear" onClick={confirmClear}>
+                <button className="btn btn-destructive btn-sm" onClick={confirmClear}>
                   yes, clear
                 </button>
-                <button className="editor-panel-bar-action" onClick={() => setPending(null)}>
+                <button className="btn btn-secondary btn-sm" onClick={() => setPending(null)}>
                   cancel
                 </button>
               </div>
             ) : (
               <>
-                <button className="editor-panel-bar-action" onClick={startSave}>
+                <button className="btn btn-secondary btn-sm" onClick={startSave}>
                   {justSaved ? 'saved to my projects ✓' : 'save to my projects'}
                 </button>
                 <button
-                  className="editor-panel-bar-clear"
+                  className="btn btn-destructive btn-sm"
                   onClick={() => (code.trim() === '' ? setCode('') : setPending('clear'))}
                 >
                   clear all

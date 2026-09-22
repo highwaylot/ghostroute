@@ -6,16 +6,7 @@ import { EditorPanel } from './EditorPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
 import { PreviewFrame } from './PreviewFrame';
 import { useSuccessFlash } from '../lib/useSuccessFlash';
-
-const STORAGE_PREFIX = 'tagsmiths-project-';
-
-function loadCode(projectId: string, starter: string): string {
-  try {
-    return localStorage.getItem(STORAGE_PREFIX + projectId) ?? starter;
-  } catch {
-    return starter;
-  }
-}
+import { PROJECT_STORAGE_PREFIX, loadProjectCode as loadCode } from '../lib/projectProgress';
 
 export function ProjectPane() {
   const { item } = useParams<{ item?: string }>();
@@ -25,6 +16,7 @@ export function ProjectPane() {
   const project = PROJECTS[index];
   const [code, setCode] = useState(() => loadCode(project.id, project.starter));
   const [openHint, setOpenHint] = useState<string | null>(null);
+  const [confirmingReset, setConfirmingReset] = useState(false);
   const [flash, triggerFlash] = useSuccessFlash();
   const wasDone = useRef(false);
 
@@ -37,6 +29,7 @@ export function ProjectPane() {
       setIndex(urlIndex);
       setCode(loadCode(PROJECTS[urlIndex].id, PROJECTS[urlIndex].starter));
       setOpenHint(null);
+      setConfirmingReset(false);
       wasDone.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,13 +39,14 @@ export function ProjectPane() {
     setIndex(i);
     setCode(loadCode(PROJECTS[i].id, PROJECTS[i].starter));
     setOpenHint(null);
+    setConfirmingReset(false);
     wasDone.current = false;
     navigate(`/html/website/solve/project/${PROJECTS[i].id}`);
   };
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_PREFIX + project.id, code);
+      localStorage.setItem(PROJECT_STORAGE_PREFIX + project.id, code);
     } catch {
       // storage unavailable — nothing to do
     }
@@ -129,16 +123,27 @@ export function ProjectPane() {
           label="active coding window"
           className={`code-panel project-editor ${flash ? 'flash-success' : ''}`}
           actions={
-            <button
-              className="editor-panel-bar-clear"
-              onClick={() => {
-                if (window.confirm('Reset back to the starting template? This can\'t be undone.')) {
-                  setCode(project.starter);
-                }
-              }}
-            >
-              reset to starter
-            </button>
+            confirmingReset ? (
+              <div className="sandbox-inline-form">
+                <span className="sandbox-inline-warn">Reset to starter? Can't be undone.</span>
+                <button
+                  className="btn btn-destructive btn-sm"
+                  onClick={() => {
+                    setCode(project.starter);
+                    setConfirmingReset(false);
+                  }}
+                >
+                  yes, reset
+                </button>
+                <button className="btn btn-secondary btn-sm" onClick={() => setConfirmingReset(false)}>
+                  cancel
+                </button>
+              </div>
+            ) : (
+              <button className="btn btn-destructive btn-sm" onClick={() => setConfirmingReset(true)}>
+                reset to starter
+              </button>
+            )
           }
         >
           <CodeEditor value={code} onChange={setCode} />

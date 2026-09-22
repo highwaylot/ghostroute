@@ -6,6 +6,7 @@ import { EditorPanel } from './EditorPanel';
 import { PreviewFrame } from './PreviewFrame';
 import { useHintLadder, getHint, type AssistLevel } from '../lib/useHintLadder';
 import { useSuccessFlash } from '../lib/useSuccessFlash';
+import { loadSolvedPuzzles, markPuzzleSolved } from '../lib/puzzleProgress';
 
 type Props = {
   assist: AssistLevel;
@@ -21,54 +22,46 @@ function findPuzzle(id: string | undefined) {
   return id ? PUZZLES.find((p) => p.id === id) : undefined;
 }
 
+// A one-line taste of the broken tag itself, not just the puzzle's title —
+// gives the list something to actually look at instead of plain text.
+function snippet(broken: string): string {
+  const line = broken.split('\n').find((l) => l.trim().length > 0) ?? '';
+  const trimmed = line.trim();
+  return trimmed.length > 34 ? trimmed.slice(0, 34) + '…' : trimmed;
+}
+
 export function PuzzlePane({ assist }: Props) {
   const { item } = useParams<{ item?: string }>();
   const navigate = useNavigate();
   const urlPuzzle = findPuzzle(item);
 
-  const [tier, setTier] = useState<Difficulty>(urlPuzzle?.difficulty ?? 'basic');
-  const tierPuzzles = PUZZLES.filter((p) => p.difficulty === tier);
-  const urlIndex = urlPuzzle ? tierPuzzles.findIndex((p) => p.id === urlPuzzle.id) : -1;
-  const [index, setIndex] = useState(urlIndex >= 0 ? urlIndex : 0);
-  const puzzle = tierPuzzles[index];
+  const [selectedId, setSelectedId] = useState(urlPuzzle?.id ?? PUZZLES[0]?.id);
+  const puzzle = PUZZLES.find((p) => p.id === selectedId);
   const [code, setCode] = useState(puzzle?.broken ?? '');
   const [solved, setSolved] = useState(false);
-  const { attempts, registerFail, reset } = useHintLadder(puzzle?.id ?? tier);
+  const { attempts, registerFail, reset } = useHintLadder(puzzle?.id ?? 'none');
   const [justFailed, setJustFailed] = useState(false);
   const [flash, triggerFlash] = useSuccessFlash();
+  const [solvedIds, setSolvedIds] = useState(loadSolvedPuzzles);
 
   // A direct link to a specific puzzle (e.g. /solve/puzzles/missing-alt)
-  // selects its tier and itself on load, or when navigated to directly.
+  // selects it on load, or when navigated to directly.
   useEffect(() => {
     const p = findPuzzle(item);
-    if (!p) return;
-    if (p.difficulty !== tier) setTier(p.difficulty);
-    const i = PUZZLES.filter((x) => x.difficulty === p.difficulty).findIndex((x) => x.id === p.id);
-    if (i >= 0 && (i !== index || p.difficulty !== tier)) {
-      setIndex(i);
-      setCode(p.broken);
-      setSolved(false);
-      setJustFailed(false);
-    }
+    if (!p || p.id === selectedId) return;
+    setSelectedId(p.id);
+    setCode(p.broken);
+    setSolved(false);
+    setJustFailed(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item]);
 
-  const selectTier = (t: Difficulty) => {
-    setTier(t);
-    setIndex(0);
-    const first = PUZZLES.filter((p) => p.difficulty === t)[0];
-    setCode(first?.broken ?? '');
+  const selectPuzzle = (p: (typeof PUZZLES)[number]) => {
+    setSelectedId(p.id);
+    setCode(p.broken);
     setSolved(false);
     setJustFailed(false);
-    if (first) navigate(`/html/website/solve/puzzles/${first.id}`);
-  };
-
-  const selectPuzzle = (i: number) => {
-    setIndex(i);
-    setCode(tierPuzzles[i].broken);
-    setSolved(false);
-    setJustFailed(false);
-    navigate(`/html/website/solve/puzzles/${tierPuzzles[i].id}`);
+    navigate(`/html/website/solve/puzzles/${p.id}`);
   };
 
   const handleCheck = () => {
@@ -78,6 +71,8 @@ export function PuzzlePane({ assist }: Props) {
       setJustFailed(false);
       reset();
       triggerFlash();
+      markPuzzleSolved(puzzle.id);
+      setSolvedIds(loadSolvedPuzzles());
     } else {
       registerFail();
       setJustFailed(true);
@@ -98,37 +93,45 @@ export function PuzzlePane({ assist }: Props) {
   return (
     <div className="puzzle-pane">
       <div className="puzzle-list">
-        <div className="puzzle-tier-picker">
-          {TIERS.map((t) => {
-            const count = PUZZLES.filter((p) => p.difficulty === t.id).length;
-            return (
-              <button
-                key={t.id}
-                className={tier === t.id ? 'active' : ''}
-                onClick={() => selectTier(t.id)}
-              >
+        {TIERS.map((t) => {
+          const tPuzzles = PUZZLES.filter((p) => p.difficulty === t.id);
+          const tSolved = tPuzzles.filter((p) => solvedIds.has(p.id)).length;
+          return (
+            <div key={t.id} className="tier-section">
+              <div className="tier-section-label">
+                <span className="tier-section-dot" />
                 {t.label}
-                <span className="puzzle-tier-count">{count}</span>
-              </button>
-            );
-          })}
-        </div>
+                <span className="tier-section-count">
+                  {tPuzzles.length > 0 ? `${tSolved}/${tPuzzles.length}` : '0/0'}
+                </span>
+              </div>
 
-        {tierPuzzles.length === 0 ? (
-          <p className="puzzle-tier-empty">
-            {tier} tier is coming soon — basic is fully stocked, start there.
-          </p>
-        ) : (
-          tierPuzzles.map((p, i) => (
-            <button
-              key={p.id}
-              className={`puzzle-pick ${i === index ? 'active' : ''}`}
-              onClick={() => selectPuzzle(i)}
-            >
-              {i + 1}. {p.title}
-            </button>
-          ))
-        )}
+              {tPuzzles.length === 0 ? (
+                <p className="puzzle-tier-empty">
+                  Coming soon — {TIERS[0].label} is fully stocked, start there.
+                </p>
+              ) : (
+                tPuzzles.map((p, i) => (
+                  <button
+                    key={p.id}
+                    className={`puzzle-card ${p.id === selectedId ? 'active' : ''} ${
+                      solvedIds.has(p.id) ? 'solved' : ''
+                    }`}
+                    onClick={() => selectPuzzle(p)}
+                  >
+                    <span className="puzzle-check" aria-hidden="true">
+                      {solvedIds.has(p.id) ? '✓' : i + 1}
+                    </span>
+                    <span className="puzzle-card-body">
+                      <span className="puzzle-card-title">{p.title}</span>
+                      <span className="puzzle-card-snip">{snippet(p.broken)}</span>
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {puzzle ? (
@@ -157,10 +160,12 @@ export function PuzzlePane({ assist }: Props) {
                 </p>
               )}
               <div className="ghost-tip-actions">
-                <button className="secondary" onClick={handleReset}>
+                <button className="btn btn-secondary" onClick={handleReset}>
                   Reset this puzzle
                 </button>
-                <button onClick={handleCheck}>Check my work</button>
+                <button className="btn btn-primary" onClick={handleCheck}>
+                  Check my work
+                </button>
               </div>
             </>
           )}

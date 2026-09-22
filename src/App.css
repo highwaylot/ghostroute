@@ -156,55 +156,201 @@
   color: var(--ink-dim);
 }
 
-.solve-picker {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
+/* Solve section switcher — a quiet breadcrumb, not a pair of tabs.
+   Clicking it drops a small menu with both modes and their progress;
+   it's the only hint a switch exists, so the default (closed) state
+   stays out of the way entirely. */
+.solve-switcher {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
 }
 
-.solve-card {
+.solve-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+
+.solve-breadcrumb:hover {
+  color: var(--ink);
+}
+
+.solve-breadcrumb b {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.solve-breadcrumb .chev {
+  transition: transform 0.15s ease;
+}
+
+.solve-breadcrumb.open .chev {
+  transform: rotate(180deg);
+}
+
+.solve-switch-menu {
+  position: absolute;
+  top: 34px;
+  right: 0;
+  z-index: 5;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(20, 24, 50, 0.14);
+  width: 280px;
+  padding: 6px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
+}
+
+.solve-switch-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   text-align: left;
-  padding: 16px 18px;
-  border-radius: 12px;
-  border: 2px solid var(--line);
-  background: var(--panel);
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: none;
+  background: none;
   cursor: pointer;
 }
 
-.solve-card:hover {
-  border-color: var(--blue);
+.solve-switch-item:hover {
+  background: var(--panel);
 }
 
-.solve-card.active {
-  border-color: var(--blue);
-  background: rgba(59, 99, 232, 0.06);
+.solve-switch-item.current {
+  background: rgba(59, 99, 232, 0.08);
 }
 
-.solve-card-title {
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 15px;
-  color: var(--ink);
-  text-transform: lowercase;
-}
-
-.solve-card.active .solve-card-title {
+.solve-switch-item-icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 99, 232, 0.1);
   color: var(--blue);
 }
 
-.solve-card-desc {
+.solve-switch-item-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.solve-switch-item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.solve-switch-item-title {
+  font-family: var(--sans);
   font-size: 12.5px;
-  line-height: 1.5;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.solve-switch-item-sub {
+  font-family: var(--mono);
+  font-size: 10.5px;
   color: var(--ink-dim);
 }
 
+.solve-switch-item-check {
+  color: var(--blue);
+  font-size: 13px;
+}
+
+/* Solve hero — the dark stylized landing header for whichever mode is
+   active, replacing the old flat picker cards. Same navy family as the
+   Route rail, so "solve this code" stops looking like a bare settings
+   page bolted onto the rest of the app. */
+.solve-hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(135deg, var(--navy), #1a2456);
+  border-radius: 16px;
+  padding: 22px 26px;
+  color: #fff;
+  margin-bottom: 18px;
+}
+
+.solve-hero-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  color: #8fa0ff;
+}
+
+.solve-hero-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.solve-hero-title {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 18px;
+  text-transform: lowercase;
+}
+
+.solve-hero-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #b9c0e6;
+  max-width: 520px;
+}
+
+.solve-hero-stat {
+  flex-shrink: 0;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+}
+
+.solve-hero-stat-num {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.solve-hero-stat-lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8b93c4;
+}
+
 @media (max-width: 600px) {
-  .solve-picker {
-    grid-template-columns: 1fr;
+  .solve-hero {
+    flex-wrap: wrap;
+  }
+  .solve-hero-stat {
+    text-align: left;
   }
 }
 
@@ -584,34 +730,6 @@
   color: #c8d0ff;
 }
 
-.ghost-tip button {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 12.5px;
-  background: var(--blue);
-  color: #fff;
-  border: none;
-  padding: 9px 16px;
-  border-radius: 7px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.ghost-tip button:hover {
-  background: var(--blue-bright);
-}
-
-.ghost-tip button.secondary,
-.puzzle-body button.secondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: #c8d0ff;
-}
-
-.ghost-tip button.secondary:hover,
-.puzzle-body button.secondary:hover {
-  background: rgba(255, 255, 255, 0.16);
-}
-
 /* Key index — slide-in overlay, not a layout column */
 /* Companion panel — floats over the corner, never blocks clicks
    elsewhere on the page (no scrim, no click-outside-to-close), so it
@@ -893,38 +1011,110 @@
   border-bottom: 1px solid var(--line);
 }
 
-.editor-panel-bar-action {
+/* Shared button system — one visual language for every clickable action
+   in the app (Run/Check, Reset, Save, Clear, pop-out, fullscreen, etc).
+   Four kinds: primary (the one main action on a panel), secondary
+   (neutral, everything else that isn't the main action or destructive),
+   destructive (red, anything that discards work), and icon (icon-only,
+   no label — copy, rename, delete glyphs). Two sizes: the default is
+   chunky, for panel-level actions like Run/Check/Save; .btn-sm is slim,
+   for inline/tab-row actions. Rounded corners throughout. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   font-family: var(--sans);
-  text-transform: none;
-  letter-spacing: normal;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--blue);
-  background: none;
-  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
   cursor: pointer;
-  padding: 2px 6px;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.editor-panel-bar-action:hover {
-  text-decoration: underline;
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
-.editor-panel-bar-clear {
-  font-family: var(--sans);
-  text-transform: none;
-  letter-spacing: normal;
+.btn-sm {
   font-size: 11.5px;
   font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 6px;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--blue-bright);
+  border-color: var(--blue-bright);
+}
+
+.btn-secondary {
+  background: var(--panel);
+  color: var(--ink-dim);
+  border-color: var(--line);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--line);
+  color: var(--ink);
+}
+
+/* On dark backgrounds (the Route ghost-tip card, pop-out banners),
+   secondary needs a lighter treatment to stay readable. */
+.btn-secondary.btn-on-dark {
+  background: rgba(255, 255, 255, 0.08);
+  color: #c8d0ff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.btn-secondary.btn-on-dark:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.btn-destructive {
+  background: #fff;
   color: var(--error);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 2px 6px;
+  border-color: var(--error);
 }
 
-.editor-panel-bar-clear:hover {
-  text-decoration: underline;
+.btn-destructive:hover:not(:disabled) {
+  background: var(--error);
+  color: #fff;
+}
+
+.btn-icon {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--ink-dim);
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.btn-icon.btn-on-dark {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-icon.btn-on-dark:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
 .sandbox-inline-form {
@@ -1005,15 +1195,10 @@
   line-height: 1.4;
 }
 
-.preview-blocked-banner button {
+.preview-blocked-banner .btn-icon {
   flex-shrink: 0;
-  background: none;
-  border: none;
-  color: #fff;
   font-size: 16px;
   line-height: 1;
-  cursor: pointer;
-  padding: 0 4px;
 }
 
 .preview-popup-blocked {
@@ -1025,23 +1210,6 @@
   border-radius: 6px;
   border: 1px solid var(--error);
   white-space: nowrap;
-}
-
-.preview-expand-btn {
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 5px 9px;
-  border-radius: 6px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--ink-dim);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.preview-expand-btn:hover {
-  color: var(--ink);
-  border-color: var(--blue);
 }
 
 .preview-fullscreen {
@@ -1063,18 +1231,6 @@
   font-family: var(--mono);
   font-size: 12px;
   flex-shrink: 0;
-}
-
-.preview-fullscreen-bar button {
-  font-family: var(--sans);
-  font-size: 12.5px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: none;
-  background: var(--blue);
-  color: #fff;
-  cursor: pointer;
 }
 
 .preview-fullscreen iframe {
@@ -1160,75 +1316,137 @@
 }
 
 .puzzle-list {
-  width: 230px;
+  width: 280px;
   flex-shrink: 0;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 14px;
 }
 
-.puzzle-pick {
-  text-align: left;
-  font-family: var(--sans);
-  font-size: 13px;
-  padding: 10px 11px;
-  border-radius: 7px;
-  border: none;
-  background: none;
-  color: var(--ink-dim);
-  cursor: pointer;
-}
-
-.puzzle-pick:hover {
-  background: rgba(59, 99, 232, 0.08);
-}
-
-.puzzle-pick.active {
-  background: var(--blue);
-  color: #fff;
-}
-
-.puzzle-tier-picker {
+.tier-section {
   display: flex;
-  gap: 4px;
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 3px;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.puzzle-tier-picker button {
-  flex: 1;
+.tier-section-label {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-family: var(--sans);
-  font-size: 11.5px;
+  gap: 8px;
+  padding: 0 2px;
+  font-family: var(--mono);
+  font-size: 10.5px;
   font-weight: 700;
-  text-transform: lowercase;
-  padding: 6px 0;
-  border-radius: 6px;
-  border: none;
-  background: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--ink-dim);
-  cursor: pointer;
 }
 
-.puzzle-tier-picker button.active {
+.tier-section-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
   background: var(--blue);
+}
+
+.tier-section-count {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.puzzle-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--blue);
+  background: #fff;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.puzzle-card:hover {
+  box-shadow: 0 4px 14px rgba(30, 36, 64, 0.08);
+  transform: translateY(-1px);
+}
+
+.puzzle-card.active {
+  background: var(--blue);
+  border-left-color: #fff;
+}
+
+.puzzle-card.active .puzzle-card-title,
+.puzzle-card.active .puzzle-card-snip {
   color: #fff;
 }
 
-.puzzle-tier-count {
+.puzzle-card.active .puzzle-card-snip {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.puzzle-card.solved {
+  opacity: 0.62;
+  border-left-color: var(--ok);
+}
+
+.puzzle-card.solved .puzzle-check {
+  background: var(--ok);
+  color: #fff;
+}
+
+.puzzle-card.active .puzzle-check {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.puzzle-card.active.solved .puzzle-check {
+  background: var(--ok);
+}
+
+.puzzle-check {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(103, 109, 140, 0.12);
+  color: var(--ink-dim);
+}
+
+.puzzle-card-body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.puzzle-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.puzzle-card-snip {
+  align-self: flex-start;
   font-family: var(--mono);
-  font-size: 10px;
-  opacity: 0.75;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  background: var(--panel);
+  border-radius: 5px;
+  padding: 2px 6px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .puzzle-tier-empty {
@@ -1236,6 +1454,7 @@
   color: var(--ink-dim);
   line-height: 1.5;
   padding: 6px 4px;
+  font-style: italic;
 }
 
 .puzzle-empty-body {
@@ -1294,32 +1513,6 @@
   border: 1px solid #b6ecd2;
   border-radius: 8px;
   padding: 10px 14px;
-}
-
-.puzzle-body .ghost-tip-actions button {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 12.5px;
-  background: var(--blue);
-  color: #fff;
-  border: none;
-  padding: 9px 16px;
-  border-radius: 7px;
-  cursor: pointer;
-}
-
-.puzzle-body .ghost-tip-actions button:hover {
-  background: var(--blue-bright);
-}
-
-.puzzle-body .ghost-tip-actions button.secondary {
-  background: var(--panel);
-  color: var(--ink-dim);
-  border: 1px solid var(--line);
-}
-
-.puzzle-body .ghost-tip-actions button.secondary:hover {
-  background: var(--line);
 }
 
 @media (max-width: 700px) {
@@ -1479,31 +1672,8 @@
   gap: 6px;
 }
 
-.myprojects-confirm,
-.myprojects-cancel {
+.myprojects-new-form-actions .btn {
   flex: 1;
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 0;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
-
-.myprojects-confirm {
-  background: var(--blue);
-  color: #fff;
-}
-
-.myprojects-confirm:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.myprojects-cancel {
-  background: var(--line);
-  color: var(--ink-dim);
 }
 
 .myprojects-rename-input {
@@ -1518,23 +1688,7 @@
   gap: 6px;
   padding: 6px 10px;
   font-size: 12.5px;
-  color: var(--error);
-}
-
-.myprojects-confirm-delete button {
-  font-family: var(--sans);
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  background: var(--line);
-  color: var(--ink);
-}
-
-.myprojects-confirm-delete button:first-of-type {
-  background: var(--error);
+  font-weight: 600;
   color: #fff;
 }
 
@@ -1578,28 +1732,10 @@
   padding-right: 6px;
 }
 
-.myprojects-item-actions button {
-  border: none;
-  background: none;
-  color: var(--ink-dim);
-  cursor: pointer;
+.myprojects-item-actions .btn-icon {
+  width: 24px;
+  height: 24px;
   font-size: 13px;
-  padding: 4px 6px;
-  border-radius: 5px;
-}
-
-.myprojects-item.active .myprojects-item-actions button {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.myprojects-item-actions button:hover {
-  background: rgba(0, 0, 0, 0.1);
-  color: var(--ink);
-}
-
-.myprojects-item.active .myprojects-item-actions button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
 }
 
 .myprojects-body {
