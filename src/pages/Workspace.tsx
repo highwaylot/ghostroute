@@ -294,7 +294,7 @@ export default function Workspace() {
           {mode === 'solve' && (
             <>
               <div className="solve-mini-hub">
-                <span className="solve-mini-hub-label">solve this code</span>
+                <span className="solve-mini-hub-label">your progress</span>
                 <span className="solve-mini-hub-bar">
                   <span
                     className="solve-mini-hub-bar-fill"
