@@ -292,7 +292,23 @@ export default function Workspace() {
           )}
 
           {mode === 'solve' && (
-            <div className="solve-accordion">
+            <>
+              <div className="solve-mini-hub">
+                <span className="solve-mini-hub-label">solve this code</span>
+                <span className="solve-mini-hub-bar">
+                  <span
+                    className="solve-mini-hub-bar-fill"
+                    style={{
+                      width: `${((puzzlesSolved + projectsDone) / (PUZZLES.length + 3)) * 100}%`,
+                    }}
+                  />
+                </span>
+                <span className="solve-mini-hub-stat">
+                  {puzzlesSolved + projectsDone}/{PUZZLES.length + 3} solved
+                </span>
+              </div>
+
+              <div className="solve-accordion">
               {/* Both panes stay mounted at all times — collapsing a section
                   only hides it visually (CSS grid-rows), it never unmounts
                   the component. That means there is no code path where
@@ -371,7 +387,8 @@ export default function Workspace() {
                   </div>
                 </div>
               </div>
-            </div>
+              </div>
+            </>
           )}
 
           {mode === 'sandbox' && (

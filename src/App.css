@@ -156,6 +156,50 @@
   color: var(--ink-dim);
 }
 
+/* Solve mini hub — a quiet overarching stat above the accordion, combining
+   puzzles + projects into one number. Deliberately tiny: this is a status
+   line, not another card competing with the two headers below it. */
+.solve-mini-hub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 2px;
+  margin-bottom: 10px;
+}
+
+.solve-mini-hub-label {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+}
+
+.solve-mini-hub-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.solve-mini-hub-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--blue);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.solve-mini-hub-stat {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink-dim);
+}
+
 /* Solve accordion — "fix this code" and "build this code" as collapsible
    sections, one open at a time, so future tracks (a CSS section, say)
    can just be added as another one of these instead of needing a new
