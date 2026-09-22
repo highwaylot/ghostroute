@@ -156,145 +156,48 @@
   color: var(--ink-dim);
 }
 
-/* Solve section switcher — a quiet breadcrumb, not a pair of tabs.
-   Clicking it drops a small menu with both modes and their progress;
-   it's the only hint a switch exists, so the default (closed) state
-   stays out of the way entirely. */
-.solve-switcher {
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 10px;
-}
-
-.solve-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink-dim);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px 4px;
-}
-
-.solve-breadcrumb:hover {
-  color: var(--ink);
-}
-
-.solve-breadcrumb b {
-  color: var(--blue);
-  font-weight: 700;
-}
-
-.solve-breadcrumb .chev {
-  transition: transform 0.15s ease;
-}
-
-.solve-breadcrumb.open .chev {
-  transform: rotate(180deg);
-}
-
-.solve-switch-menu {
-  position: absolute;
-  top: 34px;
-  right: 0;
-  z-index: 5;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(20, 24, 50, 0.14);
-  width: 280px;
-  padding: 6px;
+/* Solve accordion — "fix this code" and "build this code" as collapsible
+   sections, one open at a time, so future tracks (a CSS section, say)
+   can just be added as another one of these instead of needing a new
+   picker pattern. Both panes stay mounted underneath regardless of
+   which is open (see the comment in Workspace.tsx) — collapsing one
+   never touches its state, so there's no click here that can cost you
+   progress. */
+.solve-accordion {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-}
-
-.solve-switch-item {
-  display: flex;
-  align-items: center;
   gap: 10px;
+}
+
+.accordion-section {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
   text-align: left;
-  padding: 9px 10px;
-  border-radius: 8px;
+  background: linear-gradient(135deg, var(--navy), #1a2456);
   border: none;
-  background: none;
+  border-radius: 16px;
+  padding: 16px 20px;
+  color: #fff;
   cursor: pointer;
 }
 
-.solve-switch-item:hover {
-  background: var(--panel);
+.accordion-section.expanded .accordion-header {
+  border-radius: 16px 16px 0 0;
+  cursor: default;
 }
 
-.solve-switch-item.current {
-  background: rgba(59, 99, 232, 0.08);
-}
-
-.solve-switch-item-icon {
+.accordion-header-icon {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(59, 99, 232, 0.1);
-  color: var(--blue);
-}
-
-.solve-switch-item-icon svg {
-  width: 15px;
-  height: 15px;
-}
-
-.solve-switch-item-body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.solve-switch-item-title {
-  font-family: var(--sans);
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.solve-switch-item-sub {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-dim);
-}
-
-.solve-switch-item-check {
-  color: var(--blue);
-  font-size: 13px;
-}
-
-/* Solve hero — the dark stylized landing header for whichever mode is
-   active, replacing the old flat picker cards. Same navy family as the
-   Route rail, so "solve this code" stops looking like a bare settings
-   page bolted onto the rest of the app. */
-.solve-hero {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  background: linear-gradient(135deg, var(--navy), #1a2456);
-  border-radius: 16px;
-  padding: 22px 26px;
-  color: #fff;
-  margin-bottom: 18px;
-}
-
-.solve-hero-icon {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -302,54 +205,98 @@
   color: #8fa0ff;
 }
 
-.solve-hero-body {
+.accordion-header-body {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
-.solve-hero-title {
+.accordion-header-title {
   font-family: var(--sans);
   font-weight: 800;
-  font-size: 18px;
+  font-size: 16px;
   text-transform: lowercase;
 }
 
-.solve-hero-desc {
-  font-size: 12.5px;
-  line-height: 1.5;
+.accordion-header-desc {
+  font-size: 12px;
+  line-height: 1.4;
   color: #b9c0e6;
-  max-width: 520px;
 }
 
-.solve-hero-stat {
+.accordion-section.expanded .accordion-header-desc {
+  display: none;
+}
+
+.accordion-header-stat {
   flex-shrink: 0;
   text-align: right;
   display: flex;
   flex-direction: column;
 }
 
-.solve-hero-stat-num {
+.accordion-header-stat-num {
   font-family: var(--mono);
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
 }
 
-.solve-hero-stat-lbl {
+.accordion-header-stat-lbl {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #8b93c4;
 }
 
+.accordion-chev {
+  flex-shrink: 0;
+  color: #8b93c4;
+  transition: transform 0.2s ease;
+}
+
+.accordion-section.expanded .accordion-chev {
+  transform: rotate(180deg);
+}
+
+/* The grid-rows trick: animating 0fr -> 1fr on a grid track animates to
+   the content's real height without ever measuring it in JS, and it
+   handles the editor/preview's dynamic height inside just fine. */
+.accordion-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  transition: grid-template-rows 0.25s ease, border-color 0.25s ease;
+}
+
+.accordion-section.expanded .accordion-body {
+  grid-template-rows: 1fr;
+}
+
+.accordion-section:not(.expanded) .accordion-body {
+  border-color: transparent;
+}
+
+.accordion-body-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 20px;
+}
+
+.accordion-section.expanded .accordion-body-inner {
+  padding: 18px 20px;
+}
+
 @media (max-width: 600px) {
-  .solve-hero {
+  .accordion-header {
     flex-wrap: wrap;
   }
-  .solve-hero-stat {
+  .accordion-header-stat {
     text-align: left;
   }
 }

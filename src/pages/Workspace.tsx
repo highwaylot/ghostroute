@@ -133,10 +133,7 @@ export default function Workspace() {
   const mode: Mode = resolveMode(modeParam);
   const solveSection: SolveSection = resolveSolveSection(modeParam, subParam);
   const setMode = (m: Mode) => navigate(`/html/website/${m}`);
-  const setSolveSection = (s: SolveSection) => {
-    navigate(`/html/website/solve/${s}`);
-    setSwitcherOpen(false);
-  };
+  const setSolveSection = (s: SolveSection) => navigate(`/html/website/solve/${s}`);
   const [code, setCode] = useState(loadSavedCode);
   const [current, setCurrent] = useState(loadSavedStep);
   const [assist, setAssist] = useState<AssistLevel>(loadSavedAssist);
@@ -144,28 +141,16 @@ export default function Workspace() {
   const [flash, triggerFlash] = useSuccessFlash();
   const [puzzlesSolved, setPuzzlesSolved] = useState(0);
   const [projectsDone, setProjectsDone] = useState(0);
-  const [switcherOpen, setSwitcherOpen] = useState(false);
 
   // Recomputed whenever "solve this code" comes into view (mode switch, or
-  // hopping between its fix/build sub-sections) — cheap enough not to need
-  // finer-grained invalidation, and it's the picker cards above the active
-  // pane, not something you're staring at mid-solve.
+  // hopping between its fix/build accordion sections) — cheap enough not
+  // to need finer-grained invalidation, and it's the header stat above
+  // the active pane, not something you're staring at mid-solve.
   useEffect(() => {
     if (mode !== 'solve') return;
     setPuzzlesSolved(loadSolvedPuzzles().size);
     setProjectsDone(countCompletedProjects().done);
   }, [mode, solveSection]);
-
-  useEffect(() => {
-    if (!switcherOpen) return;
-    const close = () => setSwitcherOpen(false);
-    // Deferred a tick so the click that opened it doesn't also close it.
-    const id = window.setTimeout(() => window.addEventListener('click', close), 0);
-    return () => {
-      window.clearTimeout(id);
-      window.removeEventListener('click', close);
-    };
-  }, [switcherOpen]);
 
   useEffect(() => {
     try {
@@ -277,18 +262,34 @@ export default function Workspace() {
           )}
 
           {mode === 'solve' && (
-            <>
-              <div className="solve-switcher">
+            <div className="solve-accordion">
+              {/* Both panes stay mounted at all times — collapsing a section
+                  only hides it visually (CSS grid-rows), it never unmounts
+                  the component. That means there is no code path where
+                  opening the other tab can lose in-progress code: nothing
+                  is ever torn down to make room for it. */}
+              <div className={`accordion-section ${solveSection === 'puzzles' ? 'expanded' : ''}`}>
                 <button
-                  className={`solve-breadcrumb ${switcherOpen ? 'open' : ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSwitcherOpen((v) => !v);
-                  }}
+                  className="accordion-header"
+                  onClick={() => solveSection !== 'puzzles' && setSolveSection('puzzles')}
+                  aria-expanded={solveSection === 'puzzles'}
                 >
-                  solve this code /{' '}
-                  <b>{solveSection === 'puzzles' ? 'fix this code' : 'build this code'}</b>
-                  <svg className="chev" width="10" height="10" viewBox="0 0 10 10" fill="none">
+                  <span className="accordion-header-icon">
+                    <WrenchIcon />
+                  </span>
+                  <span className="accordion-header-body">
+                    <span className="accordion-header-title">fix this code</span>
+                    <span className="accordion-header-desc">
+                      Broken HTML, on purpose. Find what's wrong and repair it.
+                    </span>
+                  </span>
+                  <span className="accordion-header-stat">
+                    <span className="accordion-header-stat-num">
+                      {puzzlesSolved}/{PUZZLES.length}
+                    </span>
+                    <span className="accordion-header-stat-lbl">solved</span>
+                  </span>
+                  <svg className="accordion-chev" width="12" height="12" viewBox="0 0 10 10" fill="none">
                     <path
                       d="M2 3.5 5 6.5 8 3.5"
                       stroke="currentColor"
@@ -298,66 +299,49 @@ export default function Workspace() {
                     />
                   </svg>
                 </button>
-                {switcherOpen && (
-                  <div className="solve-switch-menu" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      className={`solve-switch-item ${solveSection === 'puzzles' ? 'current' : ''}`}
-                      onClick={() => setSolveSection('puzzles')}
-                    >
-                      <span className="solve-switch-item-icon">
-                        <WrenchIcon />
-                      </span>
-                      <span className="solve-switch-item-body">
-                        <span className="solve-switch-item-title">fix this code</span>
-                        <span className="solve-switch-item-sub">
-                          {puzzlesSolved}/{PUZZLES.length} solved
-                        </span>
-                      </span>
-                      {solveSection === 'puzzles' && <span className="solve-switch-item-check">✓</span>}
-                    </button>
-                    <button
-                      className={`solve-switch-item ${solveSection === 'project' ? 'current' : ''}`}
-                      onClick={() => setSolveSection('project')}
-                    >
-                      <span className="solve-switch-item-icon">
-                        <BlueprintIcon />
-                      </span>
-                      <span className="solve-switch-item-body">
-                        <span className="solve-switch-item-title">build this code</span>
-                        <span className="solve-switch-item-sub">{projectsDone}/3 done</span>
-                      </span>
-                      {solveSection === 'project' && <span className="solve-switch-item-check">✓</span>}
-                    </button>
+                <div className="accordion-body">
+                  <div className="accordion-body-inner">
+                    <PuzzlePane assist={assist} />
                   </div>
-                )}
+                </div>
               </div>
 
-              <div className="solve-hero">
-                <span className="solve-hero-icon">
-                  {solveSection === 'puzzles' ? <WrenchIcon /> : <BlueprintIcon />}
-                </span>
-                <span className="solve-hero-body">
-                  <span className="solve-hero-title">
-                    {solveSection === 'puzzles' ? 'fix this code' : 'build this code'}
+              <div className={`accordion-section ${solveSection === 'project' ? 'expanded' : ''}`}>
+                <button
+                  className="accordion-header"
+                  onClick={() => solveSection !== 'project' && setSolveSection('project')}
+                  aria-expanded={solveSection === 'project'}
+                >
+                  <span className="accordion-header-icon">
+                    <BlueprintIcon />
                   </span>
-                  <span className="solve-hero-desc">
-                    {solveSection === 'puzzles'
-                      ? "Broken HTML, on purpose. Find what's wrong and repair it."
-                      : 'A brief and a checklist. Build the page yourself, in any order.'}
+                  <span className="accordion-header-body">
+                    <span className="accordion-header-title">build this code</span>
+                    <span className="accordion-header-desc">
+                      A brief and a checklist. Build the page yourself, in any order.
+                    </span>
                   </span>
-                </span>
-                <span className="solve-hero-stat">
-                  <span className="solve-hero-stat-num">
-                    {solveSection === 'puzzles' ? `${puzzlesSolved}/${PUZZLES.length}` : `${projectsDone}/3`}
+                  <span className="accordion-header-stat">
+                    <span className="accordion-header-stat-num">{projectsDone}/3</span>
+                    <span className="accordion-header-stat-lbl">done</span>
                   </span>
-                  <span className="solve-hero-stat-lbl">
-                    {solveSection === 'puzzles' ? 'solved' : 'done'}
-                  </span>
-                </span>
+                  <svg className="accordion-chev" width="12" height="12" viewBox="0 0 10 10" fill="none">
+                    <path
+                      d="M2 3.5 5 6.5 8 3.5"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+                <div className="accordion-body">
+                  <div className="accordion-body-inner">
+                    <ProjectPane />
+                  </div>
+                </div>
               </div>
-
-              {solveSection === 'puzzles' ? <PuzzlePane assist={assist} /> : <ProjectPane />}
-            </>
+            </div>
           )}
 
           {mode === 'sandbox' && (
