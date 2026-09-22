@@ -1337,7 +1337,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--blue);
+  background: var(--tier-accent, var(--blue));
 }
 
 .tier-section-count {
@@ -1346,7 +1346,7 @@
   color: var(--ink);
 }
 
-.puzzle-card {
+.tier-card {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1354,51 +1354,51 @@
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--line);
-  border-left: 3px solid var(--blue);
+  border-left: 3px solid var(--tier-accent, var(--blue));
   background: #fff;
   cursor: pointer;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.puzzle-card:hover {
+.tier-card:hover {
   box-shadow: 0 4px 14px rgba(30, 36, 64, 0.08);
   transform: translateY(-1px);
 }
 
-.puzzle-card.active {
+.tier-card.active {
   background: var(--blue);
   border-left-color: #fff;
 }
 
-.puzzle-card.active .puzzle-card-title,
-.puzzle-card.active .puzzle-card-snip {
+.tier-card.active .tier-card-title,
+.tier-card.active .tier-card-snip {
   color: #fff;
 }
 
-.puzzle-card.active .puzzle-card-snip {
+.tier-card.active .tier-card-snip {
   background: rgba(255, 255, 255, 0.15);
 }
 
-.puzzle-card.solved {
+.tier-card.solved {
   opacity: 0.62;
   border-left-color: var(--ok);
 }
 
-.puzzle-card.solved .puzzle-check {
+.tier-card.solved .tier-card-check {
   background: var(--ok);
   color: #fff;
 }
 
-.puzzle-card.active .puzzle-check {
+.tier-card.active .tier-card-check {
   background: rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
-.puzzle-card.active.solved .puzzle-check {
+.tier-card.active.solved .tier-card-check {
   background: var(--ok);
 }
 
-.puzzle-check {
+.tier-card-check {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -1412,7 +1412,18 @@
   color: var(--ink-dim);
 }
 
-.puzzle-card-body {
+/* Projects show a "3/7" ratio instead of a single digit/check — too wide
+   for a plain circle, so it becomes a pill instead. */
+.tier-card-check.wide {
+  width: auto;
+  min-width: 22px;
+  border-radius: 999px;
+  padding: 0 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.tier-card-body {
   min-width: 0;
   flex: 1;
   display: flex;
@@ -1420,13 +1431,13 @@
   gap: 3px;
 }
 
-.puzzle-card-title {
+.tier-card-title {
   font-size: 13px;
   font-weight: 600;
   color: var(--ink);
 }
 
-.puzzle-card-snip {
+.tier-card-snip {
   align-self: flex-start;
   font-family: var(--mono);
   font-size: 10.5px;
@@ -1525,47 +1536,11 @@
 }
 
 .project-list {
-  width: 220px;
+  width: 280px;
   flex-shrink: 0;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-}
-
-.project-pick {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  text-align: left;
-  font-family: var(--sans);
-  font-size: 13px;
-  padding: 10px 11px;
-  border-radius: 7px;
-  border: none;
-  background: none;
-  color: var(--ink-dim);
-  cursor: pointer;
-  text-transform: lowercase;
-}
-
-.project-pick:hover {
-  background: rgba(59, 99, 232, 0.08);
-}
-
-.project-pick.active {
-  background: var(--blue);
-  color: #fff;
-}
-
-.project-pick-progress {
-  font-family: var(--mono);
-  font-size: 11px;
-  flex-shrink: 0;
+  gap: 14px;
 }
 
 .project-body {

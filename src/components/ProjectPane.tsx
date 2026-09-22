@@ -1,12 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PROJECTS } from '../data/projects';
+import { PROJECTS, type Difficulty } from '../data/projects';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
 import { PreviewFrame } from './PreviewFrame';
 import { useSuccessFlash } from '../lib/useSuccessFlash';
 import { PROJECT_STORAGE_PREFIX, loadProjectCode as loadCode } from '../lib/projectProgress';
+import { DIFFICULTY_VAR } from '../lib/difficulty';
+
+const TIERS: { id: Difficulty; label: string }[] = [
+  { id: 'basic', label: 'basic' },
+  { id: 'medium', label: 'medium' },
+  { id: 'hard', label: 'hard' },
+];
 
 export function ProjectPane() {
   const { item } = useParams<{ item?: string }>();
@@ -65,20 +72,54 @@ export function ProjectPane() {
   return (
     <div className="project-pane">
       <div className="project-list">
-        {PROJECTS.map((p, i) => {
-          const pCode = i === index ? code : loadCode(p.id, p.starter);
-          const pDone = p.requirements.filter((r) => r.check(pCode)).length;
+        {TIERS.map((t) => {
+          const tProjects = PROJECTS.filter((p) => p.difficulty === t.id);
+          const tDone = tProjects.filter((p) => {
+            const i = PROJECTS.indexOf(p);
+            const pCode = i === index ? code : loadCode(p.id, p.starter);
+            return p.requirements.every((r) => r.check(pCode));
+          }).length;
           return (
-            <button
-              key={p.id}
-              className={`project-pick ${i === index ? 'active' : ''}`}
-              onClick={() => selectProject(i)}
+            <div
+              key={t.id}
+              className="tier-section"
+              style={{ '--tier-accent': DIFFICULTY_VAR[t.id] } as CSSProperties}
             >
-              <span className="project-pick-title">{p.title}</span>
-              <span className="project-pick-progress">
-                {pDone}/{p.requirements.length}
-              </span>
-            </button>
+              <div className="tier-section-label">
+                <span className="tier-section-dot" />
+                {t.label}
+                <span className="tier-section-count">
+                  {tProjects.length > 0 ? `${tDone}/${tProjects.length}` : '0/0'}
+                </span>
+              </div>
+
+              {tProjects.length === 0 ? (
+                <p className="puzzle-tier-empty">
+                  Coming soon — {TIERS[0].label} is fully stocked, start there.
+                </p>
+              ) : (
+                tProjects.map((p) => {
+                  const i = PROJECTS.indexOf(p);
+                  const pCode = i === index ? code : loadCode(p.id, p.starter);
+                  const pDone = p.requirements.filter((r) => r.check(pCode)).length;
+                  const allDone = pDone === p.requirements.length;
+                  return (
+                    <button
+                      key={p.id}
+                      className={`tier-card ${i === index ? 'active' : ''} ${allDone ? 'solved' : ''}`}
+                      onClick={() => selectProject(i)}
+                    >
+                      <span className={`tier-card-check ${allDone ? '' : 'wide'}`} aria-hidden="true">
+                        {allDone ? '✓' : `${pDone}/${p.requirements.length}`}
+                      </span>
+                      <span className="tier-card-body">
+                        <span className="tier-card-title">{p.title}</span>
+                      </span>
+                    </button>
+                  );
+                })
+              )}
+            </div>
           );
         })}
       </div>

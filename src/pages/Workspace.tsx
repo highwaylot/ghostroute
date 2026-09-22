@@ -15,6 +15,7 @@ import { PreviewFrame } from '../components/PreviewFrame';
 import { Logo } from '../components/Logo';
 import { STEPS } from '../data/steps';
 import { PUZZLES } from '../data/puzzles';
+import { PROJECTS } from '../data/projects';
 import type { AssistLevel } from '../lib/useHintLadder';
 import { useSuccessFlash } from '../lib/useSuccessFlash';
 import { loadSolvedPuzzles } from '../lib/puzzleProgress';
@@ -299,12 +300,12 @@ export default function Workspace() {
                   <span
                     className="solve-mini-hub-bar-fill"
                     style={{
-                      width: `${((puzzlesSolved + projectsDone) / (PUZZLES.length + 3)) * 100}%`,
+                      width: `${((puzzlesSolved + projectsDone) / (PUZZLES.length + PROJECTS.length)) * 100}%`,
                     }}
                   />
                 </span>
                 <span className="solve-mini-hub-stat">
-                  {puzzlesSolved + projectsDone}/{PUZZLES.length + 3} solved
+                  {puzzlesSolved + projectsDone}/{PUZZLES.length + PROJECTS.length} solved
                 </span>
               </div>
 
@@ -368,7 +369,7 @@ export default function Workspace() {
                     </span>
                   </span>
                   <span className="accordion-header-stat">
-                    <span className="accordion-header-stat-num">{projectsDone}/3</span>
+                    <span className="accordion-header-stat-num">{projectsDone}/{PROJECTS.length}</span>
                     <span className="accordion-header-stat-lbl">done</span>
                   </span>
                   <svg className="accordion-chev" width="12" height="12" viewBox="0 0 10 10" fill="none">

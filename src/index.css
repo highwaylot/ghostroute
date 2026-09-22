@@ -10,6 +10,12 @@
   --ghost: #9aa8e8;
   --error: #d6455f;
   --ok: #1f9d6f;
+  /* Difficulty tier colors — basic/medium/hard, reused everywhere a tier
+     shows up (puzzles, projects). Medium is amber, not red: red already
+     means destructive/error elsewhere in the app. */
+  --diff-basic: #1f9d6f;
+  --diff-medium: #c9820c;
+  --diff-hard: #d6455f;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --sans: 'Manrope', system-ui, sans-serif;
 

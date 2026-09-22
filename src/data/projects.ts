@@ -1,4 +1,7 @@
 import { hasAnyAttribute, hasImgWithSrcAndAlt } from '../lib/htmlCheck';
+import type { Difficulty } from '../lib/difficulty';
+
+export type { Difficulty };
 
 export type Requirement = {
   id: string;
@@ -10,6 +13,7 @@ export type Requirement = {
 export type Project = {
   id: string;
   title: string;
+  difficulty: Difficulty;
   brief: string;
   starter: string;
   requirements: Requirement[];
@@ -21,6 +25,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'bio-page',
     title: 'personal bio page',
+    difficulty: 'basic',
     brief:
       "Build a small page about yourself (real or made up) — no route holding your hand this time. Use whatever you learned. The checklist tracks what you've got; nothing here checks in a fixed order.",
     starter: `<!DOCTYPE html>
@@ -87,6 +92,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'recipe-card',
     title: 'recipe card',
+    difficulty: 'basic',
     brief:
       "Build a page for a recipe (real or made up): a title, a photo, an ingredients list, and numbered steps. Nothing here checks in a fixed order — build it however makes sense to you.",
     starter: `<!DOCTYPE html>
@@ -142,6 +148,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'mini-portfolio',
     title: 'mini portfolio',
+    difficulty: 'medium',
     brief:
       "Build a one-page portfolio: an intro section, a nav with a couple of links, a list of projects or skills, and a footer. This is the most layout-heavy project yet — lean on header/nav/main/footer to organize it.",
     starter: `<!DOCTYPE html>
@@ -197,6 +204,134 @@ export const PROJECTS: Project[] = [
         desc: 'A profile photo or project image, with alt text',
         hint: '<img src="https://placekitten.com/150/150" alt="Profile photo">',
         check: (code) => hasImgWithSrcAndAlt(code),
+      },
+    ],
+  },
+  {
+    id: 'event-page',
+    title: 'event rsvp page',
+    difficulty: 'medium',
+    brief:
+      'Build a page for an event — a date, a location, a schedule, and a working RSVP form. This one leans on forms and lists more than the earlier projects did.',
+    starter: `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Event</title>
+  </head>
+  <body>
+
+  </body>
+</html>
+`,
+    requirements: [
+      {
+        id: 'heading',
+        desc: 'A heading with the event name',
+        hint: '<h1>Summer Block Party</h1>',
+        check: (code) => has(code, /<h1[^>]*>[\s\S]*?<\/h1>/i),
+      },
+      {
+        id: 'schedule',
+        desc: 'A schedule as an ordered list',
+        hint: '<ol>\n  <li>6pm — Doors open</li>\n  <li>7pm — Dinner</li>\n</ol>',
+        check: (code) => has(code, /<ol[^>]*>[\s\S]*?<li[^>]*>[\s\S]*?<\/li>[\s\S]*?<\/ol>/i),
+      },
+      {
+        id: 'form-label',
+        desc: 'A form input with a label connected to it',
+        hint: '<label for="name">Name</label>\n<input type="text" id="name">',
+        check: (code) => {
+          const idMatch = code.match(/<input\b[^>]*\bid\s*=\s*"([^"]+)"[^>]*>/i);
+          if (!idMatch) return false;
+          const labelRe = new RegExp(`<label[^>]*\\bfor\\s*=\\s*"${idMatch[1]}"[^>]*>`, 'i');
+          return labelRe.test(code);
+        },
+      },
+      {
+        id: 'select',
+        desc: 'A dropdown with at least one real choice (e.g. a meal option)',
+        hint: '<select>\n  <option>Vegetarian</option>\n  <option>Regular</option>\n</select>',
+        check: (code) =>
+          has(code, /<select[^>]*>[\s\S]*?<option[^>]*>[\s\S]*?<\/option>[\s\S]*?<\/select>/i),
+      },
+      {
+        id: 'semantic',
+        desc: 'At least one semantic layout tag (header, main, or footer)',
+        hint: 'Wrap the intro in <header>...</header>, and the schedule/form in <main>...</main>.',
+        check: (code) =>
+          has(code, /<header[^>]*>/i) || has(code, /<main[^>]*>/i) || has(code, /<footer[^>]*>/i),
+      },
+      {
+        id: 'link',
+        desc: 'A link — to a map, a related event, anything',
+        hint: '<a href="https://maps.example.com">Get directions</a>',
+        check: (code) => has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[\s\S]*?<\/a>/i),
+      },
+      {
+        id: 'image',
+        desc: 'A photo or flyer image, with alt text',
+        hint: '<img src="https://placekitten.com/300/200" alt="Last year\'s block party">',
+        check: (code) => hasImgWithSrcAndAlt(code),
+      },
+    ],
+  },
+  {
+    id: 'docs-page',
+    title: 'mini documentation page',
+    difficulty: 'hard',
+    brief:
+      "Build a documentation-style page for a made-up tool or library: a real heading outline, a reference table, a code sample, an image with a caption, and an expandable FAQ. This is the most semantically demanding project yet.",
+    starter: `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Docs</title>
+  </head>
+  <body>
+
+  </body>
+</html>
+`,
+    requirements: [
+      {
+        id: 'heading-outline',
+        desc: 'A real heading outline — one <h1>, with at least one <h2> under it',
+        hint: '<h1>My Library</h1>\n<h2>Installation</h2>',
+        check: (code) => has(code, /<h1[^>]*>[\s\S]*?<\/h1>/i) && has(code, /<h2[^>]*>[\s\S]*?<\/h2>/i),
+      },
+      {
+        id: 'table',
+        desc: 'A reference table with real header cells',
+        hint: '<table>\n  <tr>\n    <th>Option</th>\n    <th>Default</th>\n  </tr>\n  <tr>\n    <td>debug</td>\n    <td>false</td>\n  </tr>\n</table>',
+        check: (code) => has(code, /<table[^>]*>[\s\S]*?<th[^>]*>[\s\S]*?<\/th>[\s\S]*?<\/table>/i),
+      },
+      {
+        id: 'code-sample',
+        desc: 'A code sample using <pre><code>',
+        hint: '<pre><code>npm install my-library</code></pre>',
+        check: (code) => has(code, /<pre[^>]*>[\s\S]*?<code[^>]*>[\s\S]*?<\/code>[\s\S]*?<\/pre>/i),
+      },
+      {
+        id: 'figure',
+        desc: 'An image with a caption, using <figure> and <figcaption>',
+        hint: '<figure>\n  <img src="https://placekitten.com/300/200" alt="A diagram">\n  <figcaption>How it fits together.</figcaption>\n</figure>',
+        check: (code) =>
+          has(
+            code,
+            /<figure[^>]*>[\s\S]*?<img\b[^>]*>[\s\S]*?<figcaption[^>]*>[\s\S]*?<\/figcaption>[\s\S]*?<\/figure>/i,
+          ),
+      },
+      {
+        id: 'faq',
+        desc: 'An expandable FAQ item using <details> and <summary>',
+        hint: '<details>\n  <summary>Does this work offline?</summary>\n  Yes, fully.\n</details>',
+        check: (code) =>
+          has(code, /<details[^>]*>\s*<summary[^>]*>[\s\S]*?<\/summary>[\s\S]*?<\/details>/i),
+      },
+      {
+        id: 'link',
+        desc: 'A link — to a repo, a demo, anything related',
+        hint: '<a href="https://github.com">View on GitHub</a>',
+        check: (code) => has(code, /<a\s+href\s*=\s*"[^"]+"[^>]*>[\s\S]*?<\/a>/i),
       },
     ],
   },

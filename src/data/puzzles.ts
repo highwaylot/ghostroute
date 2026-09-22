@@ -1,4 +1,5 @@
-export type Difficulty = 'basic' | 'medium' | 'hard';
+export type { Difficulty } from '../lib/difficulty';
+import type { Difficulty } from '../lib/difficulty';
 
 export type Puzzle = {
   id: string;

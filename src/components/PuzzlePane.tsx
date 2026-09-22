@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PUZZLES, type Difficulty } from '../data/puzzles';
 import { CodeEditor } from './CodeEditor';
@@ -7,6 +7,7 @@ import { PreviewFrame } from './PreviewFrame';
 import { useHintLadder, getHint, type AssistLevel } from '../lib/useHintLadder';
 import { useSuccessFlash } from '../lib/useSuccessFlash';
 import { loadSolvedPuzzles, markPuzzleSolved } from '../lib/puzzleProgress';
+import { DIFFICULTY_VAR } from '../lib/difficulty';
 
 type Props = {
   assist: AssistLevel;
@@ -97,7 +98,11 @@ export function PuzzlePane({ assist }: Props) {
           const tPuzzles = PUZZLES.filter((p) => p.difficulty === t.id);
           const tSolved = tPuzzles.filter((p) => solvedIds.has(p.id)).length;
           return (
-            <div key={t.id} className="tier-section">
+            <div
+              key={t.id}
+              className="tier-section"
+              style={{ '--tier-accent': DIFFICULTY_VAR[t.id] } as CSSProperties}
+            >
               <div className="tier-section-label">
                 <span className="tier-section-dot" />
                 {t.label}
@@ -114,17 +119,17 @@ export function PuzzlePane({ assist }: Props) {
                 tPuzzles.map((p, i) => (
                   <button
                     key={p.id}
-                    className={`puzzle-card ${p.id === selectedId ? 'active' : ''} ${
+                    className={`tier-card ${p.id === selectedId ? 'active' : ''} ${
                       solvedIds.has(p.id) ? 'solved' : ''
                     }`}
                     onClick={() => selectPuzzle(p)}
                   >
-                    <span className="puzzle-check" aria-hidden="true">
+                    <span className="tier-card-check" aria-hidden="true">
                       {solvedIds.has(p.id) ? '✓' : i + 1}
                     </span>
-                    <span className="puzzle-card-body">
-                      <span className="puzzle-card-title">{p.title}</span>
-                      <span className="puzzle-card-snip">{snippet(p.broken)}</span>
+                    <span className="tier-card-body">
+                      <span className="tier-card-title">{p.title}</span>
+                      <span className="tier-card-snip">{snippet(p.broken)}</span>
                     </span>
                   </button>
                 ))
