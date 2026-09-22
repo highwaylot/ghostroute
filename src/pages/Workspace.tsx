@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { InstructionsRail } from '../components/InstructionsRail';
 import { KeySidebar } from '../components/KeySidebar';
@@ -133,7 +133,6 @@ export default function Workspace() {
   const mode: Mode = resolveMode(modeParam);
   const solveSection: SolveSection = resolveSolveSection(modeParam, subParam);
   const setMode = (m: Mode) => navigate(`/html/website/${m}`);
-  const setSolveSection = (s: SolveSection) => navigate(`/html/website/solve/${s}`);
   const [code, setCode] = useState(loadSavedCode);
   const [current, setCurrent] = useState(loadSavedStep);
   const [assist, setAssist] = useState<AssistLevel>(loadSavedAssist);
@@ -142,15 +141,46 @@ export default function Workspace() {
   const [puzzlesSolved, setPuzzlesSolved] = useState(0);
   const [projectsDone, setProjectsDone] = useState(0);
 
+  // Which accordion section (if any) is open — independent of the URL's
+  // solveSection, which only tracks "last section a link pointed at."
+  // A bare arrival at "solve this code" (no sub-route) starts with both
+  // collapsed, per spec; a direct link to a puzzle/project opens its
+  // section. Reset only fires when *entering* solve mode fresh, not on
+  // every render, so toggling doesn't fight this.
+  const [expandedSection, setExpandedSection] = useState<SolveSection | null>(
+    subParam ? solveSection : null,
+  );
+  const prevMode = useRef(mode);
+  useEffect(() => {
+    if (mode === 'solve' && prevMode.current !== 'solve') {
+      setExpandedSection(subParam ? solveSection : null);
+    }
+    prevMode.current = mode;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
+
+  // Each header is an independent light switch: click the open one to
+  // collapse it (leaving both closed is a valid state), click the closed
+  // one to open it and close the other.
+  const toggleSection = (s: SolveSection) => {
+    if (expandedSection === s) {
+      setExpandedSection(null);
+      navigate('/html/website/solve');
+    } else {
+      setExpandedSection(s);
+      navigate(`/html/website/solve/${s}`);
+    }
+  };
+
   // Recomputed whenever "solve this code" comes into view (mode switch, or
-  // hopping between its fix/build accordion sections) — cheap enough not
-  // to need finer-grained invalidation, and it's the header stat above
-  // the active pane, not something you're staring at mid-solve.
+  // toggling either accordion section) — cheap enough not to need
+  // finer-grained invalidation, and it's the header stat, not something
+  // you're staring at mid-solve.
   useEffect(() => {
     if (mode !== 'solve') return;
     setPuzzlesSolved(loadSolvedPuzzles().size);
     setProjectsDone(countCompletedProjects().done);
-  }, [mode, solveSection]);
+  }, [mode, expandedSection]);
 
   useEffect(() => {
     try {
@@ -268,11 +298,11 @@ export default function Workspace() {
                   the component. That means there is no code path where
                   opening the other tab can lose in-progress code: nothing
                   is ever torn down to make room for it. */}
-              <div className={`accordion-section ${solveSection === 'puzzles' ? 'expanded' : ''}`}>
+              <div className={`accordion-section ${expandedSection === 'puzzles' ? 'expanded' : ''}`}>
                 <button
                   className="accordion-header"
-                  onClick={() => solveSection !== 'puzzles' && setSolveSection('puzzles')}
-                  aria-expanded={solveSection === 'puzzles'}
+                  onClick={() => toggleSection('puzzles')}
+                  aria-expanded={expandedSection === 'puzzles'}
                 >
                   <span className="accordion-header-icon">
                     <WrenchIcon />
@@ -306,11 +336,11 @@ export default function Workspace() {
                 </div>
               </div>
 
-              <div className={`accordion-section ${solveSection === 'project' ? 'expanded' : ''}`}>
+              <div className={`accordion-section ${expandedSection === 'project' ? 'expanded' : ''}`}>
                 <button
                   className="accordion-header"
-                  onClick={() => solveSection !== 'project' && setSolveSection('project')}
-                  aria-expanded={solveSection === 'project'}
+                  onClick={() => toggleSection('project')}
+                  aria-expanded={expandedSection === 'project'}
                 >
                   <span className="accordion-header-icon">
                     <BlueprintIcon />
