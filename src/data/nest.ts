@@ -667,6 +667,26 @@ export const NEST: NestEntry[] = [
     example: '<link rel="stylesheet" href="style.css">',
     related: ['<head>'],
   },
+  {
+    tag: '<template>',
+    category: 'other',
+    stats: {
+      closingTag: 'required',
+      voidElement: 'no',
+      livesInside: '<head> or <body>',
+      typicallyHolds: 'markup meant to be cloned by JavaScript later',
+    },
+    whatItDoes:
+      "Holds a chunk of HTML that the browser parses but never renders and never runs — no images load, no scripts inside it execute. It just sits there, inert, until JavaScript reaches in, clones its contents, and inserts the clone somewhere else in the page.",
+    whereItGoes:
+      "Anywhere — it's invisible either way. Usually near the top of <body> or in <head>, out of the way of the content that's actually showing.",
+    mistakes: [
+      "Expecting it to show up on the page on its own — it won't, ever, without JavaScript actively cloning it in.",
+      "Using it as a substitute for hiding content with CSS (display: none) — that content still renders and runs scripts, just invisibly; <template> content does neither until cloned.",
+    ],
+    example: '<template id="row-template">\n  <li class="row"></li>\n</template>',
+    related: ['<script>'],
+  },
 ];
 
 export function getNestEntry(tag: string): NestEntry | undefined {

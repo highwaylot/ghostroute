@@ -380,4 +380,90 @@ export const PUZZLES: Puzzle[] = [
       return /\baria-label\s*=\s*"[^"]+"/i.test(m[0]);
     },
   },
+
+  // --- medium (round 2) -------------------------------------------------
+  {
+    id: 'form-not-required',
+    title: 'A required field that lets you skip it',
+    difficulty: 'medium',
+    prompt: 'This field is supposed to be mandatory, but nothing stops the form from submitting empty. Fix it.',
+    broken: '<form>\n  <label for="email">Email</label>\n  <input type="email" id="email">\n</form>',
+    hints: [
+      'An input needs to actually say it\'s mandatory — the browser can\'t guess that from the label.',
+      'The required attribute is a boolean attribute, same family as checked — just being present is enough.',
+      'Fix it to: <input type="email" id="email" required>',
+    ],
+    check: (code) => {
+      const m = code.match(/<input\b[^>]*>/i);
+      if (!m) return false;
+      return /\brequired\b/i.test(m[0]);
+    },
+  },
+  {
+    id: 'video-no-controls',
+    title: 'A video with no way to play it',
+    difficulty: 'medium',
+    prompt: 'This video is embedded, but there\'s no way for a visitor to actually play, pause, or adjust it. Fix it.',
+    broken: '<video src="clip.mp4"></video>',
+    hints: [
+      'By default a <video> just sits there — nothing lets the visitor interact with it.',
+      'The controls attribute turns on the browser\'s built-in play/pause/volume bar.',
+      'Fix it to: <video src="clip.mp4" controls></video>',
+    ],
+    check: (code) => {
+      const m = code.match(/<video\b[^>]*>/i);
+      if (!m) return false;
+      return /\bcontrols\b/i.test(m[0]);
+    },
+  },
+  {
+    id: 'table-misaligned-total',
+    title: 'A total row that doesn\'t line up',
+    difficulty: 'medium',
+    prompt: 'This table\'s total row has one cell, but it needs to visually span both columns above it. Fix it.',
+    broken:
+      '<table>\n  <tr>\n    <th>Item</th>\n    <th>Price</th>\n  </tr>\n  <tr>\n    <td>Book</td>\n    <td>$12</td>\n  </tr>\n  <tr>\n    <td>Total: $12</td>\n  </tr>\n</table>',
+    hints: [
+      'A cell can be told to take up more than one column\'s worth of space.',
+      'The colspan attribute on a <td> or <th> says how many columns it should span.',
+      'Fix it to: <td colspan="2">Total: $12</td>',
+    ],
+    check: (code) => {
+      const cells = code.match(/<td\b[^>]*>/gi) || [];
+      return cells.some((c) => /\bcolspan\s*=\s*"2"/i.test(c));
+    },
+  },
+
+  // --- hard (round 2) -----------------------------------------------------
+  {
+    id: 'iframe-no-title',
+    title: 'An embedded page with no name',
+    difficulty: 'hard',
+    prompt: 'This embedded page has nothing telling a screen reader what it is. Fix it.',
+    broken: '<iframe src="https://example.com/map"></iframe>',
+    hints: [
+      'An <iframe> is a whole separate document dropped into this page — how would someone using a screen reader know what it\'s for?',
+      'The title attribute gives it an accessible name, the same way alt does for images.',
+      'Fix it to: <iframe src="https://example.com/map" title="Location map"></iframe>',
+    ],
+    check: (code) => {
+      const m = code.match(/<iframe\b[^>]*>/i);
+      if (!m) return false;
+      return /\btitle\s*=\s*"[^"]+"/i.test(m[0]);
+    },
+  },
+  {
+    id: 'svg-no-accessible-name',
+    title: 'A meaningful icon with no name',
+    difficulty: 'hard',
+    prompt: 'This SVG icon carries real meaning (it\'s marked as an image), but it has no accessible name for a screen reader to announce. Fix it.',
+    broken: '<svg role="img" viewBox="0 0 20 20">\n  <circle cx="10" cy="10" r="8" />\n</svg>',
+    hints: [
+      'SVG has its own element for giving the whole graphic a name, similar to how <figcaption> names a <figure>.',
+      '<title> as the first child of <svg> gives it an accessible name.',
+      'Fix it to: <svg role="img" viewBox="0 0 20 20">\n  <title>Warning</title>\n  <circle cx="10" cy="10" r="8" />\n</svg>',
+    ],
+    check: (code) =>
+      /<svg\b[^>]*>\s*<title[^>]*>[\s\S]*?<\/title>[\s\S]*?<\/svg>/i.test(code),
+  },
 ];

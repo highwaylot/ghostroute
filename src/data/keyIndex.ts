@@ -234,6 +234,36 @@ export const KEY_INDEX: KeyEntry[] = [
     desc: 'Connects a CSS file so it can style this page.',
     example: '<link rel="stylesheet" href="style.css">',
   },
+  {
+    tag: '<iframe>',
+    category: 'links & media',
+    desc: 'Embeds a whole separate page inside this one. Always give it a title for accessibility.',
+    example: '<iframe src="https://example.com/map" title="Location map"></iframe>',
+  },
+  {
+    tag: '<video>',
+    category: 'links & media',
+    desc: 'Embeds a video. Needs the controls attribute or visitors can\'t play/pause it.',
+    example: '<video src="clip.mp4" controls></video>',
+  },
+  {
+    tag: '<audio>',
+    category: 'links & media',
+    desc: 'Embeds a sound clip, same deal as <video> — add controls so it\'s playable.',
+    example: '<audio src="clip.mp3" controls></audio>',
+  },
+  {
+    tag: '<svg>',
+    category: 'links & media',
+    desc: 'Draws vector graphics right in the HTML. Meaningful icons need a <title> for accessibility.',
+    example: '<svg role="img" viewBox="0 0 20 20">\n  <title>Warning</title>\n  <circle cx="10" cy="10" r="8" />\n</svg>',
+  },
+  {
+    tag: '<template>',
+    category: 'other',
+    desc: 'Holds markup that isn\'t rendered until JavaScript clones it in. Inert on its own.',
+    example: '<template id="row">\n  <li></li>\n</template>',
+  },
 ];
 
 export const KEY_CATEGORIES = Array.from(new Set(KEY_INDEX.map((e) => e.category)));
