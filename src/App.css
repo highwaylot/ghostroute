@@ -364,9 +364,20 @@
   .workspace-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .instructions-rail {
+  .rail-column {
     position: static !important;
   }
+}
+
+/* The rail box and the assist panel below it stick together as one
+   unit while scrolling — the wrapper carries the sticky positioning
+   so there's never a gap between them. */
+.rail-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 76px;
 }
 
 .instructions-rail {
@@ -374,8 +385,39 @@
   border-radius: 12px;
   padding: 18px 20px;
   color: #fff;
-  position: sticky;
-  top: 76px;
+}
+
+/* Assist panel — deliberately pulled out of the dark rail and given its
+   own bold, light card right underneath it. This is the thing someone
+   needs to notice the instant they're stuck, not a quiet row buried
+   inside another box. */
+.assist-panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--blue);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.assist-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assist-panel-icon {
+  flex-shrink: 0;
+  color: var(--blue);
+}
+
+.assist-panel-title {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--ink);
 }
 
 /* Chapter info and step are two distinct, always-visible windows,
@@ -482,6 +524,28 @@
   font-size: 11.5px;
   color: var(--assist-desc);
   text-transform: lowercase;
+}
+
+.assist-control.large {
+  gap: 12px;
+}
+
+.assist-control.large .assist-label {
+  font-size: 11px;
+}
+
+.assist-control.large .assist-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 13.5px;
+}
+
+.assist-control.large .assist-desc {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: none;
 }
 
 .workspace-main {

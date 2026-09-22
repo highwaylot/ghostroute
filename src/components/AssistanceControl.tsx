@@ -4,16 +4,17 @@ type Props = {
   value: AssistLevel;
   onChange: (level: AssistLevel) => void;
   light?: boolean;
+  large?: boolean;
 };
 
 // One row, always: a label, the three level buttons, and the active
 // level's name. The full description lives in each button's tooltip
 // instead of its own line — less to visually parse, same info on hover.
-export function AssistanceControl({ value, onChange, light }: Props) {
+export function AssistanceControl({ value, onChange, light, large }: Props) {
   const active = ASSIST_LEVELS.find((a) => a.level === value);
 
   return (
-    <div className={`assist-control ${light ? 'light' : ''}`}>
+    <div className={`assist-control ${light ? 'light' : ''} ${large ? 'large' : ''}`}>
       <span className="assist-label">assist</span>
       <div className="assist-buttons">
         {ASSIST_LEVELS.map((a) => (
