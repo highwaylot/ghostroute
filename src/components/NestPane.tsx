@@ -1,13 +1,16 @@
-import { useState } from 'react';
-import { KEY_INDEX, KEY_CATEGORIES } from '../data/keyIndex';
-import { NEST, getNestEntry } from '../data/nest';
-import { BLUEPRINTS } from '../data/blueprints';
+import { useEffect, useState } from 'react';
+import type { KeyEntry } from '../data/keyIndex';
+import type { NestEntry } from '../data/nest';
+import type { Blueprint } from '../data/blueprints';
 import { CopyButton } from './CopyButton';
 
-// Flat, ordered list of every tag the way the spine displays them —
-// category by category, in KEY_CATEGORIES order — used for page numbers
-// and prev/next "book" navigation.
-const ORDERED_TAGS = KEY_CATEGORIES.flatMap((cat) => KEY_INDEX.filter((k) => k.category === cat).map((k) => k.tag));
+type Props = {
+  bookLabel: string; // e.g. "the html book" / "the css book"
+  keyIndex: KeyEntry[];
+  categories: string[];
+  getEntry: (tag: string) => NestEntry | undefined;
+  blueprints?: Blueprint[]; // omit to hide the blueprints tab entirely
+};
 
 // Pulls the bare element name out of a tag label like '<img src="" alt="">'
 // or '<a href="">' so the diagram can spot which lines are actually that
@@ -15,6 +18,12 @@ const ORDERED_TAGS = KEY_CATEGORIES.flatMap((cat) => KEY_INDEX.filter((k) => k.c
 function bareTagName(tag: string): string | null {
   const match = tag.match(/^<([a-zA-Z0-9]+)/);
   return match ? match[1] : null;
+}
+
+// "closingTag" -> "closing tag", "appliesTo" -> "applies to" — works for
+// any domain's stat keys without a hardcoded label list per track.
+function humanizeKey(key: string): string {
+  return key.replace(/([A-Z])/g, ' $1').toLowerCase();
 }
 
 function Diagram({ example, tag }: { example: string; tag: string }) {
@@ -33,54 +42,70 @@ function Diagram({ example, tag }: { example: string; tag: string }) {
   );
 }
 
-export function NestPane() {
+export function NestPane({ bookLabel, keyIndex, categories, getEntry, blueprints }: Props) {
   const [section, setSection] = useState<'tags' | 'blueprints'>('tags');
-  const [activeTag, setActiveTag] = useState(NEST[0].tag);
-  const [activeBlueprint, setActiveBlueprint] = useState(BLUEPRINTS[0].id);
+  const [activeTag, setActiveTag] = useState(keyIndex[0]?.tag ?? '');
+  const [activeBlueprint, setActiveBlueprint] = useState(blueprints?.[0]?.id ?? '');
   const [query, setQuery] = useState('');
-  const entry = getNestEntry(activeTag);
-  const blueprint = BLUEPRINTS.find((b) => b.id === activeBlueprint);
+
+  // Switching tracks swaps in a whole new keyIndex/blueprints set — reset
+  // to the top of the new book instead of holding onto a tag/blueprint id
+  // that may not even exist in it.
+  useEffect(() => {
+    setActiveTag(keyIndex[0]?.tag ?? '');
+    setActiveBlueprint(blueprints?.[0]?.id ?? '');
+    setSection('tags');
+    setQuery('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyIndex]);
+
+  const entry = getEntry(activeTag);
+  const blueprint = blueprints?.find((b) => b.id === activeBlueprint);
+
+  const orderedTags = categories.flatMap((cat) => keyIndex.filter((k) => k.category === cat).map((k) => k.tag));
 
   const q = query.trim().toLowerCase();
-  const filteredBlueprints = BLUEPRINTS.filter(
+  const filteredBlueprints = (blueprints ?? []).filter(
     (b) => !q || b.title.toLowerCase().includes(q) || b.desc.toLowerCase().includes(q),
   );
 
-  const flatIndex = ORDERED_TAGS.indexOf(activeTag);
-  const chapterNum = entry ? KEY_CATEGORIES.indexOf(entry.category) + 1 : 0;
-  const prevTag = flatIndex > 0 ? ORDERED_TAGS[flatIndex - 1] : null;
-  const nextTag = flatIndex >= 0 && flatIndex < ORDERED_TAGS.length - 1 ? ORDERED_TAGS[flatIndex + 1] : null;
+  const flatIndex = orderedTags.indexOf(activeTag);
+  const chapterNum = entry ? categories.indexOf(entry.category) + 1 : 0;
+  const prevTag = flatIndex > 0 ? orderedTags[flatIndex - 1] : null;
+  const nextTag = flatIndex >= 0 && flatIndex < orderedTags.length - 1 ? orderedTags[flatIndex + 1] : null;
 
-  const bpIndex = BLUEPRINTS.findIndex((b) => b.id === activeBlueprint);
-  const prevBp = bpIndex > 0 ? BLUEPRINTS[bpIndex - 1] : null;
-  const nextBp = bpIndex >= 0 && bpIndex < BLUEPRINTS.length - 1 ? BLUEPRINTS[bpIndex + 1] : null;
+  const bpIndex = (blueprints ?? []).findIndex((b) => b.id === activeBlueprint);
+  const prevBp = bpIndex > 0 ? blueprints![bpIndex - 1] : null;
+  const nextBp = blueprints && bpIndex >= 0 && bpIndex < blueprints.length - 1 ? blueprints[bpIndex + 1] : null;
 
   return (
     <div className="nest-book">
       <div className="nest-spine">
         <h1 className="nest-spine-title">Nest</h1>
-        <span className="nest-spine-sub">{section === 'tags' ? 'the html book' : 'the workshop'}</span>
+        <span className="nest-spine-sub">{section === 'tags' ? bookLabel : 'the workshop'}</span>
 
-        <div className="nest-spine-tabs">
-          <button className={section === 'tags' ? 'active' : ''} onClick={() => setSection('tags')}>
-            tags
-          </button>
-          <button className={section === 'blueprints' ? 'active' : ''} onClick={() => setSection('blueprints')}>
-            blueprints
-          </button>
-        </div>
+        {blueprints && (
+          <div className="nest-spine-tabs">
+            <button className={section === 'tags' ? 'active' : ''} onClick={() => setSection('tags')}>
+              tags
+            </button>
+            <button className={section === 'blueprints' ? 'active' : ''} onClick={() => setSection('blueprints')}>
+              blueprints
+            </button>
+          </div>
+        )}
 
         <input
           className="nest-spine-search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={section === 'tags' ? 'Search tags…' : 'Search blueprints…'}
+          placeholder={section === 'tags' ? 'Search…' : 'Search blueprints…'}
         />
 
         {section === 'tags' ? (
           <>
-            {KEY_CATEGORIES.map((cat, i) => {
-              const items = KEY_INDEX.filter((k) => k.category === cat && (!q || k.tag.toLowerCase().includes(q)));
+            {categories.map((cat, i) => {
+              const items = keyIndex.filter((k) => k.category === cat && (!q || k.tag.toLowerCase().includes(q)));
               if (q && items.length === 0) return null;
               return (
                 <div key={cat} className="nest-chapter">
@@ -99,8 +124,8 @@ export function NestPane() {
                 </div>
               );
             })}
-            {q && KEY_INDEX.every((k) => !k.tag.toLowerCase().includes(q)) && (
-              <p className="nest-spine-empty">No tags match "{query}".</p>
+            {q && keyIndex.every((k) => !k.tag.toLowerCase().includes(q)) && (
+              <p className="nest-spine-empty">Nothing matches "{query}".</p>
             )}
           </>
         ) : (
@@ -123,27 +148,17 @@ export function NestPane() {
       {section === 'tags' && entry && (
         <div className="nest-page">
           <p className="nest-crumb">
-            Chapter {chapterNum} · {entry.category} · page {flatIndex + 1} of {ORDERED_TAGS.length}
+            Chapter {chapterNum} · {entry.category} · page {flatIndex + 1} of {orderedTags.length}
           </p>
           <h1 className="nest-page-title">{entry.tag}</h1>
 
           <div className="nest-stat-row">
-            <div className="nest-stat">
-              <span className="nest-stat-label">closing tag</span>
-              <span className="nest-stat-value">{entry.stats.closingTag}</span>
-            </div>
-            <div className="nest-stat">
-              <span className="nest-stat-label">void element</span>
-              <span className="nest-stat-value">{entry.stats.voidElement}</span>
-            </div>
-            <div className="nest-stat">
-              <span className="nest-stat-label">lives inside</span>
-              <span className="nest-stat-value">{entry.stats.livesInside}</span>
-            </div>
-            <div className="nest-stat">
-              <span className="nest-stat-label">typically holds</span>
-              <span className="nest-stat-value">{entry.stats.typicallyHolds}</span>
-            </div>
+            {Object.entries(entry.stats).map(([key, value]) => (
+              <div className="nest-stat" key={key}>
+                <span className="nest-stat-label">{humanizeKey(key)}</span>
+                <span className="nest-stat-value">{value}</span>
+              </div>
+            ))}
           </div>
 
           <div className="nest-section">
@@ -198,7 +213,7 @@ export function NestPane() {
       {section === 'blueprints' && blueprint && (
         <div className="nest-page">
           <p className="nest-crumb">
-            The Workshop · page {bpIndex + 1} of {BLUEPRINTS.length}
+            The Workshop · page {bpIndex + 1} of {(blueprints ?? []).length}
           </p>
           <h1 className="nest-page-title">{blueprint.title}</h1>
 

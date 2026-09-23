@@ -11,6 +11,11 @@ import { SandboxPane } from '../components/SandboxPane';
 import { ProjectPane } from '../components/ProjectPane';
 import { MyProjectsPane } from '../components/MyProjectsPane';
 import { NestPane } from '../components/NestPane';
+import { KEY_INDEX, KEY_CATEGORIES } from '../data/keyIndex';
+import { getNestEntry } from '../data/nest';
+import { BLUEPRINTS } from '../data/blueprints';
+import { CSS_KEY_INDEX, CSS_KEY_CATEGORIES, getCssNestEntry } from '../data/cssNest';
+import { EMAIL_KEY_INDEX, EMAIL_KEY_CATEGORIES, getEmailNestEntry } from '../data/emailNest';
 import { PreviewFrame } from '../components/PreviewFrame';
 import { Logo } from '../components/Logo';
 import { STEPS } from '../data/steps';
@@ -101,6 +106,11 @@ const TRACK_CONFIG = {
     stepKey: 'tagsmiths-step-v2', // v2: route was condensed from 24 to 14 steps
     puzzles: PUZZLES,
     projects: PROJECTS,
+    nestLabel: 'the html book',
+    nestKeyIndex: KEY_INDEX,
+    nestCategories: KEY_CATEGORIES,
+    nestGetEntry: getNestEntry,
+    nestBlueprints: BLUEPRINTS,
   },
   css: {
     basePath: '/css/website',
@@ -111,6 +121,11 @@ const TRACK_CONFIG = {
     stepKey: 'tagsmiths-css-step',
     puzzles: null,
     projects: null,
+    nestLabel: 'the css book',
+    nestKeyIndex: CSS_KEY_INDEX,
+    nestCategories: CSS_KEY_CATEGORIES,
+    nestGetEntry: getCssNestEntry,
+    nestBlueprints: undefined,
   },
   email: {
     basePath: '/html/email',
@@ -121,6 +136,11 @@ const TRACK_CONFIG = {
     stepKey: 'tagsmiths-email-step',
     puzzles: EMAIL_PUZZLES,
     projects: EMAIL_PROJECTS,
+    nestLabel: 'the email book',
+    nestKeyIndex: EMAIL_KEY_INDEX,
+    nestCategories: EMAIL_KEY_CATEGORIES,
+    nestGetEntry: getEmailNestEntry,
+    nestBlueprints: undefined,
   },
 } as const;
 
@@ -508,7 +528,13 @@ export default function Workspace() {
                 The deep dive. Key index is quick lookup; this is where a tag gets explained —
                 what it does, exactly where it goes, and the mistakes people actually make with it.
               </p>
-              <NestPane />
+              <NestPane
+                bookLabel={trackConfig.nestLabel}
+                keyIndex={trackConfig.nestKeyIndex}
+                categories={trackConfig.nestCategories}
+                getEntry={trackConfig.nestGetEntry}
+                blueprints={trackConfig.nestBlueprints}
+              />
             </>
           )}
         </main>

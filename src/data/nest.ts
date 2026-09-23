@@ -1,12 +1,13 @@
 export type NestEntry = {
   tag: string;
   category: string;
-  stats: {
-    closingTag: string;
-    voidElement: string;
-    livesInside: string;
-    typicallyHolds: string;
-  };
+  // Freeform label/value pairs instead of four fixed fields — HTML's
+  // stats (closing tag, void element, lives inside, typically holds)
+  // don't mean anything for a CSS property or an email pattern, and
+  // this way every domain can pick the stats that actually apply to it
+  // without a separate NestEntry type per track. Existing entries below
+  // already satisfy this shape as-is; nothing here needed rewriting.
+  stats: Record<string, string>;
   whatItDoes: string;
   whereItGoes: string;
   mistakes: string[];
@@ -686,6 +687,82 @@ export const NEST: NestEntry[] = [
     ],
     example: '<template id="row-template">\n  <li class="row"></li>\n</template>',
     related: ['<script>'],
+  },
+  {
+    tag: '<iframe>',
+    category: 'links & media',
+    stats: {
+      closingTag: 'required',
+      voidElement: 'no',
+      livesInside: 'anywhere in <body>',
+      typicallyHolds: 'nothing — src loads a whole separate document',
+    },
+    whatItDoes:
+      "Embeds an entire separate web page inside this one, in its own little sandboxed window — a map, a video, a payment form from another site, anything with its own URL.",
+    whereItGoes:
+      "Anywhere in <body>. Needs a src pointing at the page to embed, and width/height (or CSS) so it isn't a tiny sliver.",
+    mistakes: [
+      "Leaving off title — without it, a screen reader has no way to say what the embedded content even is.",
+      "Assuming you can style or read the content inside it with your own CSS/JS — a same-origin iframe sometimes allows this, but a cross-origin one (a different site) never does, by design.",
+    ],
+    example: '<iframe src="https://example.com/map" title="Location map"></iframe>',
+    related: ['<embed>', '<object>'],
+  },
+  {
+    tag: '<video>',
+    category: 'links & media',
+    stats: {
+      closingTag: 'required',
+      voidElement: 'no',
+      livesInside: 'anywhere in <body>',
+      typicallyHolds: 'fallback text, or one or more <source> tags',
+    },
+    whatItDoes: 'Embeds a video using the browser\'s own built-in player — no plugin, no external library required.',
+    whereItGoes:
+      'Anywhere in <body>. src (or nested <source> tags for multiple formats) points at the file.',
+    mistakes: [
+      'Forgetting controls — without it, there\'s no play/pause/volume bar and the video is effectively unusable.',
+      'Relying on autoplay with sound — most browsers block autoplaying video with audio outright; muted autoplay is the only version that reliably works.',
+    ],
+    example: '<video src="clip.mp4" controls></video>',
+    related: ['<audio>'],
+  },
+  {
+    tag: '<audio>',
+    category: 'links & media',
+    stats: {
+      closingTag: 'required',
+      voidElement: 'no',
+      livesInside: 'anywhere in <body>',
+      typicallyHolds: 'fallback text, or one or more <source> tags',
+    },
+    whatItDoes: 'The audio-only sibling of <video> — embeds a sound clip with the browser\'s built-in controls.',
+    whereItGoes: 'Anywhere in <body>. Same src/controls pattern as <video>.',
+    mistakes: [
+      'Forgetting controls, same as <video> — without it, there\'s no way to play, pause, or adjust the volume.',
+    ],
+    example: '<audio src="clip.mp3" controls></audio>',
+    related: ['<video>'],
+  },
+  {
+    tag: '<svg>',
+    category: 'links & media',
+    stats: {
+      closingTag: 'required',
+      voidElement: 'no',
+      livesInside: 'anywhere in <body>',
+      typicallyHolds: 'shape elements like <circle>, <path>, <rect>',
+    },
+    whatItDoes:
+      'Draws vector graphics directly in the HTML — shapes described with math instead of pixels, so they stay crisp at any size, unlike a raster <img>.',
+    whereItGoes:
+      "Anywhere in <body>. Needs a viewBox to define its coordinate system, then shape elements inside it drawing the actual graphic.",
+    mistakes: [
+      "Adding role=\"img\" (marking it as a meaningful graphic) without a <title> inside it — that combination promises an accessible name and then doesn't deliver one.",
+      "Forgetting viewBox — without it, the shapes inside are positioned in raw pixel coordinates with no relationship to the element's actual displayed size, and scaling gets unpredictable.",
+    ],
+    example: '<svg role="img" viewBox="0 0 20 20">\n  <title>Warning</title>\n  <circle cx="10" cy="10" r="8" />\n</svg>',
+    related: [],
   },
 ];
 
