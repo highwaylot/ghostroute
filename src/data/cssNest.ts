@@ -26,6 +26,12 @@ export const CSS_KEY_INDEX: KeyEntry[] = [
     example: '#nav a { color: red; }   /* beats */\n.nav a { color: blue; }',
   },
   {
+    tag: '--custom-property',
+    category: 'attaching css',
+    desc: 'A reusable value defined once and referenced anywhere with var() — change it in one place, everywhere using it updates.',
+    example: ':root {\n  --brand-color: #2563eb;\n}\nbutton {\n  background: var(--brand-color);\n}',
+  },
+  {
     tag: '.class',
     category: 'selectors',
     desc: 'Selects every element carrying that class attribute. Reusable across the page.',
@@ -102,6 +108,12 @@ export const CSS_KEY_INDEX: KeyEntry[] = [
     category: 'display & flow',
     desc: 'Takes an element out of (or repositions it within) the normal flow other elements respect.',
     example: '.badge {\n  position: absolute;\n  top: 0;\n  right: 0;\n}',
+  },
+  {
+    tag: 'z-index',
+    category: 'display & flow',
+    desc: 'Decides which positioned element sits on top when two of them overlap. Only does anything on an element that also has a position other than static.',
+    example: '.modal {\n  position: fixed;\n  z-index: 100;\n}',
   },
   {
     tag: 'display: flex',
@@ -208,6 +220,26 @@ export const CSS_NEST: NestEntry[] = [
     ],
     example: '/* both match the same <a>, the id wins regardless of order */\n#nav a { color: red; }\n.nav a { color: blue; }',
     related: ['.class', '#id'],
+  },
+  {
+    tag: '--custom-property',
+    category: 'attaching css',
+    stats: {
+      type: 'declaration + function pair',
+      appliesTo: 'any element it\'s defined on, and its descendants (it inherits)',
+      inherits: 'yes',
+      commonValues: '--brand-color: #2563eb; used as var(--brand-color)',
+    },
+    whatItDoes:
+      "Defines a value once, under a name you choose, and lets any other declaration reference it with var(--name) instead of repeating the literal value. Change the one definition and every place that uses var() picks up the new value — the same problem a find-and-replace on a literal color across a whole file solves, except it's actually reliable and works live.",
+    whereItGoes:
+      'Defined inside a selector (:root, meaning the whole document, is the most common spot for a global one); referenced anywhere inside var() that a normal value would go.',
+    mistakes: [
+      "Defining it somewhere too narrow (like a single .card rule) and then trying to use it outside that selector's descendants — a custom property is only visible to the element it's defined on and that element's children, same as any other inherited value.",
+      'Forgetting the -- prefix — custom-color: blue; is just an unrecognized (and ignored) regular property, not a custom property.',
+    ],
+    example: ':root {\n  --brand-color: #2563eb;\n}\n\nbutton {\n  background: var(--brand-color);\n}\na {\n  color: var(--brand-color);\n}',
+    related: ['specificity & the cascade'],
   },
   {
     tag: '.class',
@@ -456,7 +488,26 @@ export const CSS_NEST: NestEntry[] = [
       'Reaching for position to build a layout (like a row of cards) instead of flexbox or grid — position solves overlap/pinning problems, not general layout.',
     ],
     example: '.badge-wrap {\n  position: relative;\n}\n.badge {\n  position: absolute;\n  top: 0;\n  right: 0;\n}',
-    related: ['display'],
+    related: ['display', 'z-index'],
+  },
+  {
+    tag: 'z-index',
+    category: 'display & flow',
+    stats: {
+      type: 'property',
+      appliesTo: 'a positioned element (anything with position other than static)',
+      inherits: 'no',
+      commonValues: 'auto (default), 0, 10, 100, -1',
+    },
+    whatItDoes:
+      'When two positioned elements overlap, z-index decides which one renders on top — higher numbers sit above lower ones. It only has any effect on an element that also has position set to something other than the default static; on a static element it\'s silently ignored.',
+    whereItGoes: 'On the same element as a position declaration, whenever it needs to explicitly sit above or below something else it overlaps.',
+    mistakes: [
+      "Setting z-index on an element without also setting position — nothing happens, and it's easy to miss why.",
+      'Reaching for increasingly large values (999, 9999, 99999) to "win" a stacking fight instead of figuring out why the actual stacking order is wrong — usually a sign two unrelated parts of the page are fighting over the same numeric range with no real system.',
+    ],
+    example: '.dropdown {\n  position: absolute;\n  z-index: 10;\n}\n.modal-overlay {\n  position: fixed;\n  z-index: 100;\n}',
+    related: ['position'],
   },
   {
     tag: 'display: flex',

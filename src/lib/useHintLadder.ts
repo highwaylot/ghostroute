@@ -24,11 +24,18 @@ export function useHintLadder(activeKey: string) {
 }
 
 // How aggressively hints reveal depends on the Assistance level:
-// 1 (hands-off) never shows a hint; 2 (guided) reveals one every two
-// misses; 3 (full assist) reveals one after every miss, same as before.
-export function getHint(hints: string[], attempts: number, level: AssistLevel): string | null {
-  if (attempts === 0 || level === 1) return null;
+// 1 (hands-off) never auto-reveals; 2 (guided) reveals one every two
+// misses; 3 (full assist) reveals one after every miss. -1 means "nothing
+// auto-revealed yet" — separate from a manual, on-demand ask (see
+// PuzzlePane), which always works regardless of level.
+export function hintIndex(attempts: number, level: AssistLevel): number {
+  if (attempts === 0 || level === 1) return -1;
   const spacing = level === 2 ? 2 : 1;
-  const index = Math.floor((attempts - 1) / spacing);
-  return hints[Math.min(index, hints.length - 1)];
+  return Math.floor((attempts - 1) / spacing);
+}
+
+export function getHint(hints: string[], attempts: number, level: AssistLevel): string | null {
+  const i = hintIndex(attempts, level);
+  if (i < 0) return null;
+  return hints[Math.min(i, hints.length - 1)];
 }

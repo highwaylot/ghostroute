@@ -197,7 +197,26 @@ export const NEST: NestEntry[] = [
       'Leaving href empty or missing entirely — then it\'s not actually a link to anywhere.',
     ],
     example: '<a href="https://example.com">Visit</a>',
-    related: ['<nav>', '<img src="" alt="">'],
+    related: ['<nav>', '<img src="" alt="">', 'target="_blank" / rel=""'],
+  },
+  {
+    tag: 'target="_blank" / rel=""',
+    category: 'links & media',
+    stats: {
+      type: 'attributes, on <a>',
+      appliesTo: 'a link that should open somewhere new',
+      livesInside: 'the opening <a> tag',
+      commonValues: 'target="_blank" rel="noopener"',
+    },
+    whatItDoes:
+      'target="_blank" opens the link in a brand new tab instead of navigating the current page away. On its own, that new tab gets a handle back to the page that opened it (window.opener) — enough that a malicious destination could redirect your original tab to a phishing page while you\'re looking at the new one. rel="noopener" (or "noreferrer", which also strips the referrer) cuts that link off.',
+    whereItGoes: 'Both attributes go directly on the <a> tag, alongside href.',
+    mistakes: [
+      'Adding target="_blank" without rel="noopener" — the link works fine and looks correct, so this one is easy to ship without ever noticing the gap.',
+      'Assuming rel="noopener" is only needed for links to "untrusted" sites — it\'s a blanket best practice for every target="_blank" link, trusted destination or not.',
+    ],
+    example: '<a href="https://example.com" target="_blank" rel="noopener">Visit</a>',
+    related: ['<a href="">'],
   },
   {
     tag: '<img src="" alt="">',
@@ -320,7 +339,45 @@ export const NEST: NestEntry[] = [
     whereItGoes: 'As early as possible inside <head> — ideally the very first line inside it, since the browser needs this before it can safely read the rest of the page\'s text.',
     mistakes: ['Leaving it out — usually harmless for plain English text, but it\'s the first thing to check when special characters show up broken.'],
     example: '<head>\n  <meta charset="utf-8">\n</head>',
-    related: ['<head>'],
+    related: ['<head>', 'lang=""', '<meta name="viewport">'],
+  },
+  {
+    tag: 'lang=""',
+    category: 'document',
+    stats: {
+      type: 'attribute, on <html>',
+      appliesTo: 'the whole page',
+      livesInside: 'the opening <html> tag',
+      commonValues: 'en, en-US, es, fr, ja',
+    },
+    whatItDoes:
+      "Declares what language the page's text is written in. Screen readers use it to pick the right pronunciation rules — without it, English text read by a screen reader set to another language can come out with the wrong accent or cadence entirely. Browsers and translation tools (like an auto-translate prompt) also rely on it to know what they're looking at.",
+    whereItGoes: 'On the opening <html> tag — it applies to the entire document by default, and any element can override it locally with its own lang if a portion of the page is genuinely in a different language.',
+    mistakes: [
+      'Leaving it off entirely — it\'s easy to forget since the page still renders and looks completely normal without it; the effects only show up in tools that actually read the attribute.',
+      'Using a language name instead of its code — it\'s lang="en", not lang="English".',
+    ],
+    example: '<html lang="en">\n  ...\n</html>',
+    related: ['<html>'],
+  },
+  {
+    tag: '<meta name="viewport">',
+    category: 'document',
+    stats: {
+      type: 'HTML tag, lives in <head>',
+      appliesTo: 'how mobile browsers scale the page',
+      livesInside: '<head>',
+      commonValues: 'content="width=device-width, initial-scale=1"',
+    },
+    whatItDoes:
+      "Without it, mobile browsers render the page at a fake desktop-sized viewport (often 980px wide) and then zoom the whole thing out to fit the screen — tiny, unreadable text, and any @media (max-width: ...) query written for a phone never actually triggers, because the browser never admits the screen is narrow. This tag tells it to use the device's real width instead.",
+    whereItGoes: 'Inside <head>, alongside charset and title.',
+    mistakes: [
+      'Skipping it and then not understanding why responsive CSS media queries never seem to kick in on an actual phone — this tag is what makes a "narrow screen" query true in the first place.',
+      'Adding user-scalable=no to block pinch-zoom — this actively hurts accessibility for low-vision users and is rarely worth the tradeoff.',
+    ],
+    example: '<head>\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n</head>',
+    related: ['<meta charset="utf-8">'],
   },
   {
     tag: '<h1> – <h6>',
@@ -568,14 +625,15 @@ export const NEST: NestEntry[] = [
       livesInside: '<form>',
       typicallyHolds: 'n/a (self-contained)',
     },
-    whatItDoes: 'A box the user can type into or interact with. The type attribute changes its whole behavior — text, email, checkbox, radio, date, and more all use the same tag.',
+    whatItDoes: 'A box the user can type into or interact with. The type attribute changes its whole behavior — text, email, checkbox, radio, date, and more all use the same tag. Its name attribute is what actually labels the value when the form submits — a field with no name is invisible to whatever receives the submission, even though it displays and works fine on screen.',
     whereItGoes: 'Inside a <form>, usually paired with a <label>.',
     mistakes: [
       'Writing </input> — there\'s nothing to close.',
       'Leaving off type entirely — it defaults to a plain text box, which may not be what\'s intended.',
       'Skipping a paired <label> — makes the field much harder to use for screen reader users and anyone clicking to focus it.',
+      'Forgetting name — the field still renders and the user can still type into it, but its value is silently dropped from the submitted data since there\'s no key to attach it to.',
     ],
-    example: '<label for="email">Email</label>\n<input type="email" id="email">',
+    example: '<label for="email">Email</label>\n<input type="email" id="email" name="email">',
     related: ['<label>', '<form>'],
   },
   {
@@ -617,10 +675,14 @@ export const NEST: NestEntry[] = [
       livesInside: '<body>',
       typicallyHolds: 'inputs, labels, and a submit button',
     },
-    whatItDoes: 'Groups form controls together so they can all be submitted at once as a single request.',
+    whatItDoes: 'Groups form controls together so they can all be submitted at once as a single request. action says where that request goes; method says how — get appends the data to the URL (fine for a search box, wrong for a password), post sends it in the request body instead, which is what most real forms want.',
     whereItGoes: 'Wrapping every <input>, <label>, <select>, and <button> that belong to that one submission.',
-    mistakes: ['Scattering inputs outside of any <form> — they\'ll render fine but won\'t submit anywhere as a group.'],
-    example: '<form>\n  <input type="text">\n  <button>Submit</button>\n</form>',
+    mistakes: [
+      'Scattering inputs outside of any <form> — they\'ll render fine but won\'t submit anywhere as a group.',
+      'Leaving off action — the form then submits back to the current page\'s own URL, which is sometimes intentional but often just forgotten.',
+      'Using the default method (get) for a form that submits sensitive data — a get submission puts every field\'s value directly in the URL, visible in browser history and server logs.',
+    ],
+    example: '<form action="/submit" method="post">\n  <input type="text" name="query">\n  <button>Submit</button>\n</form>',
     related: ['<input>', '<button>', '<label>'],
   },
   {

@@ -795,6 +795,12 @@
   flex: 1;
 }
 
+/* The hint ask is opt-in and low-stakes — it shouldn't compete for width
+   with Reset/Check, so it sits left, sized to its own label. */
+.ghost-tip-actions .btn-ghost {
+  flex: none;
+}
+
 .ghost-tip code {
   font-family: var(--mono);
   background: rgba(0, 0, 0, 0.25);
@@ -1153,6 +1159,20 @@
 .btn-secondary.btn-on-dark:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.16);
   color: #fff;
+}
+
+/* Lower-emphasis than secondary — for an optional, opt-in action (asking
+   for a hint) that shouldn't visually compete with Reset/Check. */
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-dim);
+  border-color: transparent;
+  margin-right: auto;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--ink);
+  text-decoration: underline;
 }
 
 .btn-destructive {

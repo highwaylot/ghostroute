@@ -19,6 +19,18 @@ export const KEY_INDEX: KeyEntry[] = [
     example: '<html>\n  ...\n</html>',
   },
   {
+    tag: 'lang=""',
+    category: 'document',
+    desc: 'Declares the page\'s language, on <html>. Screen readers and translation tools rely on it.',
+    example: '<html lang="en">',
+  },
+  {
+    tag: '<meta name="viewport">',
+    category: 'document',
+    desc: 'Tells mobile browsers to render at the device\'s actual width instead of zoomed-out desktop scale. Goes in <head>.',
+    example: '<meta name="viewport" content="width=device-width, initial-scale=1">',
+  },
+  {
     tag: '<head>',
     category: 'document',
     desc: 'Page metadata: title, styles, scripts. Not shown directly to visitors.',
@@ -107,6 +119,12 @@ export const KEY_INDEX: KeyEntry[] = [
     category: 'links & media',
     desc: 'A clickable link. href is where it goes.',
     example: '<a href="https://example.com">Visit</a>',
+  },
+  {
+    tag: 'target="_blank" / rel=""',
+    category: 'links & media',
+    desc: 'target="_blank" opens the link in a new tab. Always pair it with rel="noopener" — without it, the new tab gets risky access back to this page.',
+    example: '<a href="https://example.com" target="_blank" rel="noopener">Visit</a>',
   },
   {
     tag: '<img src="" alt="">',

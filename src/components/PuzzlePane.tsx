@@ -4,7 +4,7 @@ import type { Puzzle, Difficulty } from '../data/puzzles';
 import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { PreviewFrame } from './PreviewFrame';
-import { useHintLadder, getHint, type AssistLevel } from '../lib/useHintLadder';
+import { useHintLadder, hintIndex, type AssistLevel } from '../lib/useHintLadder';
 import { useSuccessFlash } from '../lib/useSuccessFlash';
 import { loadSolvedPuzzles, markPuzzleSolved } from '../lib/puzzleProgress';
 import { DIFFICULTY_VAR } from '../lib/difficulty';
@@ -47,6 +47,12 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
   const [flash, triggerFlash] = useSuccessFlash();
   const [solvedIds, setSolvedIds] = useState(loadSolvedPuzzles);
 
+  // How many hints have been manually requested (click-to-reveal), on top
+  // of whatever the assist level auto-reveals on a failed check — the
+  // Assistance level only controls the passive, fail-triggered cadence;
+  // an explicit "need a hint?" ask always works, at any level.
+  const [revealedCount, setRevealedCount] = useState(0);
+
   // Two independent collapse layers: a whole difficulty tier can be
   // folded away, and — separately — the solved puzzles inside a tier
   // (which have nothing left to do) start tucked under their own toggle
@@ -79,6 +85,7 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
     setCode(p.broken);
     setSolved(false);
     setJustFailed(false);
+    setRevealedCount(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item]);
 
@@ -87,6 +94,7 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
     setCode(p.broken);
     setSolved(false);
     setJustFailed(false);
+    setRevealedCount(0);
     navigate(`${basePath}/${p.id}`);
   };
 
@@ -114,8 +122,12 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
     reset();
   };
 
-  const hint = puzzle ? getHint(puzzle.hints, attempts, assist) : null;
-  const showGenericRetry = attempts > 0 && assist === 1;
+  const autoIdx = puzzle ? hintIndex(attempts, assist) : -1;
+  const shownIdx = Math.max(autoIdx, revealedCount - 1);
+  const hint = puzzle && shownIdx >= 0 ? puzzle.hints[Math.min(shownIdx, puzzle.hints.length - 1)] : null;
+  const hasMoreHints = puzzle ? shownIdx < puzzle.hints.length - 1 : false;
+  const requestHint = () => setRevealedCount((c) => Math.max(c, shownIdx + 2));
+  const showGenericRetry = attempts > 0 && assist === 1 && !hint;
 
   return (
     <div className="puzzle-pane">
@@ -245,6 +257,11 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
                 </p>
               )}
               <div className="ghost-tip-actions">
+                {hasMoreHints && (
+                  <button className="btn btn-ghost hint-request-btn" onClick={requestHint}>
+                    {hint ? 'Show another hint' : 'Need a hint?'}
+                  </button>
+                )}
                 <button className="btn btn-secondary" onClick={handleReset}>
                   Reset this puzzle
                 </button>
