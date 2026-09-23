@@ -15,6 +15,7 @@ type Props = {
   basePath: string;
   assist: AssistLevel;
   onAssistChange: (level: AssistLevel) => void;
+  onProgress?: () => void;
 };
 
 const TIERS: { id: Difficulty; label: string }[] = [
@@ -31,7 +32,7 @@ function snippet(broken: string): string {
   return trimmed.length > 34 ? trimmed.slice(0, 34) + '…' : trimmed;
 }
 
-export function PuzzlePane({ puzzles, basePath, assist, onAssistChange }: Props) {
+export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgress }: Props) {
   const { item } = useParams<{ item?: string }>();
   const navigate = useNavigate();
   const findPuzzle = (id: string | undefined) => (id ? puzzles.find((p) => p.id === id) : undefined);
@@ -45,6 +46,29 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange }: Props)
   const [justFailed, setJustFailed] = useState(false);
   const [flash, triggerFlash] = useSuccessFlash();
   const [solvedIds, setSolvedIds] = useState(loadSolvedPuzzles);
+
+  // Two independent collapse layers: a whole difficulty tier can be
+  // folded away, and — separately — the solved puzzles inside a tier
+  // (which have nothing left to do) start tucked under their own toggle
+  // so the visible list is mostly what's still unsolved.
+  const [collapsedTiers, setCollapsedTiers] = useState<Set<Difficulty>>(new Set());
+  const [openSolved, setOpenSolved] = useState<Set<Difficulty>>(new Set());
+  const toggleTier = (id: Difficulty) => {
+    setCollapsedTiers((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const toggleSolved = (id: Difficulty) => {
+    setOpenSolved((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   // A direct link to a specific puzzle (e.g. /solve/puzzles/missing-alt)
   // selects it on load, or when navigated to directly.
@@ -75,6 +99,7 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange }: Props)
       triggerFlash();
       markPuzzleSolved(puzzle.id);
       setSolvedIds(loadSolvedPuzzles());
+      onProgress?.();
     } else {
       registerFail();
       setJustFailed(true);
@@ -96,44 +121,95 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange }: Props)
     <div className="puzzle-pane">
       <div className="puzzle-list">
         {TIERS.map((t) => {
-          const tPuzzles = puzzles.filter((p) => p.difficulty === t.id);
-          const tSolved = tPuzzles.filter((p) => solvedIds.has(p.id)).length;
+          const tPuzzlesNumbered = puzzles
+            .map((p, i) => ({ p, num: i + 1 }))
+            .filter(({ p }) => p.difficulty === t.id);
+          const unsolved = tPuzzlesNumbered.filter(({ p }) => !solvedIds.has(p.id));
+          const solvedList = tPuzzlesNumbered.filter(({ p }) => solvedIds.has(p.id));
+          const tSolved = solvedList.length;
+          const tierCollapsed = collapsedTiers.has(t.id);
+          const solvedOpen = openSolved.has(t.id);
+
+          const card = ({ p, num }: { p: Puzzle; num: number }) => (
+            <button
+              key={p.id}
+              className={`tier-card ${p.id === selectedId ? 'active' : ''} ${
+                solvedIds.has(p.id) ? 'solved' : ''
+              }`}
+              onClick={() => selectPuzzle(p)}
+            >
+              <span className="tier-card-check" aria-hidden="true">
+                {solvedIds.has(p.id) ? '✓' : num}
+              </span>
+              <span className="tier-card-body">
+                <span className="tier-card-title">{p.title}</span>
+                <span className="tier-card-snip">{snippet(p.broken)}</span>
+              </span>
+            </button>
+          );
+
           return (
             <div
               key={t.id}
               className="tier-section"
               style={{ '--tier-accent': DIFFICULTY_VAR[t.id] } as CSSProperties}
             >
-              <div className="tier-section-label">
+              <button
+                className="tier-section-label"
+                onClick={() => toggleTier(t.id)}
+                aria-expanded={!tierCollapsed}
+              >
                 <span className="tier-section-dot" />
                 {t.label}
                 <span className="tier-section-count">
-                  {tPuzzles.length > 0 ? `${tSolved}/${tPuzzles.length}` : '0/0'}
+                  {tPuzzlesNumbered.length > 0 ? `${tSolved}/${tPuzzlesNumbered.length}` : '0/0'}
                 </span>
-              </div>
+                <svg className="tier-chev" width="10" height="10" viewBox="0 0 10 10" fill="none">
+                  <path
+                    d="M2 3.5 5 6.5 8 3.5"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
 
-              {tPuzzles.length === 0 ? (
-                <p className="puzzle-tier-empty">
-                  Coming soon — {TIERS[0].label} is fully stocked, start there.
-                </p>
-              ) : (
-                tPuzzles.map((p, i) => (
-                  <button
-                    key={p.id}
-                    className={`tier-card ${p.id === selectedId ? 'active' : ''} ${
-                      solvedIds.has(p.id) ? 'solved' : ''
-                    }`}
-                    onClick={() => selectPuzzle(p)}
-                  >
-                    <span className="tier-card-check" aria-hidden="true">
-                      {solvedIds.has(p.id) ? '✓' : i + 1}
-                    </span>
-                    <span className="tier-card-body">
-                      <span className="tier-card-title">{p.title}</span>
-                      <span className="tier-card-snip">{snippet(p.broken)}</span>
-                    </span>
-                  </button>
-                ))
+              {!tierCollapsed && (
+                <>
+                  {tPuzzlesNumbered.length === 0 ? (
+                    <p className="puzzle-tier-empty">
+                      Coming soon — {TIERS[0].label} is fully stocked, start there.
+                    </p>
+                  ) : (
+                    <>
+                      {unsolved.map(card)}
+                      {solvedList.length > 0 && (
+                        <div className="tier-solved-group">
+                          <button className="tier-solved-toggle" onClick={() => toggleSolved(t.id)}>
+                            <svg
+                              className={`tier-chev ${solvedOpen ? 'open' : ''}`}
+                              width="9"
+                              height="9"
+                              viewBox="0 0 10 10"
+                              fill="none"
+                            >
+                              <path
+                                d="M2 3.5 5 6.5 8 3.5"
+                                stroke="currentColor"
+                                strokeWidth="1.4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            {tSolved} solved
+                          </button>
+                          {solvedOpen && solvedList.map(card)}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </>
               )}
             </div>
           );

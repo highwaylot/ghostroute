@@ -1394,6 +1394,13 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  /* Capped to roughly the editor+output column's own height and scrolled
+     independently — a long puzzle list used to inflate the whole
+     accordion row, dragging the input/output panes out of view as you
+     scrolled down through it. Now the list scrolls in place instead. */
+  max-height: min(70vh, 620px);
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .tier-section {
@@ -1406,13 +1413,66 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 2px;
+  padding: 4px 2px;
   font-family: var(--mono);
   font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--ink-dim);
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.tier-section-label:hover {
+  color: var(--ink);
+}
+
+.tier-chev {
+  flex-shrink: 0;
+  color: #8b93c4;
+  transition: transform 0.2s ease;
+}
+
+.tier-section-label[aria-expanded='false'] .tier-chev {
+  transform: rotate(-90deg);
+}
+
+.tier-solved-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tier-solved-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 2px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-dim);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tier-solved-toggle:hover {
+  color: var(--ink);
+}
+
+.tier-solved-toggle .tier-chev {
+  transform: rotate(-90deg);
+}
+
+.tier-solved-toggle .tier-chev.open {
+  transform: rotate(0deg);
 }
 
 .tier-section-dot {

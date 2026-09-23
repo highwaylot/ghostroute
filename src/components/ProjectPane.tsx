@@ -18,9 +18,10 @@ const TIERS: { id: Difficulty; label: string }[] = [
 type Props = {
   projects: Project[];
   basePath: string;
+  onProgress?: () => void;
 };
 
-export function ProjectPane({ projects: PROJECTS, basePath }: Props) {
+export function ProjectPane({ projects: PROJECTS, basePath, onProgress }: Props) {
   const { item } = useParams<{ item?: string }>();
   const navigate = useNavigate();
   const urlIndex = PROJECTS.findIndex((p) => p.id === item);
@@ -72,6 +73,8 @@ export function ProjectPane({ projects: PROJECTS, basePath }: Props) {
       triggerFlash();
     }
     wasDone.current = allDone;
+    onProgress?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allDone, triggerFlash]);
 
   return (

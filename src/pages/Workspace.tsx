@@ -459,6 +459,9 @@ export default function Workspace() {
                       basePath={`${basePath}/solve/puzzles`}
                       assist={assist}
                       onAssistChange={setAssist}
+                      onProgress={() =>
+                        setPuzzlesSolved(trackPuzzles.filter((p) => loadSolvedPuzzles().has(p.id)).length)
+                      }
                     />
                   </div>
                 </div>
@@ -495,7 +498,11 @@ export default function Workspace() {
                 </button>
                 <div className="accordion-body">
                   <div className="accordion-body-inner">
-                    <ProjectPane projects={trackProjects} basePath={`${basePath}/solve/project`} />
+                    <ProjectPane
+                      projects={trackProjects}
+                      basePath={`${basePath}/solve/project`}
+                      onProgress={() => setProjectsDone(countCompletedProjects(trackProjects).done)}
+                    />
                   </div>
                 </div>
               </div>
