@@ -26,6 +26,8 @@ import { EMAIL_STEPS, EMAIL_STARTER } from '../data/emailSteps';
 import { EMAIL_CHAPTERS } from '../data/emailChapters';
 import { PUZZLES } from '../data/puzzles';
 import { PROJECTS } from '../data/projects';
+import { CSS_PUZZLES } from '../data/cssPuzzles';
+import { CSS_PROJECTS } from '../data/cssProjects';
 import { EMAIL_PUZZLES } from '../data/emailPuzzles';
 import { EMAIL_PROJECTS } from '../data/emailProjects';
 import type { AssistLevel } from '../lib/useHintLadder';
@@ -119,8 +121,8 @@ const TRACK_CONFIG = {
     starter: CSS_STARTER,
     codeKey: 'tagsmiths-css-code',
     stepKey: 'tagsmiths-css-step',
-    puzzles: null,
-    projects: null,
+    puzzles: CSS_PUZZLES,
+    projects: CSS_PROJECTS,
     nestLabel: 'the css book',
     nestKeyIndex: CSS_KEY_INDEX,
     nestCategories: CSS_KEY_CATEGORIES,
