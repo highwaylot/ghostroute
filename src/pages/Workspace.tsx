@@ -11,6 +11,8 @@ import { SandboxPane } from '../components/SandboxPane';
 import { ProjectPane } from '../components/ProjectPane';
 import { MyProjectsPane } from '../components/MyProjectsPane';
 import { NestPane } from '../components/NestPane';
+import { ThemeToggle } from '../components/ThemeToggle';
+import { useTheme } from '../lib/ThemeContext';
 import { KEY_INDEX, KEY_CATEGORIES } from '../data/keyIndex';
 import { getNestEntry } from '../data/nest';
 import { BLUEPRINTS } from '../data/blueprints';
@@ -228,6 +230,7 @@ export default function Workspace() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [track]);
   const [keyOpen, setKeyOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
   const [flash, triggerFlash] = useSuccessFlash();
   const [puzzlesSolved, setPuzzlesSolved] = useState(0);
   const [projectsDone, setProjectsDone] = useState(0);
@@ -338,6 +341,7 @@ export default function Workspace() {
         </nav>
 
         <div className="topbar-actions">
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
           <button
             className={`topbar-action ${mode === 'myprojects' ? 'active' : ''}`}
             onClick={() => setMode('myprojects')}

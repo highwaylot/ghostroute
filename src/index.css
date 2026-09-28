@@ -7,6 +7,13 @@
   --line: #e4e6f0;
   --panel: #f4f5fa;
   --bg: #fdfdfe;
+  /* A handful of components (cards, buttons, popovers) were hardcoded to
+     #fff before dark mode existed, since "white surface on a light page"
+     was the only case there was. --surface is that same idea made
+     theme-aware — the light value is still literally #fff, so nothing
+     about light mode changed, but dark mode can now give it a distinct,
+     visible-above-the-page value instead of leaving it stuck white. */
+  --surface: #fff;
   --ghost: #9aa8e8;
   --error: #d6455f;
   --ok: #1f9d6f;
@@ -16,6 +23,17 @@
   --diff-basic: #1f9d6f;
   --diff-medium: #c9820c;
   --diff-hard: #d6455f;
+  /* The hint/solved status chips were hardcoded pastel hex backgrounds —
+     fine on a light page, but a solid pale-amber or pale-green rectangle
+     reads as a jarring bright hole once the page around it goes dark.
+     Named as variables so the dark override below can swap them for a
+     translucent tint instead, the same technique .solved-banner already
+     used everywhere else in the app. */
+  --hint-bg: #fff4e0;
+  --hint-border: #ffdca0;
+  --hint-fg: #90540a;
+  --solved-chip-bg: #e6f7ef;
+  --solved-chip-border: #b6ecd2;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --sans: 'Manrope', system-ui, sans-serif;
 
@@ -25,6 +43,35 @@
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Explicit opt-in only — a toggle sets this attribute on <html> and
+   persists the choice, rather than the page silently following the OS
+   setting with no way to override it. useTheme.ts picks the initial
+   value from prefers-color-scheme the first time there's no saved
+   choice yet, so the *default* still respects the system, but once
+   someone's picked a side, that's what they get. */
+:root[data-theme='dark'] {
+  --navy: #0a0e24;
+  --ink: #e9ecfb;
+  --ink-dim: #9aa4d4;
+  --line: #2a3268;
+  --panel: #171c40;
+  --bg: #0d1130;
+  --surface: #161b3e;
+  --ghost: #9aa8e8;
+  --error: #e0637a;
+  --ok: #3ac981;
+  --diff-basic: #3ac981;
+  --diff-medium: #dfa33e;
+  --diff-hard: #e0637a;
+  --hint-bg: rgba(255, 178, 61, 0.14);
+  --hint-border: rgba(255, 178, 61, 0.35);
+  --hint-fg: #ffc470;
+  --solved-chip-bg: rgba(58, 201, 129, 0.14);
+  --solved-chip-border: rgba(58, 201, 129, 0.35);
+
+  color-scheme: dark;
 }
 
 * {

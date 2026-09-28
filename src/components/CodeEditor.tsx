@@ -4,6 +4,7 @@ import { html } from '@codemirror/lang-html';
 import { linter, lintGutter, type Diagnostic as CMDiagnostic } from '@codemirror/lint';
 import { EditorView } from '@codemirror/view';
 import { runDiagnostics } from '../lib/diagnostics';
+import { useTheme } from '../lib/ThemeContext';
 
 type Props = {
   value: string;
@@ -26,17 +27,18 @@ const diagnosticsLinter = linter((view) => {
   return diagnostics;
 });
 
-const theme = EditorView.theme({
+const chrome = EditorView.theme({
   '&': { fontSize: '14px', height: '100%' },
   '.cm-scroller': { fontFamily: 'var(--mono)', lineHeight: '1.7' },
   '.cm-content': { padding: '12px 0' },
   '.cm-gutters': { paddingTop: 0 },
-  '.cm-lint-marker-error': { color: '#d6455f' },
-  '.cm-lint-marker-warning': { color: '#c98a1a' },
+  '.cm-lint-marker-error': { color: 'var(--error)' },
+  '.cm-lint-marker-warning': { color: 'var(--diff-medium)' },
 });
 
 export function CodeEditor({ value, onChange }: Props) {
   const viewRef = useRef<EditorView | null>(null);
+  const { theme } = useTheme();
 
   // @uiw/react-codemirror can silently fail to push an external `value`
   // change into the view once the user has typed in it themselves — the
@@ -69,10 +71,10 @@ export function CodeEditor({ value, onChange }: Props) {
     <CodeMirror
       value={value}
       height="100%"
-      theme="light"
+      theme={theme}
       // autoCloseTags off — auto-inserting closing tags as you type was
       // fighting the point of the route, which is writing the tag yourself.
-      extensions={[html({ autoCloseTags: false }), diagnosticsLinter, lintGutter(), theme]}
+      extensions={[html({ autoCloseTags: false }), diagnosticsLinter, lintGutter(), chrome]}
       onChange={onChange}
       onCreateEditor={(view) => {
         viewRef.current = view;
