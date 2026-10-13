@@ -69,6 +69,20 @@
   margin: 0 auto;
 }
 
+/* The mission line sits between the hero and the language tiles. The
+   hero carries 40px of bottom margin for the tiles' sake; pulling the
+   mission up with a negative top margin keeps the hero-to-mission gap
+   tight (they read as one unit) without touching the hero rule, which
+   other landing-style pages share. */
+.landing-mission {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: #b7c0f0;
+  max-width: 52ch;
+  margin: -16px auto 36px;
+}
+
 .landing-tiles {
   display: flex;
   gap: 16px;

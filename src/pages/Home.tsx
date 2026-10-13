@@ -4,7 +4,9 @@ import './Home.css';
 
 const LANGUAGES = [
   { id: 'html', label: 'html', to: '/html', ready: true },
-  { id: 'css', label: 'css', to: '/css', ready: false },
+  // CSS has no hub page (one track, not several), so it goes straight to
+  // its workspace rather than through a chooser the way html does.
+  { id: 'css', label: 'css', to: '/css/website', ready: true },
   { id: 'js', label: 'javascript', to: '/javascript', ready: false },
 ];
 
@@ -16,6 +18,10 @@ export default function Home() {
       </Link>
       <div className="landing-inner">
         <h1 className="landing-hero">code.</h1>
+        <p className="landing-mission">
+          coding is complicated. we're here to make it palatable — real concepts, for regular people,
+          in bites small enough to actually stick. still growing, still being built.
+        </p>
         <div className="landing-tiles">
           {LANGUAGES.map((lang) => (
             <Link key={lang.id} to={lang.to} className="landing-tile">

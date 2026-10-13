@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import HtmlHub from './pages/HtmlHub';
 import Workspace from './pages/Workspace';
@@ -25,10 +25,9 @@ function App() {
       <Route path="/html/email/:mode" element={<Workspace />} />
       <Route path="/html/email/:mode/:sub" element={<Workspace />} />
       <Route path="/html/email/:mode/:sub/:item" element={<Workspace />} />
-      <Route
-        path="/css"
-        element={<ComingSoon title="css" backTo="/" backLabel="code." previewTo="/css/website/route" />}
-      />
+      {/* The css track shipped — anything still pointing at /css (old
+          bookmarks, the former "coming soon" tile) lands on the real thing. */}
+      <Route path="/css" element={<Navigate to="/css/website" replace />} />
       <Route
         path="/javascript"
         element={<ComingSoon title="javascript" backTo="/" backLabel="code." />}
