@@ -50,15 +50,21 @@ export function GhostTip({ steps, current, code, assist, onAdvance, onReset, onS
     <div className={`ghost-tip ${justSolved ? 'solved' : ''}`}>
       {justSolved && <p className="solved-banner">✓ Correct — moving on</p>}
       <div className="txt">
+        {/* No "Target:" prefix — the card's STEP header already frames
+            this, and the word only read naturally for HTML, where `tag`
+            is a literal element. CSS/email steps put a rule pattern or a
+            concept name here ("padding", "bulletproof button"), and
+            "Target: padding — ..." reads wrong, worse when the `why` text
+            then explains what a selector "targets" in the same sentence. */}
         <p className="target">
-          Target: <code>{step.tag}</code> — {step.why}
+          <code>{step.tag}</code> — {step.why}
         </p>
         {hint && (
           <p className={`hint ${justFailed ? 'flash' : ''}`}>{hint}</p>
         )}
         {showGenericRetry && (
           <p className={`hint ${justFailed ? 'flash' : ''}`}>
-            Not quite yet — look closely at the target above and try again.
+            Not quite yet — look closely at the step above and try again.
           </p>
         )}
         {step.fact && (

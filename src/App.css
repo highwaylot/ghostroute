@@ -1355,11 +1355,15 @@
 }
 
 /* @uiw/react-codemirror wraps the actual editor in an extra
-   .cm-theme-light div with no height of its own — height:100% on
+   .cm-theme-<name> div with no height of its own — height:100% on
    .cm-editor alone resolves against that auto-height wrapper, which
    means "grow to fit content" instead of clip-and-scroll. Both need
-   an explicit height for the scroll container to actually cap. */
-.code-panel .cm-theme-light {
+   an explicit height for the scroll container to actually cap.
+   The wrapper class is derived from the theme prop (cm-theme-light /
+   cm-theme-dark), so this matches on the prefix rather than naming
+   one theme — hardcoding .cm-theme-light here silently broke scrolling
+   the moment dark mode was switched on. */
+.code-panel [class*='cm-theme'] {
   height: 100%;
 }
 

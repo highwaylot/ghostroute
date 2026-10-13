@@ -460,7 +460,12 @@ export default function Workspace() {
                 </button>
                 <div className="accordion-body">
                   <div className="accordion-body-inner">
+                    {/* Keyed by track: Workspace itself doesn't remount when the
+                        URL prefix changes (see the prevTrack effect above), so
+                        without this the pane keeps the previous track's
+                        selected puzzle id and its collapsed-tier state. */}
                     <PuzzlePane
+                      key={track}
                       puzzles={trackPuzzles}
                       basePath={`${basePath}/solve/puzzles`}
                       assist={assist}
@@ -505,6 +510,7 @@ export default function Workspace() {
                 <div className="accordion-body">
                   <div className="accordion-body-inner">
                     <ProjectPane
+                      key={track}
                       projects={trackProjects}
                       basePath={`${basePath}/solve/project`}
                       onProgress={() => setProjectsDone(countCompletedProjects(trackProjects).done)}
