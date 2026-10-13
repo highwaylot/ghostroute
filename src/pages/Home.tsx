@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
+import { CodeFlow } from '../components/CodeFlow';
 import './Home.css';
 
 const LANGUAGES = [
@@ -13,6 +14,7 @@ const LANGUAGES = [
 export default function Home() {
   return (
     <div className="landing">
+      <CodeFlow />
       <Link to="/" className="landing-brand">
         <Logo size={20} />
       </Link>

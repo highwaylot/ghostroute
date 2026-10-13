@@ -7,20 +7,43 @@
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
+  overflow: hidden;
+}
+
+/* The ambient canvas sits behind everything and never takes the pointer,
+   so the tiles are exactly as clickable as before it existed. Pong mode
+   flips pointer-events on (from the component) and dims the content so a
+   paddle-chasing mouse can't accidentally navigate away mid-game. */
+.code-flow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+.landing--pong .landing-inner {
+  opacity: 0.1;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
 }
 
 .landing-brand {
   position: absolute;
   top: 24px;
   left: 24px;
+  z-index: 2;
   text-decoration: none;
   color: var(--blue-bright);
 }
 
 .landing-inner {
+  position: relative;
+  z-index: 1;
   max-width: 780px;
   width: 100%;
   text-align: center;
+  transition: opacity 0.25s ease;
 }
 
 .landing-back {
