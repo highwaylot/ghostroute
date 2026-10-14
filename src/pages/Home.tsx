@@ -20,10 +20,7 @@ export default function Home() {
       </Link>
       <div className="landing-inner">
         <h1 className="landing-hero">code.</h1>
-        <p className="landing-mission">
-          coding is complicated. we're here to make it palatable — real concepts, for regular people,
-          in bites small enough to actually stick. still growing, still being built.
-        </p>
+        <p className="landing-mission">Average Joe Coding Dimenium</p>
         <div className="landing-tiles">
           {LANGUAGES.map((lang) => (
             <Link key={lang.id} to={lang.to} className="landing-tile">
