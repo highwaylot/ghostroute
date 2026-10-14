@@ -282,6 +282,60 @@ export const KEY_INDEX: KeyEntry[] = [
     desc: 'Holds markup that isn\'t rendered until JavaScript clones it in. Inert on its own.',
     example: '<template id="row">\n  <li></li>\n</template>',
   },
+  {
+    tag: '<details> / <summary>',
+    category: 'grouping',
+    desc: 'A built-in collapsible section. <summary> is the always-visible clickable heading; the rest shows on click. No JS needed.',
+    example: '<details>\n  <summary>More info</summary>\n  Hidden until clicked.\n</details>',
+  },
+  {
+    tag: 'data-*=""',
+    category: 'grouping',
+    desc: 'Your own custom attribute — any name starting with data-. Readable from JS and CSS, ignored by the browser otherwise.',
+    example: '<li data-id="42" data-state="done">Buy milk</li>',
+  },
+  {
+    tag: '<picture> / <source>',
+    category: 'links & media',
+    desc: 'Offers several versions of an image; the browser picks the first <source> it can use, falling back to the <img>.',
+    example: '<picture>\n  <source srcset="small.jpg" media="(max-width: 600px)">\n  <img src="large.jpg" alt="A view">\n</picture>',
+  },
+  {
+    tag: '<th scope="">',
+    category: 'layout',
+    desc: 'A header cell. scope="col" or "row" says which direction it labels; colspan/rowspan stretch a cell across several.',
+    example: '<th scope="col">Price</th>\n<td colspan="2">Total: $12</td>',
+  },
+  {
+    tag: '<thead> / <tbody>',
+    category: 'layout',
+    desc: 'Splits a table into header rows and data rows — lets the header stick, and gives CSS a handle on each part.',
+    example: '<table>\n  <thead><tr><th>Name</th></tr></thead>\n  <tbody><tr><td>Ann</td></tr></tbody>\n</table>',
+  },
+  {
+    tag: '<fieldset> / <legend>',
+    category: 'forms',
+    desc: 'Groups related fields under one title. Screen readers read the <legend> with each field — essential for radio groups.',
+    example: '<fieldset>\n  <legend>Size</legend>\n  <input type="radio" name="size"> Small\n</fieldset>',
+  },
+  {
+    tag: '<textarea>',
+    category: 'forms',
+    desc: 'A multi-line text box. Starting text goes between the tags, not in a value attribute.',
+    example: '<textarea name="message" rows="4"></textarea>',
+  },
+  {
+    tag: 'checked / required / disabled',
+    category: 'forms',
+    desc: 'On/off attributes — present means on, no value needed. checked="false" is still checked; remove it to turn off.',
+    example: '<input type="checkbox" checked>\n<input type="email" required>',
+  },
+  {
+    tag: 'aria-label=""',
+    category: 'other',
+    desc: 'A spoken name for an element with no visible text — an icon-only button, an <svg>. role says what kind of thing it is.',
+    example: '<button aria-label="Close">✕</button>',
+  },
 ];
 
 export const KEY_CATEGORIES = Array.from(new Set(KEY_INDEX.map((e) => e.category)));

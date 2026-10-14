@@ -134,6 +134,18 @@ export const CSS_KEY_INDEX: KeyEntry[] = [
     example: '.row {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 12px;\n}',
   },
   {
+    tag: 'display: grid',
+    category: 'grid',
+    desc: 'Turns an element into a grid container — children snap into rows and columns you define, for 2D layouts flexbox struggles with.',
+    example: '.gallery {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 16px;\n}',
+  },
+  {
+    tag: 'grid-template-columns',
+    category: 'grid',
+    desc: 'Defines the columns of a grid. fr units share leftover space; repeat() and auto-fit make it responsive without media queries.',
+    example: '.gallery {\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n}',
+  },
+  {
     tag: '@media',
     category: 'responsive basics',
     desc: 'Applies a block of CSS only when the screen matches a condition, usually a width.',
@@ -150,6 +162,60 @@ export const CSS_KEY_INDEX: KeyEntry[] = [
     category: 'interaction & polish',
     desc: 'Animates a property change smoothly over time instead of it jumping instantly.',
     example: 'button {\n  transition: opacity 0.2s ease;\n}\nbutton:hover {\n  opacity: 0.8;\n}',
+  },
+  {
+    tag: '::before / ::after',
+    category: 'selectors',
+    desc: 'Pseudo-elements that insert a styleable box before or after an element\'s content — decorative icons, quote marks, overlays — with no extra HTML.',
+    example: '.quote::before {\n  content: "“";\n  color: gray;\n}',
+  },
+  {
+    tag: 'width / height',
+    category: 'the box model',
+    desc: 'An element\'s size. min-width/max-width (and the height pair) set limits so it can flex between them.',
+    example: '.card {\n  width: 100%;\n  max-width: 480px;\n}',
+  },
+  {
+    tag: 'border-radius',
+    category: 'the box model',
+    desc: 'Rounds an element\'s corners. 50% on a square makes a circle.',
+    example: '.avatar {\n  border-radius: 50%;\n}',
+  },
+  {
+    tag: 'text-align',
+    category: 'color & type',
+    desc: 'Lines up text (and inline content) inside its container: left, center, right.',
+    example: 'h1 {\n  text-align: center;\n}',
+  },
+  {
+    tag: 'text-decoration / font-style',
+    category: 'color & type',
+    desc: 'Underlines, strikethroughs, and italics. text-decoration: none is how you un-underline a link.',
+    example: 'a {\n  text-decoration: none;\n}\n.note {\n  font-style: italic;\n}',
+  },
+  {
+    tag: 'overflow',
+    category: 'display & flow',
+    desc: 'What happens when content is bigger than its box: spill out (default), clip it, or scroll it.',
+    example: '.panel {\n  height: 200px;\n  overflow: auto;\n}',
+  },
+  {
+    tag: 'flex-direction',
+    category: 'flexbox',
+    desc: 'Which way a flex container lays its items out: row (default) or column. Flips which axis justify-content and align-items control.',
+    example: '.stack {\n  display: flex;\n  flex-direction: column;\n}',
+  },
+  {
+    tag: 'flex (grow / shrink / basis)',
+    category: 'flexbox',
+    desc: 'Set on a flex item: how much it grows into spare space, shrinks when squeezed, and what size it starts from. flex: 1 is the everyday "share the room equally."',
+    example: '.sidebar {\n  flex: 0 0 240px;\n}\n.content {\n  flex: 1;\n}',
+  },
+  {
+    tag: 'calc()',
+    category: 'responsive basics',
+    desc: 'Do math in a value, mixing units: calc(100% - 40px) is "full width minus the padding."',
+    example: '.main {\n  width: calc(100% - 240px);\n}',
   },
 ];
 
@@ -296,7 +362,7 @@ export const CSS_NEST: NestEntry[] = [
       'Chaining too many descendant selectors (nav ul li a span) — it works, but it\'s brittle: restructure the HTML slightly and the rule silently stops matching.',
     ],
     example: 'nav a { color: white; }      /* any <a> inside <nav>, any depth */\nnav > a { color: white; }    /* only <a> directly inside <nav> */',
-    related: [':hover / :first-child'],
+    related: [':hover / :first-child', '::before / ::after'],
   },
   {
     tag: ':hover / :first-child',
@@ -335,7 +401,7 @@ export const CSS_NEST: NestEntry[] = [
       'Setting box-sizing: border-box on one element but forgetting * { box-sizing: border-box; } globally — the two models mixed on the same page produce inconsistent sizing.',
     ],
     example: '* {\n  box-sizing: border-box;\n}\n\n.card {\n  width: 300px;\n  padding: 20px; /* included in that 300px, not added to it */\n}',
-    related: ['padding', 'border', 'margin'],
+    related: ['padding', 'border', 'margin', 'width / height'],
   },
   {
     tag: 'margin',
@@ -392,7 +458,7 @@ export const CSS_NEST: NestEntry[] = [
       'Not accounting for border adding to an element\'s total size under the default box-sizing — same gotcha as padding.',
     ],
     example: '.card {\n  border: 1px solid #ccc;\n  border-radius: 8px;\n}',
-    related: ['padding', 'box-sizing'],
+    related: ['padding', 'box-sizing', 'border-radius'],
   },
   {
     tag: 'color & background-color',
@@ -431,7 +497,7 @@ export const CSS_NEST: NestEntry[] = [
       'Setting font-size in px everywhere — it ignores a user\'s browser-level font size preference, unlike rem, which scales with it.',
     ],
     example: 'body {\n  font-family: system-ui, sans-serif;\n  font-size: 16px;\n}',
-    related: ['font-weight & line-height', 'color & background-color'],
+    related: ['font-weight & line-height', 'color & background-color', 'text-align', 'text-decoration / font-style'],
   },
   {
     tag: 'font-weight & line-height',
@@ -469,7 +535,7 @@ export const CSS_NEST: NestEntry[] = [
       'Using display: none to "hide" something that should stay in the accessibility tree (like a skip-navigation trick) — none removes it entirely, from sighted users and screen readers alike.',
     ],
     example: 'span.badge {\n  display: inline-block;\n  padding: 2px 8px;\n}',
-    related: ['position', 'display: flex'],
+    related: ['position', 'display: flex', 'display: grid', 'overflow'],
   },
   {
     tag: 'position',
@@ -526,7 +592,7 @@ export const CSS_NEST: NestEntry[] = [
       'Setting flex properties (justify-content, align-items) on the children instead of the container — those properties only do anything on the flex container itself.',
     ],
     example: '.row {\n  display: flex;\n  gap: 12px;\n}',
-    related: ['justify-content & align-items', 'flex-wrap & gap'],
+    related: ['justify-content & align-items', 'flex-wrap & gap', 'flex-direction', 'flex (grow / shrink / basis)', 'display: grid'],
   },
   {
     tag: 'justify-content & align-items',
@@ -545,7 +611,7 @@ export const CSS_NEST: NestEntry[] = [
       'Trying to use justify-content to center a single item vertically — that\'s align-items\' job in a row-direction flex container.',
     ],
     example: '.row {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}',
-    related: ['display: flex', 'flex-wrap & gap'],
+    related: ['display: flex', 'flex-wrap & gap', 'flex-direction'],
   },
   {
     tag: 'flex-wrap & gap',
@@ -584,7 +650,7 @@ export const CSS_NEST: NestEntry[] = [
       "Designing desktop-first with max-width queries added on top, instead of mobile-first with min-width — mobile-first is usually less CSS to override.",
     ],
     example: '.row {\n  flex-direction: row;\n}\n\n@media (max-width: 600px) {\n  .row {\n    flex-direction: column;\n  }\n}',
-    related: ['rem / % / vw'],
+    related: ['rem / % / vw', 'flex-direction', 'calc()', 'grid-template-columns'],
   },
   {
     tag: 'rem / % / vw',
@@ -603,7 +669,7 @@ export const CSS_NEST: NestEntry[] = [
       'Setting width: 100vw on an element inside a page that also has a vertical scrollbar — 100vw includes the scrollbar\'s width, causing a slight horizontal overflow.',
     ],
     example: '.container {\n  width: 90%;\n  max-width: 60rem;\n  padding: 2vw;\n}',
-    related: ['@media'],
+    related: ['@media', 'calc()', 'width / height'],
   },
   {
     tag: 'transition',
@@ -623,6 +689,227 @@ export const CSS_NEST: NestEntry[] = [
     ],
     example: 'button {\n  opacity: 1;\n  transition: opacity 0.2s ease;\n}\nbutton:hover {\n  opacity: 0.8;\n}',
     related: [':hover / :first-child'],
+  },
+  {
+    tag: '::before / ::after',
+    category: 'selectors',
+    stats: {
+      type: 'pseudo-element',
+      appliesTo: 'a generated box inside the element, before or after its content',
+      inherits: 'n/a (it inherits from its element like a child would)',
+      commonValues: 'content: ""; content: "→"; content: attr(data-label)',
+    },
+    whatItDoes:
+      'Creates an extra box inside an element — one just before its real content, one just after — that you can style like anything else, without adding a tag to the HTML. Decorative quote marks, an arrow after a link, a colored stripe down a card\'s edge, a dimming overlay: all ::before/::after. The box only appears if content is set, even to an empty string.',
+    whereItGoes:
+      'Appended to a selector with two colons: .card::before. Set content (required), then style it — most layouts give it position: absolute so it sits on top of or beside the element without pushing text around.',
+    mistakes: [
+      'Forgetting the content property — without it the pseudo-element doesn\'t render at all, even with a width, height, and background set. content: "" is enough.',
+      'Putting real text or meaning in it — screen readers mostly skip generated content, so anything a visitor needs to know belongs in the HTML, not in content.',
+      'Trying to use it on an <img> or <input> — elements that can\'t have children can\'t have ::before/::after either. Wrap them in a <span> and attach it there.',
+    ],
+    example: '.quote::before {\n  content: "“";\n  font-size: 2em;\n  color: gray;\n}\n.card::after {\n  content: "";\n  position: absolute;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.3);\n}',
+    related: ['descendant & child selectors', ':hover / :first-child', 'position'],
+  },
+  {
+    tag: 'width / height',
+    category: 'the box model',
+    stats: {
+      type: 'property',
+      appliesTo: 'block elements, flex/grid items, images — not plain inline text',
+      inherits: 'no',
+      commonValues: 'auto, 100%, 480px, 60rem; min-width / max-width to set limits',
+    },
+    whatItDoes:
+      'Sets how big an element is. auto (the default) means "as wide as the container, as tall as the content," which is right far more often than a fixed number. min-* and max-* set a floor and a ceiling, so width: 100% with max-width: 480px fills a phone screen and stops growing on a monitor.',
+    whereItGoes: 'On the element being sized. Remember box-sizing: without border-box, padding and border get added on top of whatever width you set.',
+    mistakes: [
+      'Setting a fixed height on a box that holds text — the moment the text wraps one more line, it spills out the bottom. Let height stay auto, or use min-height.',
+      'Setting width on an inline element like <a> or <span> and seeing nothing happen — inline elements ignore width and height. Change display first.',
+      'Using width: 100% plus padding, then wondering why it overflows — under the default box-sizing the padding is added to the 100%. Set box-sizing: border-box.',
+    ],
+    example: '.card {\n  width: 100%;\n  max-width: 480px;\n  min-height: 120px;\n}',
+    related: ['box-sizing', 'padding', 'rem / % / vw', 'overflow'],
+  },
+  {
+    tag: 'border-radius',
+    category: 'the box model',
+    stats: {
+      type: 'property',
+      appliesTo: 'any element',
+      inherits: 'no',
+      commonValues: '4px, 8px, 50%, 999px (a pill)',
+    },
+    whatItDoes:
+      'Rounds the corners of an element\'s box — the border, the background, and anything clipped by overflow all follow the curve. A small value softens a card; 50% on a square makes a circle; a huge value on a wide element makes a pill.',
+    whereItGoes: 'On the element whose corners should round. Works with or without a visible border — the background rounds too.',
+    mistakes: [
+      'Expecting the corners of a child image to round when only the parent has border-radius — the parent needs overflow: hidden to actually clip its children to the curve.',
+      'Using 50% on a non-square element hoping for a circle — it makes an ellipse. Make the width and height equal first.',
+      'Rounding every single element — a few consistent radii (say 4px for inputs, 12px for cards) read as a system; a different value on everything reads as noise.',
+    ],
+    example: '.avatar {\n  width: 48px;\n  height: 48px;\n  border-radius: 50%;\n  overflow: hidden;\n}',
+    related: ['border', 'overflow', 'width / height'],
+  },
+  {
+    tag: 'text-align',
+    category: 'color & type',
+    stats: {
+      type: 'property',
+      appliesTo: 'block containers — it aligns the inline content inside them',
+      inherits: 'yes',
+      commonValues: 'left (default), center, right, justify',
+    },
+    whatItDoes:
+      'Lines up the text — and any inline things like images or inline-block buttons — inside a block. It\'s set on the container, not on the text itself: text-align: center on a <div> centers everything inline inside that <div>.',
+    whereItGoes: 'On the block whose contents should align. It inherits, so setting it on <body> or a section cascades to everything inside.',
+    mistakes: [
+      'Using it to center a block element like a <div> or a card — it only moves inline content. A block centers with margin: 0 auto (plus a width), or with flexbox on its parent.',
+      'Setting it on the element you want moved rather than on its parent — text-align: center on a <span> does nothing; the <span> is the thing being aligned, not the thing aligning.',
+      'Reaching for justify on web text — it stretches spaces to fill the line, which without hyphenation produces rivers of white space in narrow columns.',
+    ],
+    example: 'h1 {\n  text-align: center;\n}\n.price {\n  text-align: right;\n}',
+    related: ['font-family & font-size', 'justify-content & align-items', 'margin'],
+  },
+  {
+    tag: 'text-decoration / font-style',
+    category: 'color & type',
+    stats: {
+      type: 'property',
+      appliesTo: 'any element containing text',
+      inherits: 'text-decoration: no (but propagates visually) — font-style: yes',
+      commonValues: 'text-decoration: none / underline / line-through; font-style: italic / normal',
+    },
+    whatItDoes:
+      'text-decoration draws a line through, under, or over text — underline is what every link gets by default, none removes it, line-through strikes it out. font-style switches between upright and italic. Together they cover most "make this text look different" needs that aren\'t weight or size.',
+    whereItGoes: 'On the text element. The single most common use is a { text-decoration: none; } to drop link underlines — then giving links some other signal they\'re clickable.',
+    mistakes: [
+      'Removing underlines from links in running text and giving them nothing else — color alone fails for colorblind readers; keep the underline there, or add it back on hover and focus at minimum.',
+      'Using font-style: italic on text that should be <em>, or text-decoration: line-through on text that should be <del> — the look is right but the meaning is lost. Use the semantic tag and let it style itself.',
+      'Trying to un-underline a child when the parent is underlined — text-decoration propagates to children and can\'t be removed from inside. Remove it on the parent.',
+    ],
+    example: 'a {\n  text-decoration: none;\n}\na:hover,\na:focus {\n  text-decoration: underline;\n}\n.old-price {\n  text-decoration: line-through;\n}',
+    related: ['font-weight & line-height', ':hover / :first-child'],
+  },
+  {
+    tag: 'overflow',
+    category: 'display & flow',
+    stats: {
+      type: 'property',
+      appliesTo: 'block containers with a set size',
+      inherits: 'no',
+      commonValues: 'visible (default), hidden, auto, scroll; overflow-x / overflow-y for one axis',
+    },
+    whatItDoes:
+      'Decides what happens when the content inside a box is bigger than the box. visible lets it spill out over whatever\'s next (the default, and usually the surprise). hidden clips it. auto adds a scrollbar only when needed; scroll always shows one. It only does anything once the box has a size the content can exceed.',
+    whereItGoes: 'On the container that has a fixed width or height. A box that just grows with its content never overflows, so there\'s nothing for the property to decide.',
+    mistakes: [
+      'Setting overflow: auto on a box with no height — it never overflows, so nothing scrolls. The box needs a height, max-height, or a flex/grid parent constraining it.',
+      'Using overflow: hidden to "fix" a layout problem without finding the cause — it clips the symptom. The content is still too big, and whatever got cut off is now invisible to everyone.',
+      'Forgetting that overflow: hidden also kills position: absolute children that reach outside the box — a dropdown menu inside an overflow: hidden container gets clipped at the edge.',
+    ],
+    example: '.log {\n  height: 240px;\n  overflow: auto;\n}\n.avatar {\n  border-radius: 50%;\n  overflow: hidden;\n}',
+    related: ['width / height', 'display', 'position', 'border-radius'],
+  },
+  {
+    tag: 'flex-direction',
+    category: 'flexbox',
+    stats: {
+      type: 'property (on the flex container)',
+      appliesTo: 'a flex container',
+      inherits: 'no',
+      commonValues: 'row (default), column, row-reverse, column-reverse',
+    },
+    whatItDoes:
+      'Sets which way a flex container lays its items out — side by side (row) or stacked (column). It also rotates the whole axis system: in a column, justify-content works vertically and align-items works horizontally, the reverse of a row. That swap is what trips people up.',
+    whereItGoes: 'On the flex container, next to display: flex. The classic use is a row on desktop that becomes a column inside a @media query on phones.',
+    mistakes: [
+      'Switching to column and then wondering why justify-content: center no longer centers horizontally — in a column, justify-content is the vertical axis. Use align-items: center for horizontal.',
+      'Reaching for flex-direction: column on a single element that should just stack normally — block elements already stack. Flex column is for when you also need the gap, alignment, or flex-grow behavior.',
+      'Using row-reverse or column-reverse to change visual order — keyboard and screen-reader order still follow the HTML, so visitors tab through it backwards. Reorder the HTML instead.',
+    ],
+    example: '.stack {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n\n@media (max-width: 600px) {\n  .row {\n    flex-direction: column;\n  }\n}',
+    related: ['display: flex', 'justify-content & align-items', '@media'],
+  },
+  {
+    tag: 'flex (grow / shrink / basis)',
+    category: 'flexbox',
+    stats: {
+      type: 'property (on each flex item)',
+      appliesTo: 'the children of a flex container',
+      inherits: 'no',
+      commonValues: 'flex: 1; flex: 0 0 240px; flex: 1 1 auto',
+    },
+    whatItDoes:
+      'The one flex property that goes on the items, not the container. flex-grow says how much of the spare space this item takes; flex-shrink says how much it gives up when there isn\'t enough; flex-basis is its starting size. flex: 1 means "grow to share the room equally"; flex: 0 0 240px means "exactly 240px, never grow, never shrink" — a fixed sidebar next to a stretchy main area.',
+    whereItGoes: 'On individual flex items — the children of whatever has display: flex. Different items can have different values; that\'s the point.',
+    mistakes: [
+      'Setting flex: 1 on the container instead of the items — it only means something on a child of a flex parent.',
+      'Expecting equal columns from flex: 1 when the items have very different content — flex: 1 shares the *spare* space equally, on top of each item\'s own content size. flex: 1 1 0 (or just flex: 1, which sets basis to 0) makes them truly equal.',
+      'Fighting a flex item that won\'t shrink below its content — a long word or an image sets a minimum. Add min-width: 0 to the item to let it shrink past that.',
+    ],
+    example: '.layout {\n  display: flex;\n}\n.sidebar {\n  flex: 0 0 240px;\n}\n.content {\n  flex: 1;\n  min-width: 0;\n}',
+    related: ['display: flex', 'flex-wrap & gap', 'width / height'],
+  },
+  {
+    tag: 'display: grid',
+    category: 'grid',
+    stats: {
+      type: 'property value',
+      appliesTo: 'a container, changing how its direct children lay out',
+      inherits: 'no',
+      commonValues: 'grid, inline-grid',
+    },
+    whatItDoes:
+      'Turns an element into a grid container: its direct children snap into rows and columns you define, in two dimensions at once. Flexbox is one line that wraps; grid is a true table of cells. A photo gallery, a dashboard of cards, a page with a header, sidebar, and main area — anything you\'d sketch as boxes on graph paper is grid.',
+    whereItGoes: 'On the container. On its own it does almost nothing visible — pair it with grid-template-columns to actually define the columns, and gap for spacing.',
+    mistakes: [
+      'Using grid for a simple row of items that just need to sit side by side — flexbox is simpler there. Grid earns its keep when both rows and columns need to line up.',
+      'Setting grid properties on the children and expecting a layout — like flexbox, the container owns the layout; children only need rules if they span cells.',
+      'Forgetting gap and adding margin to every child — gap puts even spacing between cells without the extra space at the edges that margins leave behind.',
+    ],
+    example: '.gallery {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 16px;\n}',
+    related: ['grid-template-columns', 'display: flex', 'flex-wrap & gap', 'display'],
+  },
+  {
+    tag: 'grid-template-columns',
+    category: 'grid',
+    stats: {
+      type: 'property (on the grid container)',
+      appliesTo: 'a grid container',
+      inherits: 'no',
+      commonValues: '1fr 1fr 1fr; repeat(3, 1fr); 240px 1fr; repeat(auto-fit, minmax(200px, 1fr))',
+    },
+    whatItDoes:
+      'Defines the columns of a grid — how many, and how wide. The fr unit is the key: it means "one share of whatever space is left," so 1fr 1fr 1fr is three equal columns and 240px 1fr is a fixed sidebar beside a stretchy main area. repeat(auto-fit, minmax(200px, 1fr)) fits as many 200px-minimum columns as will fit, then stretches them — a responsive grid with no media query at all.',
+    whereItGoes: 'On the grid container, alongside display: grid. grid-template-rows is the same idea for rows, though rows are usually left to size themselves from the content.',
+    mistakes: [
+      'Writing percentages instead of fr — 33% 33% 33% plus a gap overflows the container, because the percentages don\'t know about the gap. fr does.',
+      'Hard-coding a column count and then needing a media query to change it on phones — repeat(auto-fit, minmax(…)) handles that on its own.',
+      'Expecting items to span columns automatically because they\'re wide — each child takes exactly one cell unless you tell it otherwise with grid-column: span 2.',
+    ],
+    example: '.gallery {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 16px;\n}\n.sidebar-layout {\n  grid-template-columns: 240px 1fr;\n}',
+    related: ['display: grid', 'rem / % / vw', '@media'],
+  },
+  {
+    tag: 'calc()',
+    category: 'responsive basics',
+    stats: {
+      type: 'function',
+      appliesTo: 'any property that takes a length, percentage, or number',
+      inherits: 'n/a',
+      commonValues: 'calc(100% - 240px), calc(100vh - 64px), calc(1rem + 2vw)',
+    },
+    whatItDoes:
+      'Lets a value be arithmetic, and — the real power — lets that arithmetic mix units the browser otherwise can\'t combine. calc(100% - 240px) is "the container\'s width minus a fixed sidebar"; calc(100vh - 64px) is "the viewport minus the header." Neither is expressible as a single number.',
+    whereItGoes: 'Anywhere a length goes: width, height, padding, margin, font-size, top/left. Written as the function around the expression.',
+    mistakes: [
+      'Leaving out the spaces around + and - : calc(100%-240px) is invalid and the whole declaration is dropped. The spaces are required (multiply and divide don\'t need them, but it\'s consistent to space everything).',
+      'Using it where a simpler tool exists — calc(100% - 32px) for padding is what box-sizing: border-box already solves; calc for equal columns is what fr already solves.',
+      'Dividing by a value with a unit — calc(100% / 50px) isn\'t allowed; only the divisor must be a plain number.',
+    ],
+    example: '.main {\n  width: calc(100% - 240px);\n  min-height: calc(100vh - 64px);\n}',
+    related: ['rem / % / vw', 'width / height', '@media'],
   },
 ];
 
