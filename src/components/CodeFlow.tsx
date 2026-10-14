@@ -20,6 +20,24 @@ const AREA_PER_PARTICLE = 9000;
 const MOUSE_RADIUS = 130;
 const CLICK_RADIUS = 190;
 
+// Pong tuning. The cpu predicts where the ball will cross its line rather
+// than chasing the ball's current x — chasing can't keep up once the ball
+// is fast, which made it trivially beatable. AI_AIM_ERROR keeps it human:
+// a per-rally offset, so well-angled edge shots still get past it.
+const PONG_BASE_SPEED = 420;
+const PONG_SPEEDUP = 1.07;
+const PONG_MAX_SPEED = 1000;
+const AI_MAX_SPEED = 520;
+const AI_AIM_ERROR = 0.4; // fraction of half the paddle width
+
+// The easter egg's four letters drift among the digits; click them in
+// order and each lights green, the fourth starts the game. They're kept
+// out of the central content box: a letter drifting behind a language
+// tile would mean clicking it also navigates away.
+const LETTERS = ['p', 'o', 'n', 'g'];
+const LETTER_HIT_RADIUS = 22;
+const LETTER_MARGIN = 36;
+
 // Four draw buckets: 2 sizes × 2 tones. Particles are allocated in bucket
 // order so each frame sets font/fillStyle only four times.
 const BUCKET_FONT = ['12px', '12px', '16px', '16px'];
@@ -81,6 +99,61 @@ export function CodeFlow() {
       }
     };
 
+    // --- the p o n g letters ----------------------------------------------
+    const lx = new Float32Array(4);
+    const ly = new Float32Array(4);
+    const lvx = new Float32Array(4);
+    const lvy = new Float32Array(4);
+    const lphase = new Float32Array(4);
+    let lit = 0; // how many letters are lit, in order
+    // content box (the hero/mission/tiles), in canvas coords — letters stay outside it
+    const inner = { left: 0, top: 0, right: 0, bottom: 0 };
+    const measureInner = () => {
+      const el = host.querySelector('.landing-inner');
+      if (!el) return;
+      const h = host.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      inner.left = r.left - h.left - LETTER_MARGIN;
+      inner.top = r.top - h.top - LETTER_MARGIN;
+      inner.right = r.right - h.left + LETTER_MARGIN;
+      inner.bottom = r.bottom - h.top + LETTER_MARGIN;
+    };
+    const sidesHaveRoom = () => inner.left > 80 && width - inner.right > 80;
+    const spawnLetter = (i: number, fromBottom: boolean) => {
+      if (sidesHaveRoom()) {
+        const leftSide = Math.random() < 0.5;
+        lx[i] = leftSide ? 24 + Math.random() * (inner.left - 48) : inner.right + 24 + Math.random() * (width - inner.right - 48);
+        ly[i] = fromBottom ? height + 20 : 40 + Math.random() * (height - 80);
+      } else {
+        // narrow viewport: content spans the width, so use the top/bottom bands
+        lx[i] = 24 + Math.random() * (width - 48);
+        const topBand = inner.top > 80;
+        ly[i] = fromBottom ? height + 20 : topBand ? 30 + Math.random() * (inner.top - 60) : inner.bottom + 20;
+      }
+      lvx[i] = 0;
+      lvy[i] = -(9 + Math.random() * 7);
+      lphase[i] = Math.random() * Math.PI * 2;
+    };
+    const resetLetters = () => {
+      lit = 0;
+      for (let i = 0; i < 4; i++) spawnLetter(i, false);
+    };
+    // keep a letter out of the content box by pushing it to the nearest edge
+    const keepOut = (i: number) => {
+      const x = lx[i];
+      const y = ly[i];
+      if (x <= inner.left || x >= inner.right || y <= inner.top || y >= inner.bottom) return;
+      const dl = x - inner.left;
+      const dr = inner.right - x;
+      const dt = y - inner.top;
+      const db = inner.bottom - y;
+      const m = Math.min(dl, dr, dt, db);
+      if (m === dl) lx[i] = inner.left - 1;
+      else if (m === dr) lx[i] = inner.right + 1;
+      else if (m === dt) ly[i] = inner.top - 1;
+      else ly[i] = inner.bottom + 1;
+    };
+
     // --- input (window-level, never on the canvas in flow mode) -----------
     let mx = -9999;
     let my = -9999;
@@ -118,6 +191,15 @@ export function CodeFlow() {
         return;
       }
       burst(cx, cy);
+      if (mode !== 'flow') return;
+      // letter hit-test: only the next letter in sequence counts
+      const i = lit;
+      const dx = lx[i] - cx;
+      const dy = ly[i] - cy;
+      if (dx * dx + dy * dy <= LETTER_HIT_RADIUS * LETTER_HIT_RADIUS) {
+        lit++;
+        if (lit === 4) enterPong();
+      }
     };
 
     // --- pong ----------------------------------------------------------------
@@ -131,32 +213,44 @@ export function CodeFlow() {
       paddleW: 110,
       paddleH: 10,
       ballR: 7,
-      speed: 300,
+      speed: PONG_BASE_SPEED,
       serving: true,
       playerScore: 0,
       aiScore: 0,
+      aiOffset: 0,
       trail: new Float32Array(24 * 2),
       trailHead: 0,
     };
-    const serve = () => {
+    const setServing = (on: boolean) => {
+      pong.serving = on;
+      canvas.dataset.serving = on ? 'true' : 'false';
+    };
+    // Ball back to center, trail cleared, waiting on a serve — called on
+    // entering pong and after every point, so a scored point visibly
+    // resets instead of leaving the ball off-screen until the next click.
+    const resetBall = () => {
       pong.ballX = width / 2;
       pong.ballY = height / 2;
-      const angle = (Math.random() * 0.6 - 0.3) + (Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2);
-      pong.speed = 300;
+      pong.ballVX = 0;
+      pong.ballVY = 0;
+      pong.trail.fill(-100);
+      setServing(true);
+    };
+    const serve = () => {
+      const angle = (Math.random() * 0.8 - 0.4) + (Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2);
+      pong.speed = PONG_BASE_SPEED;
       pong.ballVX = Math.cos(angle) * pong.speed;
       pong.ballVY = Math.sin(angle) * pong.speed;
-      pong.serving = false;
+      pong.aiOffset = (Math.random() * 2 - 1) * AI_AIM_ERROR;
+      setServing(false);
     };
     const enterPong = () => {
       mode = 'pong';
       pong.playerScore = 0;
       pong.aiScore = 0;
-      pong.serving = true;
-      pong.ballX = width / 2;
-      pong.ballY = height / 2;
       pong.playerX = width / 2;
       pong.aiX = width / 2;
-      pong.trail.fill(-100);
+      resetBall();
       canvas.style.pointerEvents = 'auto';
       canvas.dataset.mode = 'pong';
       host.classList.add('landing--pong');
@@ -166,6 +260,7 @@ export function CodeFlow() {
       canvas.style.pointerEvents = 'none';
       canvas.dataset.mode = mode;
       host.classList.remove('landing--pong');
+      resetLetters();
       if (reduced) drawStatic();
     };
 
@@ -173,6 +268,11 @@ export function CodeFlow() {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && mode === 'pong') {
         exitPong();
+        return;
+      }
+      if (e.key === ' ' && mode === 'pong') {
+        e.preventDefault();
+        if (pong.serving) serve();
         return;
       }
       if (e.key.length !== 1) return;
@@ -200,6 +300,8 @@ export function CodeFlow() {
         if (px[i] > width) px[i] = Math.random() * width;
         if (py[i] > height) py[i] = Math.random() * height;
       }
+      measureInner();
+      for (let i = 0; i < 4; i++) keepOut(i);
       if (mode === 'static') drawStatic();
     };
     let resizeTimer = 0;
@@ -232,6 +334,51 @@ export function CodeFlow() {
     const drawStatic = () => {
       ctx.clearRect(0, 0, width, height);
       drawParticles(0.8);
+    };
+
+    const stepLetters = (dt: number, t: number) => {
+      const r2 = MOUSE_RADIUS * MOUSE_RADIUS;
+      for (let i = 0; i < 4; i++) {
+        const wobble = Math.sin(t * 0.0009 + lphase[i]) * 5;
+        lvx[i] += (wobble - lvx[i]) * Math.min(1, dt * 1.5);
+        lvy[i] += (-(9 + (i % 2) * 4) - lvy[i]) * Math.min(1, dt * 1.5);
+        if (mouseInside) {
+          const dx = lx[i] - mx;
+          const dy = ly[i] - my;
+          const d2 = dx * dx + dy * dy;
+          // letters drift away from the pointer gently, but less than the
+          // digits do — you need to be able to catch them
+          if (d2 < r2 && d2 > 0.01) {
+            const d = Math.sqrt(d2);
+            const k = (1 - d / MOUSE_RADIUS) * 40;
+            lvx[i] += (dx / d) * k * dt * 6;
+            lvy[i] += (dy / d) * k * dt * 6;
+          }
+        }
+        lx[i] += lvx[i] * dt;
+        ly[i] += lvy[i] * dt;
+        keepOut(i);
+        if (ly[i] < -24) spawnLetter(i, true);
+        if (lx[i] < 12) lx[i] = 12;
+        else if (lx[i] > width - 12) lx[i] = width - 12;
+      }
+    };
+
+    const drawLetters = () => {
+      ctx.font = `700 22px ${mono}`;
+      for (let i = 0; i < 4; i++) {
+        if (i < lit) {
+          ctx.strokeStyle = 'rgba(58, 201, 129, 0.45)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(lx[i], ly[i], 15, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(58, 201, 129, 0.95)';
+        } else {
+          ctx.fillStyle = 'rgba(200, 208, 255, 0.6)';
+        }
+        ctx.fillText(LETTERS[i], lx[i], ly[i]);
+      }
     };
 
     const stepParticles = (dt: number, t: number) => {
@@ -271,11 +418,24 @@ export function CodeFlow() {
 
     const stepPong = (dt: number) => {
       const p = pong;
-      if (mouseInside) p.playerX += (mx - p.playerX) * Math.min(1, dt * 18);
+      const topY = 34;
+      if (mouseInside) p.playerX += (mx - p.playerX) * Math.min(1, dt * 26);
       p.playerX = Math.max(p.paddleW / 2, Math.min(width - p.paddleW / 2, p.playerX));
-      // AI tracks the ball with limited speed so it's beatable
-      const aiTarget = p.ballVY < 0 ? p.ballX : width / 2;
-      const aiMax = 240 * dt;
+
+      // cpu: when the ball is coming, predict where it crosses the cpu's
+      // line (folding for wall bounces) and head there; otherwise drift
+      // back to center. Capped speed + the per-rally aim error keep it
+      // beatable without being a pushover.
+      let aiTarget = width / 2;
+      if (!p.serving && p.ballVY < 0) {
+        const t = (p.ballY - topY) / -p.ballVY;
+        let predX = p.ballX + p.ballVX * t;
+        const span = width - 2 * p.ballR;
+        predX = Math.abs(((predX - p.ballR) % (2 * span) + 2 * span) % (2 * span));
+        if (predX > span) predX = 2 * span - predX;
+        aiTarget = predX + p.ballR + p.aiOffset * (p.paddleW / 2);
+      }
+      const aiMax = AI_MAX_SPEED * dt;
       p.aiX += Math.max(-aiMax, Math.min(aiMax, aiTarget - p.aiX));
       p.aiX = Math.max(p.paddleW / 2, Math.min(width - p.paddleW / 2, p.aiX));
       if (p.serving) return;
@@ -294,17 +454,17 @@ export function CodeFlow() {
         p.ballVX = -Math.abs(p.ballVX);
       }
       const bottomY = height - 34;
-      const topY = 34;
       const hit = (paddleX: number, paddleY: number, dirUp: boolean) => {
         const withinX = Math.abs(p.ballX - paddleX) <= p.paddleW / 2 + p.ballR;
         const crossing = dirUp ? p.ballY + p.ballR >= paddleY && p.ballVY > 0 : p.ballY - p.ballR <= paddleY && p.ballVY < 0;
         if (!withinX || !crossing) return false;
         const offset = (p.ballX - paddleX) / (p.paddleW / 2); // -1..1
-        p.speed = Math.min(720, p.speed * 1.04);
-        const angle = offset * 0.9; // steer by where it hit the paddle
+        p.speed = Math.min(PONG_MAX_SPEED, p.speed * PONG_SPEEDUP);
+        const angle = offset * 1.0; // steer by where it hit the paddle
         p.ballVX = Math.sin(angle) * p.speed;
         p.ballVY = (dirUp ? -1 : 1) * Math.cos(angle) * p.speed;
         p.ballY = dirUp ? paddleY - p.ballR - 1 : paddleY + p.ballR + 1;
+        if (dirUp) p.aiOffset = (Math.random() * 2 - 1) * AI_AIM_ERROR; // fresh error each time it's sent back
         burst(p.ballX, p.ballY);
         return true;
       };
@@ -312,10 +472,10 @@ export function CodeFlow() {
 
       if (p.ballY > height + 30) {
         p.aiScore++;
-        p.serving = true;
+        resetBall();
       } else if (p.ballY < -30) {
         p.playerScore++;
-        p.serving = true;
+        resetBall();
       }
     };
 
@@ -353,7 +513,7 @@ export function CodeFlow() {
       ctx.fillStyle = 'rgba(200, 208, 255, 0.85)';
       ctx.fillText(`pong  ·  you ${p.playerScore} : ${p.aiScore} cpu`, width - 18, 20);
       ctx.fillStyle = 'rgba(154, 168, 232, 0.7)';
-      ctx.fillText(p.serving ? 'click to serve  ·  esc to quit' : 'esc to quit', width - 18, 40);
+      ctx.fillText(p.serving ? 'click or space to serve  ·  esc to quit' : 'esc to quit', width - 18, 40);
       ctx.textAlign = 'center';
     };
 
@@ -370,13 +530,22 @@ export function CodeFlow() {
         drawPong();
       } else {
         drawParticles(1);
+        stepLetters(dt, now);
+        drawLetters();
       }
     };
 
     // --- wire up ---------------------------------------------------------------
     resize();
     scatter();
+    resetLetters();
     canvas.dataset.mode = mode;
+    // Test seam: read-only snapshot of the parts a browser test can't see
+    // through the DOM. A function property, so it costs nothing per frame.
+    (canvas as HTMLCanvasElement & { __codeflow?: unknown }).__codeflow = {
+      letters: () => LETTERS.map((ch, i) => ({ ch, x: lx[i], y: ly[i], lit: i < lit })),
+      ball: () => ({ x: pong.ballX, y: pong.ballY, serving: pong.serving }),
+    };
     ro.observe(host);
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerdown', onPointerDown, { passive: true });
