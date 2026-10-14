@@ -35,8 +35,10 @@ const AI_AIM_ERROR = 0.4; // fraction of half the paddle width
 // out of the central content box: a letter drifting behind a language
 // tile would mean clicking it also navigates away.
 const LETTERS = ['p', 'o', 'n', 'g'];
-const LETTER_HIT_RADIUS = 22;
+const LETTER_HIT_RADIUS = 34;
+const LETTER_HOVER_RADIUS = 64; // a letter freezes while the cursor is this close, so it's catchable
 const LETTER_MARGIN = 36;
+const CLICK_BOOST = 1.12; // mid-rally click: ball speed multiplier
 
 // Four draw buckets: 2 sizes × 2 tones. Particles are allocated in bucket
 // order so each frame sets font/fillStyle only four times.
@@ -187,7 +189,17 @@ export function CodeFlow() {
       const cx = e.clientX - r.left;
       const cy = e.clientY - r.top;
       if (mode === 'pong') {
-        if (pong.serving) serve();
+        if (pong.serving) {
+          serve();
+        } else {
+          // click anywhere mid-rally to crank the ball up
+          const p = pong;
+          p.speed = Math.min(PONG_MAX_SPEED, p.speed * CLICK_BOOST);
+          const mag = Math.hypot(p.ballVX, p.ballVY) || 1;
+          p.ballVX = (p.ballVX / mag) * p.speed;
+          p.ballVY = (p.ballVY / mag) * p.speed;
+          burst(p.ballX, p.ballY);
+        }
         return;
       }
       burst(cx, cy);
@@ -336,25 +348,27 @@ export function CodeFlow() {
       drawParticles(0.8);
     };
 
+    const lhover = new Uint8Array(4);
     const stepLetters = (dt: number, t: number) => {
-      const r2 = MOUSE_RADIUS * MOUSE_RADIUS;
+      const hr2 = LETTER_HOVER_RADIUS * LETTER_HOVER_RADIUS;
       for (let i = 0; i < 4; i++) {
-        const wobble = Math.sin(t * 0.0009 + lphase[i]) * 5;
-        lvx[i] += (wobble - lvx[i]) * Math.min(1, dt * 1.5);
-        lvy[i] += (-(9 + (i % 2) * 4) - lvy[i]) * Math.min(1, dt * 1.5);
+        // Unlike the digits, letters never run from the cursor — and when
+        // it gets close they stop dead, so they can actually be clicked.
+        let hovered = 0;
         if (mouseInside) {
           const dx = lx[i] - mx;
           const dy = ly[i] - my;
-          const d2 = dx * dx + dy * dy;
-          // letters drift away from the pointer gently, but less than the
-          // digits do — you need to be able to catch them
-          if (d2 < r2 && d2 > 0.01) {
-            const d = Math.sqrt(d2);
-            const k = (1 - d / MOUSE_RADIUS) * 40;
-            lvx[i] += (dx / d) * k * dt * 6;
-            lvy[i] += (dy / d) * k * dt * 6;
-          }
+          if (dx * dx + dy * dy < hr2) hovered = 1;
         }
+        lhover[i] = hovered;
+        if (hovered) {
+          lvx[i] = 0;
+          lvy[i] = 0;
+          continue;
+        }
+        const wobble = Math.sin(t * 0.0009 + lphase[i]) * 4;
+        lvx[i] += (wobble - lvx[i]) * Math.min(1, dt * 1.5);
+        lvy[i] += (-(7 + (i % 2) * 3) - lvy[i]) * Math.min(1, dt * 1.5);
         lx[i] += lvx[i] * dt;
         ly[i] += lvy[i] * dt;
         keepOut(i);
@@ -365,17 +379,24 @@ export function CodeFlow() {
     };
 
     const drawLetters = () => {
-      ctx.font = `700 22px ${mono}`;
+      ctx.font = `700 26px ${mono}`;
+      ctx.lineWidth = 1.5;
       for (let i = 0; i < 4; i++) {
         if (i < lit) {
-          ctx.strokeStyle = 'rgba(58, 201, 129, 0.45)';
-          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = 'rgba(58, 201, 129, 0.5)';
           ctx.beginPath();
-          ctx.arc(lx[i], ly[i], 15, 0, Math.PI * 2);
+          ctx.arc(lx[i], ly[i], 18, 0, Math.PI * 2);
           ctx.stroke();
           ctx.fillStyle = 'rgba(58, 201, 129, 0.95)';
+        } else if (lhover[i]) {
+          // hovered: a ring says "this is a thing you can click"
+          ctx.strokeStyle = 'rgba(200, 208, 255, 0.5)';
+          ctx.beginPath();
+          ctx.arc(lx[i], ly[i], 18, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
         } else {
-          ctx.fillStyle = 'rgba(200, 208, 255, 0.6)';
+          ctx.fillStyle = 'rgba(200, 208, 255, 0.75)';
         }
         ctx.fillText(LETTERS[i], lx[i], ly[i]);
       }
@@ -423,10 +444,13 @@ export function CodeFlow() {
       p.playerX = Math.max(p.paddleW / 2, Math.min(width - p.paddleW / 2, p.playerX));
 
       // cpu: when the ball is coming, predict where it crosses the cpu's
-      // line (folding for wall bounces) and head there; otherwise drift
-      // back to center. Capped speed + the per-rally aim error keep it
+      // line (folding for wall bounces) and head there at full speed. When
+      // the ball is moving away it just lazily shadows the ball's x at a
+      // third of that — no snapping back to center after every hit, which
+      // read as robotic. Capped speed + the per-rally aim error keep it
       // beatable without being a pushover.
-      let aiTarget = width / 2;
+      let aiTarget = p.aiX;
+      let aiMax = AI_MAX_SPEED * dt;
       if (!p.serving && p.ballVY < 0) {
         const t = (p.ballY - topY) / -p.ballVY;
         let predX = p.ballX + p.ballVX * t;
@@ -434,8 +458,10 @@ export function CodeFlow() {
         predX = Math.abs(((predX - p.ballR) % (2 * span) + 2 * span) % (2 * span));
         if (predX > span) predX = 2 * span - predX;
         aiTarget = predX + p.ballR + p.aiOffset * (p.paddleW / 2);
+      } else if (!p.serving) {
+        aiTarget = p.ballX;
+        aiMax *= 0.35;
       }
-      const aiMax = AI_MAX_SPEED * dt;
       p.aiX += Math.max(-aiMax, Math.min(aiMax, aiTarget - p.aiX));
       p.aiX = Math.max(p.paddleW / 2, Math.min(width - p.paddleW / 2, p.aiX));
       if (p.serving) return;
@@ -513,7 +539,7 @@ export function CodeFlow() {
       ctx.fillStyle = 'rgba(200, 208, 255, 0.85)';
       ctx.fillText(`pong  ·  you ${p.playerScore} : ${p.aiScore} cpu`, width - 18, 20);
       ctx.fillStyle = 'rgba(154, 168, 232, 0.7)';
-      ctx.fillText(p.serving ? 'click or space to serve  ·  esc to quit' : 'esc to quit', width - 18, 40);
+      ctx.fillText(p.serving ? 'click or space to serve  ·  esc to quit' : 'click to speed up  ·  esc to quit', width - 18, 40);
       ctx.textAlign = 'center';
     };
 
@@ -544,7 +570,7 @@ export function CodeFlow() {
     // through the DOM. A function property, so it costs nothing per frame.
     (canvas as HTMLCanvasElement & { __codeflow?: unknown }).__codeflow = {
       letters: () => LETTERS.map((ch, i) => ({ ch, x: lx[i], y: ly[i], lit: i < lit })),
-      ball: () => ({ x: pong.ballX, y: pong.ballY, serving: pong.serving }),
+      ball: () => ({ x: pong.ballX, y: pong.ballY, serving: pong.serving, speed: pong.speed, aiX: pong.aiX }),
     };
     ro.observe(host);
     window.addEventListener('pointermove', onPointerMove, { passive: true });
