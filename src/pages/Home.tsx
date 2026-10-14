@@ -20,7 +20,7 @@ export default function Home() {
       </Link>
       <div className="landing-inner">
         <h1 className="landing-hero">code.</h1>
-        <p className="landing-mission">Average Joe Coding Dimenium</p>
+        <p className="landing-mission">we bring the complexity of code to the average person</p>
         <div className="landing-tiles">
           {LANGUAGES.map((lang) => (
             <Link key={lang.id} to={lang.to} className="landing-tile">
