@@ -342,6 +342,66 @@ export const KEY_INDEX: KeyEntry[] = [
     desc: 'A spoken name for an element with no visible text — an icon-only button, an <svg>. role says what kind of thing it is.',
     example: '<button aria-label="Close">✕</button>',
   },
+  {
+    tag: "<section> / <article>",
+    category: "layout",
+    desc: "Thematic chunk of a page (section) vs. a self-contained piece like a post or card (article).",
+    example: "<section>\n  <h2>Latest posts</h2>\n  <article>...</article>\n</section>",
+  },
+  {
+    tag: "<aside>",
+    category: "layout",
+    desc: "Related-but-secondary content: a sidebar, related links, a pull quote.",
+    example: "<aside>\n  <h2>Related</h2>\n  ...\n</aside>",
+  },
+  {
+    tag: "<address>",
+    category: "layout",
+    desc: "Contact details for the page or an article's author.",
+    example: "<address>\n  <a href=\"mailto:hi@example.com\">hi@example.com</a>\n</address>",
+  },
+  {
+    tag: "<input type=\"\">",
+    category: "forms",
+    desc: "The type attribute picks the control: text, email, number, checkbox, radio, date, file, submit...",
+    example: "<input type=\"email\" name=\"email\">\n<input type=\"checkbox\" name=\"tos\">",
+  },
+  {
+    tag: "style=\"\"",
+    category: "grouping",
+    desc: "Inline CSS on one element. Handy for a test, wrong for a site.",
+    example: "<p style=\"color: crimson;\">Sold out</p>",
+  },
+  {
+    tag: "<dl> / <dt> / <dd>",
+    category: "lists",
+    desc: "Description list: term and description pairs, for glossaries, specs and FAQs.",
+    example: "<dl>\n  <dt>HTML</dt>\n  <dd>Page structure.</dd>\n</dl>",
+  },
+  {
+    tag: "<sub> / <sup>",
+    category: "text",
+    desc: "Subscript (H\u2082O) and superscript (x\u00b2, footnote markers).",
+    example: "H<sub>2</sub>O and x<sup>2</sup>",
+  },
+  {
+    tag: "<abbr>",
+    category: "text",
+    desc: "An abbreviation, with its full form in title=\"\".",
+    example: "<abbr title=\"Cascading Style Sheets\">CSS</abbr>",
+  },
+  {
+    tag: "<time>",
+    category: "text",
+    desc: "A date or time, with the machine-readable value in datetime=\"\".",
+    example: "<time datetime=\"2026-03-03\">March 3rd</time>",
+  },
+  {
+    tag: "<kbd>",
+    category: "text",
+    desc: "Keyboard input: a key to press or text to type.",
+    example: "Press <kbd>Ctrl</kbd> + <kbd>S</kbd>",
+  },
 ];
 
 export const KEY_CATEGORIES = Array.from(new Set(KEY_INDEX.map((e) => e.category)));

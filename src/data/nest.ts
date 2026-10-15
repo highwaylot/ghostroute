@@ -39,7 +39,7 @@ export const NEST: NestEntry[] = [
       'Using more than one <main> on a page — there should only ever be one.',
     ],
     example: '<body>\n  <header>...</header>\n  <nav>...</nav>\n  <main>\n    <h1>Page title</h1>\n    <p>The actual content.</p>\n  </main>\n  <footer>...</footer>\n</body>',
-    related: ['<header>', '<nav>', '<footer>', '<body>'],
+    related: ['<header>', '<nav>', '<footer>', '<body>', '<section> / <article>', '<aside>'],
   },
   {
     tag: '<div>',
@@ -60,7 +60,7 @@ export const NEST: NestEntry[] = [
       'Reaching for <div> when a semantic tag fits better — if the box is your page\'s main content, header, or nav, use <main>/<header>/<nav> instead so the structure actually means something.',
     ],
     example: '<div class="card">\n  <h2>Title</h2>\n  <p>Some text.</p>\n</div>',
-    related: ['<span>', 'class=""', 'id=""'],
+    related: ['<span>', 'class=""', 'id=""', '<section> / <article>'],
   },
   {
     tag: '<span>',
@@ -101,7 +101,7 @@ export const NEST: NestEntry[] = [
       'Using class for something that should be unique — that\'s what id is for.',
     ],
     example: '<p class="highlight">Styled text</p>\n<p class="highlight">Also styled, same way</p>',
-    related: ['id=""', '<div>', '<span>', 'data-*=""'],
+    related: ['id=""', '<div>', '<span>', 'data-*=""', 'style=""'],
   },
   {
     tag: 'id=""',
@@ -161,7 +161,7 @@ export const NEST: NestEntry[] = [
       'Forgetting the links inside still need real href values to go anywhere.',
     ],
     example: '<nav>\n  <a href="/">Home</a>\n  <a href="/about">About</a>\n</nav>',
-    related: ['<header>', '<a href="">'],
+    related: ['<header>', '<a href="">', '<aside>'],
   },
   {
     tag: '<footer>',
@@ -182,7 +182,7 @@ export const NEST: NestEntry[] = [
       'Stuffing primary content into it because it\'s "at the bottom" — if visitors need it to use the page, it belongs in <main>.',
     ],
     example: '<footer>\n  <p>&copy; 2025 My Site</p>\n</footer>',
-    related: ['<header>', '<main>'],
+    related: ['<header>', '<main>', '<address>'],
   },
   {
     tag: '<a href="">',
@@ -277,7 +277,7 @@ export const NEST: NestEntry[] = [
       'Having more than one <html>, <head>, or <body> — there\'s only ever one of each.',
     ],
     example: '<!DOCTYPE html>\n<html>\n  <head>...</head>\n  <body>...</body>\n</html>',
-    related: ['<head>', '<body>'],
+    related: ['<head>', '<body>', '<!DOCTYPE html>'],
   },
   {
     tag: '<head>',
@@ -427,7 +427,7 @@ export const NEST: NestEntry[] = [
       'Forgetting to close it before the next <p> opens — browsers recover, but the page outline and any CSS targeting the paragraph get unpredictable.',
     ],
     example: '<p>This is the first paragraph.</p>\n<p>This is the second.</p>',
-    related: ['<h1> – <h6>', '<br>'],
+    related: ['<h1> – <h6>', '<br>', '<abbr>', '<time>', '<blockquote>'],
   },
   {
     tag: '<strong>',
@@ -446,7 +446,7 @@ export const NEST: NestEntry[] = [
       'Wrapping a whole paragraph in it — if everything is important, nothing is; it\'s for the specific words that carry the weight.',
     ],
     example: 'This step is <strong>required</strong> before continuing.',
-    related: ['<em>'],
+    related: ['<em>', '<mark>'],
   },
   {
     tag: '<em>',
@@ -521,7 +521,7 @@ export const NEST: NestEntry[] = [
       'Hiding something important in it because it "looks like a footnote" — the tag lowers emphasis; it doesn\'t make text any less binding.',
     ],
     example: '<p>$10/month. <small>Cancel anytime.</small></p>',
-    related: ['<p>'],
+    related: ['<p>', '<sub> / <sup>'],
   },
   {
     tag: '<mark>',
@@ -578,7 +578,7 @@ export const NEST: NestEntry[] = [
       'Indenting the contents of <pre> to match the surrounding HTML — every one of those spaces renders, since <pre> keeps whitespace exactly. The content starts at column one.',
     ],
     example: 'Use the <code>let</code> keyword.\n\n<pre><code>let x = 5;\nconsole.log(x);</code></pre>',
-    related: ['<p>'],
+    related: ['<p>', '<kbd>'],
   },
   {
     tag: '<figure> / <figcaption>',
@@ -616,7 +616,7 @@ export const NEST: NestEntry[] = [
       'Using a list for things that aren\'t a list, just to get bullets or indentation — a nav menu is a list; a decorative arrow before a heading is CSS.',
     ],
     example: '<ul>\n  <li>Milk</li>\n  <li>Eggs</li>\n</ul>',
-    related: ['<ol> / <li>'],
+    related: ['<ol> / <li>', '<dl> / <dt> / <dd>'],
   },
   {
     tag: '<ol> / <li>',
@@ -635,7 +635,7 @@ export const NEST: NestEntry[] = [
       'Breaking one list into several <ol>s with text in between — the numbering restarts at 1 each time. Keep it one list, or use the start attribute to continue the count.',
     ],
     example: '<ol>\n  <li>Preheat the oven.</li>\n  <li>Mix the batter.</li>\n</ol>',
-    related: ['<ul> / <li>'],
+    related: ['<ul> / <li>', '<dl> / <dt> / <dd>'],
   },
   {
     tag: '<table> / <tr> / <td>',
@@ -692,7 +692,7 @@ export const NEST: NestEntry[] = [
       'Forgetting name — the field still renders and the user can still type into it, but its value is silently dropped from the submitted data since there\'s no key to attach it to.',
     ],
     example: '<label for="email">Email</label>\n<input type="email" id="email" name="email">',
-    related: ['<label>', '<form>', '<textarea>', 'checked / required / disabled'],
+    related: ['<label>', '<form>', '<textarea>', 'checked / required / disabled', '<input type="">'],
   },
   {
     tag: '<label>',
@@ -749,7 +749,7 @@ export const NEST: NestEntry[] = [
       'Using the default method (get) for a form that submits sensitive data — a get submission puts every field\'s value directly in the URL, visible in browser history and server logs.',
     ],
     example: '<form action="/submit" method="post">\n  <input type="text" name="query">\n  <button>Submit</button>\n</form>',
-    related: ['<input>', '<button>', '<label>', '<fieldset> / <legend>'],
+    related: ['<input>', '<button>', '<label>', '<fieldset> / <legend>', '<select> / <option>'],
   },
   {
     tag: '<!-- comment -->',
@@ -787,7 +787,7 @@ export const NEST: NestEntry[] = [
       'Putting code inside a <script> that also has a src — the inline code is ignored; it\'s one or the other.',
     ],
     example: '<script src="app.js"></script>',
-    related: ['<style>', '<link rel="stylesheet">'],
+    related: ['<style>', '<link rel="stylesheet">', '<!-- comment -->'],
   },
   {
     tag: '<link rel="stylesheet">',
@@ -827,7 +827,7 @@ export const NEST: NestEntry[] = [
       'Mixing it up with the style="" attribute — <style> is a block of rules in <head>; style="color: red" is a single inline declaration on one element. Inline wins over the block, which is usually not what you want.',
     ],
     example: '<head>\n  <style>\n    h1 { color: teal; }\n    p { line-height: 1.6; }\n  </style>\n</head>',
-    related: ['<link rel="stylesheet">', '<head>', '<script>'],
+    related: ['<link rel="stylesheet">', '<head>', '<script>', 'style=""'],
   },
   {
     tag: '<template>',
@@ -886,7 +886,7 @@ export const NEST: NestEntry[] = [
       'Relying on autoplay with sound — most browsers block autoplaying video with audio outright; muted autoplay is the only version that reliably works.',
     ],
     example: '<video src="clip.mp4" controls></video>',
-    related: ['<audio>'],
+    related: ['<audio>', '<iframe>'],
   },
   {
     tag: '<audio>',
@@ -1114,6 +1114,216 @@ export const NEST: NestEntry[] = [
     ],
     example: '<li data-id="42" data-state="done">Buy milk</li>',
     related: ['class=""', 'id=""'],
+  },
+  {
+    tag: "<section> / <article>",
+    category: "layout",
+    stats: {
+      closingTag: "required",
+      voidElement: "no",
+      livesInside: "<body>, usually inside <main>",
+      typicallyHolds: "a heading plus the content that belongs under it",
+    },
+    whatItDoes:
+      "The two workhorse grouping tags for page structure. <section> is a thematic chunk of a page that would make sense with its own heading \u2014 Features, Pricing, About. <article> is a self-contained piece that would still make sense lifted out and published on its own \u2014 a blog post, a news story, a product card, a comment. Both are block boxes that look exactly like <div> until you style them; the difference is the meaning they carry for screen readers, search engines, and the next person reading your code.",
+    whereItGoes:
+      "Inside <main> (or inside each other \u2014 an <article> can hold <section>s, and a <section> can list <article>s). Each one should start with a heading (<h2> or lower); if you can't think of a heading for it, it's probably a <div>, not a <section>.",
+    mistakes: [
+      "Using <section> as a generic wrapper for styling \u2014 if it has no heading and no theme of its own, it's a <div>. Sectioning tags without headings confuse outline tools and screen readers.",
+      "Picking <article> for anything 'important' \u2014 the test is 'would this still make sense on its own page?'. A pricing block wouldn't; a blog post or a product card would.",
+      "Nesting a new <h1> inside every section \u2014 keep one <h1> per page and use <h2>/<h3> inside sections so the heading levels still describe the structure.",
+    ],
+    example: "<main>\n  <section>\n    <h2>Latest posts</h2>\n    <article>\n      <h3>Why I switched to Linux</h3>\n      <p>It started with a broken update...</p>\n    </article>\n  </section>\n</main>",
+    related: ["<main>", "<div>", "<h1> \u2013 <h6>", "<aside>"],
+  },
+  {
+    tag: "<aside>",
+    category: "layout",
+    stats: {
+      closingTag: "required",
+      voidElement: "no",
+      livesInside: "<body> or <main>, beside the main content",
+      typicallyHolds: "related links, a sidebar, a pull quote, an ad",
+    },
+    whatItDoes:
+      "Content that is related to what's around it but not part of the main flow \u2014 a sidebar of related links, an author bio next to an article, a 'did you know' box, a pull quote. Screen readers announce it as complementary content, which lets a listener skip it to get to the point. Visually it's just a block box; the sidebar look comes from your CSS, not from the tag.",
+    whereItGoes:
+      "Inside <main> when it relates to the page's content, or directly in <body> as a site-wide sidebar. Rarely more than one or two per page \u2014 if everything is an aside, nothing is.",
+    mistakes: [
+      "Using it for the main navigation \u2014 that's <nav>. An <aside> is for content that's tangential, not for the way around the site.",
+      "Assuming it floats to the side on its own \u2014 <aside> says nothing about layout. It stacks like any block until flexbox or grid puts it beside the main column.",
+      "Putting the most important content in it because it 'looks like a sidebar' in the design \u2014 if the page wouldn't make sense without it, it belongs in <main>, not <aside>.",
+    ],
+    example: "<main>\n  <article>\n    <h1>Baking sourdough</h1>\n    <p>...</p>\n  </article>\n  <aside>\n    <h2>Related</h2>\n    <ul><li><a href=\"/starter\">Keeping a starter alive</a></li></ul>\n  </aside>\n</main>",
+    related: ["<section> / <article>", "<nav>", "<main>"],
+  },
+  {
+    tag: "<address>",
+    category: "layout",
+    stats: {
+      closingTag: "required",
+      voidElement: "no",
+      livesInside: "usually <footer>, or inside an <article>",
+      typicallyHolds: "contact details for the page or article author",
+    },
+    whatItDoes:
+      "Marks contact information for the nearest <article> or, in a <footer>, for the whole page \u2014 an email link, a street address, a phone number, a social handle. Browsers render it in italics by default, which you'll usually reset. The win is semantic: machines and assistive tech can find 'how to contact the author' without guessing.",
+    whereItGoes:
+      "In the site <footer> for the organisation's contact details, or inside an <article> for that article's author. Not for every street address on the page \u2014 a venue's address in the body text is just a <p>.",
+    mistakes: [
+      "Wrapping any postal address in it \u2014 it means 'contact info for this content's author', not 'this text is an address'. A list of store locations is ordinary content.",
+      "Putting headings or whole sections inside it \u2014 it holds contact lines only, typically <a href=\"mailto:\">, <a href=\"tel:\">, and line breaks.",
+      "Forgetting to reset the italic default with font-style: normal when it clashes with the design.",
+    ],
+    example: "<footer>\n  <address>\n    Questions? <a href=\"mailto:hi@tagsmiths.com\">hi@tagsmiths.com</a><br>\n    Tagsmiths, 12 Forge Lane\n  </address>\n</footer>",
+    related: ["<footer>", "<a href=\"\">", "<section> / <article>"],
+  },
+  {
+    tag: "<input type=\"\">",
+    category: "forms",
+    stats: {
+      closingTag: "none \u2014 void element",
+      voidElement: "yes",
+      livesInside: "<form>, next to its <label>",
+      typicallyHolds: "n/a (self-contained)",
+    },
+    whatItDoes:
+      "One tag, many controls. The type attribute decides what an <input> actually is: text (the default), email, password, number, tel, url, search, date, checkbox, radio, file, range, color, hidden, and submit. The type changes the keyboard a phone shows, the built-in validation the browser runs, and how the control looks. Picking the right type is free user experience: type=\"email\" gets the @ key on mobile and rejects 'bob' before the form ever submits.",
+    whereItGoes:
+      "On every <input>, even though text is the default \u2014 being explicit makes the form easier to read. Pair with a <label> whose for matches the input's id; checkbox and radio inputs also want the label's text so the user has something to click.",
+    mistakes: [
+      "Using type=\"text\" for everything \u2014 you lose the mobile keyboard switch, the free validation, and the native date/colour pickers.",
+      "Using type=\"number\" for things that aren't quantities (phone numbers, zip codes, card numbers) \u2014 it strips leading zeros and shows a spinner. Use type=\"tel\" or text with inputmode=\"numeric\".",
+      "Giving radio buttons in one group different name values \u2014 the browser only treats inputs with the same name as one group, so they stop being mutually exclusive.",
+    ],
+    example: "<label for=\"e\">Email</label>\n<input type=\"email\" id=\"e\" name=\"email\" required>\n\n<label><input type=\"checkbox\" name=\"tos\"> I agree</label>\n\n<input type=\"radio\" name=\"size\" value=\"s\" id=\"s\"> <label for=\"s\">Small</label>\n<input type=\"radio\" name=\"size\" value=\"l\" id=\"l\"> <label for=\"l\">Large</label>",
+    related: ["<input>", "<label>", "checked / required / disabled", "<form>"],
+  },
+  {
+    tag: "style=\"\"",
+    category: "grouping",
+    stats: {
+      closingTag: "n/a \u2014 attribute",
+      voidElement: "n/a",
+      livesInside: "any tag",
+      typicallyHolds: "CSS declarations, separated by semicolons",
+    },
+    whatItDoes:
+      "An inline style: CSS written directly on one element. style=\"color: red; margin-top: 8px\" applies those two declarations to that element and nothing else. It's the quickest way to test an idea and the worst way to style a site \u2014 the rules can't be reused, can't respond to :hover or a media query, and outrank nearly everything in your stylesheet, so they're hard to override later.",
+    whereItGoes:
+      "On a single element, in the opening tag, as a last resort: quick experiments, one-off values that genuinely come from data (a chart bar's width, a user-chosen colour), or emails where stylesheets get stripped. Everything else belongs in a <style> block or a .css file.",
+    mistakes: [
+      "Writing HTML-style attributes inside it \u2014 style=\"color=red\" does nothing. Inside the quotes it's CSS: property, colon, value, semicolon.",
+      "Using it to fix a layout problem on one element and then wondering why the .css rule for it stops working \u2014 inline beats class and id selectors. Only !important beats inline.",
+      "Trying to put :hover or @media in it \u2014 pseudo-classes and media queries can't live inline. The moment you need them, move the rule to a stylesheet.",
+    ],
+    example: "<p style=\"color: crimson; font-weight: bold;\">Sold out</p>\n\n<!-- same thing, the reusable way -->\n<p class=\"warning\">Sold out</p>",
+    related: ["class=\"\"", "id=\"\"", "<style>"],
+  },
+  {
+    tag: "<dl> / <dt> / <dd>",
+    category: "lists",
+    stats: {
+      closingTag: "required",
+      voidElement: "no",
+      livesInside: "<body>, like any list",
+      typicallyHolds: "<dt> terms, each followed by one or more <dd> descriptions",
+    },
+    whatItDoes:
+      "A description list: pairs of a term (<dt>) and its description (<dd>). It's the right list for a glossary, an FAQ, product specs (Weight: 1.2 kg), or metadata (Author: ..., Published: ...). Where <ul> says 'these are items' and <ol> says 'in this order', <dl> says 'this goes with that'. Browsers indent the <dd> a little by default.",
+    whereItGoes:
+      "Wrapping alternating <dt> and <dd> elements. One <dt> can have several <dd>s (a word with two meanings), and several <dt>s can share one <dd> (synonyms). You may wrap each pair in a <div> for styling.",
+    mistakes: [
+      "Using it for layout because the indent looks nice \u2014 if the items aren't term/description pairs, it's the wrong list.",
+      "Putting <li> inside it \u2014 <dl> holds <dt> and <dd> only. <li> belongs to <ul> and <ol>.",
+      "Reaching for a <table> for simple key/value specs \u2014 two-column data with no real rows to compare is a <dl>; <table> is for data that needs rows and columns.",
+    ],
+    example: "<dl>\n  <dt>HTML</dt>\n  <dd>The structure of a page: what things are.</dd>\n  <dt>CSS</dt>\n  <dd>The look of a page: how things appear.</dd>\n</dl>",
+    related: ["<ul> / <li>", "<ol> / <li>", "<table> / <tr> / <td>"],
+  },
+  {
+    tag: "<sub> / <sup>",
+    category: "text",
+    stats: {
+      closingTag: "required",
+      voidElement: "no",
+      livesInside: "inline, inside running text",
+      typicallyHolds: "a character or two",
+    },
+    whatItDoes:
+      "Subscript and superscript. <sub> drops text below the baseline and shrinks it (H<sub>2</sub>O, CO<sub>2</sub>); <sup> raises it (x<sup>2</sup>, 1<sup>st</sup>, a footnote marker<sup>3</sup>). They're meaning tags for typographical conventions, so chemistry, maths and footnotes read correctly even without CSS.",
+    whereItGoes:
+      "Inline, around just the characters that go up or down. Keep them short \u2014 a word, a number, a symbol.",
+    mistakes: [
+      "Using them to make text small \u2014 that's <small> or CSS font-size. <sub>/<sup> also shift the baseline, which looks wrong on ordinary text.",
+      "Wrapping a whole sentence or paragraph in them \u2014 they're for a few characters inside a line.",
+      "Letting them push the line taller \u2014 browsers often bump line-height around a <sup>; a line-height: 0 or position: relative tweak in CSS fixes the jitter.",
+    ],
+    example: "<p>Water is H<sub>2</sub>O. The area of a square is x<sup>2</sup>.<sup><a href=\"#note1\">1</a></sup></p>",
+    related: ["<small>", "<code> / <pre>", "<p>"],
+  },
+  {
+    tag: "<abbr>",
+    category: "text",
+    stats: {
+      closingTag: "required",
+      voidElement: "no",
+      livesInside: "inline, inside running text",
+      typicallyHolds: "an abbreviation or acronym",
+    },
+    whatItDoes:
+      "Marks an abbreviation or acronym and, through its title attribute, spells it out: <abbr title=\"Cascading Style Sheets\">CSS</abbr>. Hovering shows the expansion as a tooltip, and assistive tech can read it out. Browsers draw a dotted underline by default as a hint that there's more to see.",
+    whereItGoes:
+      "Inline, around the abbreviation itself, with title holding the full form. Convention: expand it on first use in the page, either with <abbr> or in plain text, then use the short form freely.",
+    mistakes: [
+      "Leaving off title \u2014 then the tag adds nothing the reader can use.",
+      "Wrapping every occurrence on the page \u2014 once per page (the first) is enough; a dotted underline on every 'HTML' is noise.",
+      "Relying on the tooltip for essential information \u2014 touch screens have no hover. If the expansion matters, write it in the text as well.",
+    ],
+    example: "<p>Pages are built with <abbr title=\"HyperText Markup Language\">HTML</abbr> and styled with <abbr title=\"Cascading Style Sheets\">CSS</abbr>.</p>",
+    related: ["<em>", "<strong>", "<p>"],
+  },
+  {
+    tag: "<time>",
+    category: "text",
+    stats: {
+      closingTag: "required",
+      voidElement: "no",
+      livesInside: "inline, inside running text",
+      typicallyHolds: "a human-readable date or time",
+    },
+    whatItDoes:
+      "Marks a date, time, or duration and gives machines the exact value through datetime. The visible text can be friendly ('last Tuesday', 'March 3rd'); datetime carries the unambiguous ISO form (2026-03-03, 14:30, PT2H). Search engines use it for event dates and article publish dates, and scripts can read it without parsing prose.",
+    whereItGoes:
+      "Inline, around the date as the reader sees it, with datetime in a machine format: YYYY-MM-DD for dates, HH:MM for times, YYYY-MM-DDTHH:MM for both, P\u2026T\u2026 for durations.",
+    mistakes: [
+      "Skipping datetime when the visible text isn't already machine-readable \u2014 'next Friday' inside <time> with no datetime helps no one.",
+      "Writing datetime in a local format like 03/04/2026 \u2014 it must be ISO order (year-month-day) or browsers and crawlers ignore it.",
+      "Using it for anything time-flavoured, like 'a long time ago' \u2014 it's for a specific point or span that can be written as a datetime.",
+    ],
+    example: "<p>Published <time datetime=\"2026-03-03\">March 3rd</time>. Doors open at <time datetime=\"19:30\">7:30 pm</time>.</p>",
+    related: ["<p>", "<small>", "<abbr>"],
+  },
+  {
+    tag: "<kbd>",
+    category: "text",
+    stats: {
+      closingTag: "required",
+      voidElement: "no",
+      livesInside: "inline, inside running text",
+      typicallyHolds: "a key name or short typed input",
+    },
+    whatItDoes:
+      "Marks keyboard input: a key the reader should press or text they should type. Press <kbd>Ctrl</kbd> + <kbd>S</kbd>. It's the cousin of <code> \u2014 <code> is for code the computer runs, <kbd> is for what the human types. Browsers render it in a monospace font; a border and a little shadow in CSS makes it look like a keycap.",
+    whereItGoes:
+      "Inline, around each key name or the typed text. Nest a <kbd> per key inside an outer <kbd> for a combination if you want to style keys and the whole shortcut differently.",
+    mistakes: [
+      "Using <code> for keys and shortcuts \u2014 it reads as source code to assistive tech, and the keycap styling has nowhere to attach.",
+      "Writing the + inside the <kbd> \u2014 'Ctrl + S' as one chunk means you can't style the keys as keys. Put each key in its own <kbd>.",
+      "Marking up program output with it \u2014 what the computer prints back is <samp>, not <kbd>.",
+    ],
+    example: "<p>Save with <kbd>Ctrl</kbd> + <kbd>S</kbd>, or type <kbd>:wq</kbd> and press <kbd>Enter</kbd>.</p>",
+    related: ["<code> / <pre>", "<p>"],
   },
 ];
 

@@ -223,6 +223,114 @@ export const CSS_KEY_INDEX: KeyEntry[] = [
     desc: 'Do math in a value, mixing units: calc(100% - 40px) is "full width minus the padding."',
     example: '.main {\n  width: calc(100% - 240px);\n}',
   },
+  {
+    tag: "background",
+    category: "color & type",
+    desc: "Shorthand for background colour, image, gradient, size and position.",
+    example: ".hero {\n  background: url(hero.jpg) center / cover;\n}",
+  },
+  {
+    tag: "text-transform / letter-spacing",
+    category: "color & type",
+    desc: "Display text in UPPERCASE/Capitalised, and loosen or tighten the gap between letters.",
+    example: ".eyebrow {\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n}",
+  },
+  {
+    tag: "max-width / min-height",
+    category: "the box model",
+    desc: "Limits instead of fixed sizes: never wider than X, never shorter than Y.",
+    example: ".wrap {\n  max-width: 1100px;\n  margin: 0 auto;\n}",
+  },
+  {
+    tag: "box-shadow",
+    category: "the box model",
+    desc: "A shadow around the box: x, y, blur, spread, colour. Lifts cards off the page.",
+    example: ".card {\n  box-shadow: 0 4px 12px rgba(0,0,0,.15);\n}",
+  },
+  {
+    tag: "list-style",
+    category: "display & flow",
+    desc: "Which bullet or number a list shows. none removes bullets for nav bars.",
+    example: "nav ul {\n  list-style: none;\n  padding: 0;\n}",
+  },
+  {
+    tag: "object-fit",
+    category: "display & flow",
+    desc: "How an image fills a box of a different shape: cover crops, contain letterboxes.",
+    example: ".avatar {\n  width: 64px; height: 64px;\n  object-fit: cover;\n}",
+  },
+  {
+    tag: "float / clear",
+    category: "display & flow",
+    desc: "Wrap text around an image. Legacy layout tool: use flex/grid for columns.",
+    example: "img.left {\n  float: left;\n  margin-right: 16px;\n}",
+  },
+  {
+    tag: ":focus / :focus-visible",
+    category: "selectors",
+    desc: "Style the element that has keyboard focus. Restyle the ring, never remove it.",
+    example: "a:focus-visible {\n  outline: 2px solid #6366f1;\n}",
+  },
+  {
+    tag: ":nth-child() / :not()",
+    category: "selectors",
+    desc: "Select by position among siblings (odd, 3n) or exclude a match (:not(.active)).",
+    example: "tr:nth-child(odd) { background: #eee; }\nli:not(:last-child) { ... }",
+  },
+  {
+    tag: "!important",
+    category: "attaching css",
+    desc: "Forces a declaration to win over everything. For utilities and overrides, not for fixing selectors.",
+    example: ".hidden {\n  display: none !important;\n}",
+  },
+  {
+    tag: "inherit / initial",
+    category: "attaching css",
+    desc: "Keyword values: copy the parent's value, or reset to a default.",
+    example: "a { color: inherit; }\nbutton { font: inherit; }",
+  },
+  {
+    tag: "@font-face",
+    category: "color & type",
+    desc: "Load a custom font file and name it for font-family.",
+    example: "@font-face {\n  font-family: 'Inter';\n  src: url(inter.woff2);\n}",
+  },
+  {
+    tag: "grid-template-rows",
+    category: "grid",
+    desc: "Size the rows of a grid. auto 1fr auto makes a sticky-footer page.",
+    example: ".page {\n  grid-template-rows: auto 1fr auto;\n  min-height: 100vh;\n}",
+  },
+  {
+    tag: "grid-column / grid-row / grid-area",
+    category: "grid",
+    desc: "Place a grid item: which lines it spans, or which named area it fills.",
+    example: ".featured { grid-column: 1 / -1; }\nheader { grid-area: header; }",
+  },
+  {
+    tag: "opacity",
+    category: "interaction & polish",
+    desc: "Fade a whole element, 1 solid to 0 invisible. Still takes space at 0.",
+    example: ".btn:disabled {\n  opacity: 0.5;\n}",
+  },
+  {
+    tag: "cursor",
+    category: "interaction & polish",
+    desc: "Which mouse pointer to show. pointer makes custom buttons feel clickable.",
+    example: "button, .card {\n  cursor: pointer;\n}",
+  },
+  {
+    tag: "transform",
+    category: "interaction & polish",
+    desc: "Move, scale or rotate an element visually without affecting layout. Smooth to animate.",
+    example: ".card:hover {\n  transform: translateY(-4px);\n}",
+  },
+  {
+    tag: "animation / @keyframes",
+    category: "interaction & polish",
+    desc: "Self-running animation: define steps in @keyframes, play them with animation.",
+    example: "@keyframes spin { to { transform: rotate(360deg); } }\n.spinner { animation: spin 1s linear infinite; }",
+  },
 ];
 
 export const CSS_KEY_CATEGORIES = Array.from(new Set(CSS_KEY_INDEX.map((e) => e.category)));
@@ -252,7 +360,7 @@ export const CSS_NEST: NestEntry[] = [
       'Reaching for the style="" attribute instead — an inline style on one element beats every rule in the <style> block (and in your .css file), so a stray style="" is the classic reason a rule "doesn\'t work".',
     ],
     example: '<head>\n  <style>\n    body { font-family: system-ui, sans-serif; }\n    h1 { color: teal; }\n  </style>\n</head>',
-    related: ['<link rel="stylesheet">', 'selector { }', 'specificity & the cascade'],
+    related: ['<link rel="stylesheet">', 'selector { }', 'specificity & the cascade', '!important'],
   },
   {
     tag: '<link rel="stylesheet">',
@@ -312,7 +420,7 @@ export const CSS_NEST: NestEntry[] = [
       'Assuming "the CSS further down the file always wins" — an id selector earlier in the file still beats a class selector later, regardless of order.',
     ],
     example: '/* both match the same <a>, the id wins regardless of order */\n#nav a { color: red; }\n.nav a { color: blue; }',
-    related: ['.class', '#id'],
+    related: ['.class', '#id', '!important', 'inherit / initial'],
   },
   {
     tag: '--custom-property',
@@ -408,7 +516,7 @@ export const CSS_NEST: NestEntry[] = [
       'Adding a :hover style without a matching :focus style — a keyboard user tabbing through the page never triggers hover at all, and loses the same visual feedback.',
     ],
     example: 'button:hover, button:focus {\n  opacity: 0.8;\n}',
-    related: ['descendant & child selectors'],
+    related: ['descendant & child selectors', ':focus / :focus-visible', ':nth-child() / :not()', 'cursor'],
   },
   {
     tag: 'box-sizing',
@@ -485,7 +593,7 @@ export const CSS_NEST: NestEntry[] = [
       'Not accounting for border adding to an element\'s total size under the default box-sizing — same gotcha as padding.',
     ],
     example: '.card {\n  border: 1px solid #ccc;\n  border-radius: 8px;\n}',
-    related: ['padding', 'box-sizing', 'border-radius'],
+    related: ['padding', 'box-sizing', 'border-radius', 'box-shadow'],
   },
   {
     tag: 'color & background-color',
@@ -504,7 +612,7 @@ export const CSS_NEST: NestEntry[] = [
       'Expecting background-color to inherit like color does — a parent\'s background never bleeds down to children automatically; each element\'s own background is transparent by default.',
     ],
     example: 'body {\n  color: #222;\n  background-color: #fafafa;\n}',
-    related: ['font-family & font-size'],
+    related: ['font-family & font-size', 'background'],
   },
   {
     tag: 'font-family & font-size',
@@ -524,7 +632,7 @@ export const CSS_NEST: NestEntry[] = [
       'Setting font-size in px everywhere — it ignores a user\'s browser-level font size preference, unlike rem, which scales with it.',
     ],
     example: 'body {\n  font-family: system-ui, sans-serif;\n  font-size: 16px;\n}',
-    related: ['font-weight & line-height', 'color & background-color', 'text-align', 'text-decoration / font-style'],
+    related: ['font-weight & line-height', 'color & background-color', 'text-align', 'text-decoration / font-style', 'text-transform / letter-spacing', '@font-face'],
   },
   {
     tag: 'font-weight & line-height',
@@ -562,7 +670,7 @@ export const CSS_NEST: NestEntry[] = [
       'Using display: none to "hide" something that should stay in the accessibility tree (like a skip-navigation trick) — none removes it entirely, from sighted users and screen readers alike.',
     ],
     example: 'span.badge {\n  display: inline-block;\n  padding: 2px 8px;\n}',
-    related: ['position', 'display: flex', 'display: grid', 'overflow'],
+    related: ['position', 'display: flex', 'display: grid', 'overflow', 'float / clear', 'list-style'],
   },
   {
     tag: 'position',
@@ -696,7 +804,7 @@ export const CSS_NEST: NestEntry[] = [
       'Setting width: 100vw on an element inside a page that also has a vertical scrollbar — 100vw includes the scrollbar\'s width, causing a slight horizontal overflow.',
     ],
     example: '.container {\n  width: 90%;\n  max-width: 60rem;\n  padding: 2vw;\n}',
-    related: ['@media', 'calc()', 'width / height'],
+    related: ['@media', 'calc()', 'width / height', 'max-width / min-height'],
   },
   {
     tag: 'transition',
@@ -715,7 +823,7 @@ export const CSS_NEST: NestEntry[] = [
       'Transitioning all as a lazy catch-all — it can quietly animate properties that were never meant to (like layout-affecting ones), sometimes hurting performance.',
     ],
     example: 'button {\n  opacity: 1;\n  transition: opacity 0.2s ease;\n}\nbutton:hover {\n  opacity: 0.8;\n}',
-    related: [':hover / :first-child'],
+    related: [':hover / :first-child', 'transform', 'animation / @keyframes', 'opacity'],
   },
   {
     tag: '::before / ::after',
@@ -756,7 +864,7 @@ export const CSS_NEST: NestEntry[] = [
       'Using width: 100% plus padding, then wondering why it overflows — under the default box-sizing the padding is added to the 100%. Set box-sizing: border-box.',
     ],
     example: '.card {\n  width: 100%;\n  max-width: 480px;\n  min-height: 120px;\n}',
-    related: ['box-sizing', 'padding', 'rem / % / vw', 'overflow'],
+    related: ['box-sizing', 'padding', 'rem / % / vw', 'overflow', 'max-width / min-height', 'object-fit'],
   },
   {
     tag: 'border-radius',
@@ -776,7 +884,7 @@ export const CSS_NEST: NestEntry[] = [
       'Rounding every single element — a few consistent radii (say 4px for inputs, 12px for cards) read as a system; a different value on everything reads as noise.',
     ],
     example: '.avatar {\n  width: 48px;\n  height: 48px;\n  border-radius: 50%;\n  overflow: hidden;\n}',
-    related: ['border', 'overflow', 'width / height'],
+    related: ['border', 'overflow', 'width / height', 'box-shadow'],
   },
   {
     tag: 'text-align',
@@ -896,7 +1004,7 @@ export const CSS_NEST: NestEntry[] = [
       'Forgetting gap and adding margin to every child — gap puts even spacing between cells without the extra space at the edges that margins leave behind.',
     ],
     example: '.gallery {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 16px;\n}',
-    related: ['grid-template-columns', 'display: flex', 'flex-wrap & gap', 'display'],
+    related: ['grid-template-columns', 'display: flex', 'flex-wrap & gap', 'display', 'grid-template-rows', 'grid-column / grid-row / grid-area'],
   },
   {
     tag: 'grid-template-columns',
@@ -916,7 +1024,7 @@ export const CSS_NEST: NestEntry[] = [
       'Expecting items to span columns automatically because they\'re wide — each child takes exactly one cell unless you tell it otherwise with grid-column: span 2.',
     ],
     example: '.gallery {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 16px;\n}\n.sidebar-layout {\n  grid-template-columns: 240px 1fr;\n}',
-    related: ['display: grid', 'rem / % / vw', '@media'],
+    related: ['display: grid', 'rem / % / vw', '@media', 'grid-template-rows', 'grid-column / grid-row / grid-area'],
   },
   {
     tag: 'calc()',
@@ -937,6 +1045,384 @@ export const CSS_NEST: NestEntry[] = [
     ],
     example: '.main {\n  width: calc(100% - 240px);\n  min-height: calc(100vh - 64px);\n}',
     related: ['rem / % / vw', 'width / height', '@media'],
+  },
+  {
+    tag: "background",
+    category: "color & type",
+    stats: {
+      type: "shorthand property",
+      appliesTo: "any element",
+      inherits: "no",
+      commonValues: "a colour, url(image.jpg), a gradient, plus size / position / repeat",
+    },
+    whatItDoes:
+      "The shorthand for everything behind an element's content: colour, an image, a gradient, and how that image sits (background-size, background-position, background-repeat). background: #222 is the same as background-color: #222; background: url(hero.jpg) center / cover no-repeat drops an image in, centres it, scales it to fill, and stops it tiling. Gradients count as images: background: linear-gradient(to right, #0ea5e9, #6366f1).",
+    whereItGoes:
+      "On the element whose box should carry the colour or image \u2014 a hero <section>, a card, <body> for the page. The image sits behind the padding box and under the content, so text on top stays readable only if you keep contrast in mind.",
+    mistakes: [
+      "Writing background: red after a background-image rule and losing the image \u2014 the shorthand resets every background-* property you don't mention. Use background-color when you only mean the colour.",
+      "Forgetting background-size: cover (or the / cover part of the shorthand) \u2014 a large photo shows at its natural size and tiles, so you see the top-left corner four times.",
+      "Putting meaningful images in the background \u2014 a CSS background has no alt text. If the picture is content, it's an <img>; if it's decoration, background is right.",
+    ],
+    example: ".hero {\n  background: url(hero.jpg) center / cover no-repeat;\n  color: white;\n}\n.btn {\n  background: linear-gradient(to right, #0ea5e9, #6366f1);\n}\n.card { background-color: #fff; }",
+    related: ["color & background-color", "width / height", "opacity"],
+  },
+  {
+    tag: "text-transform / letter-spacing",
+    category: "color & type",
+    stats: {
+      type: "properties",
+      appliesTo: "text",
+      inherits: "yes",
+      commonValues: "uppercase | capitalize | none; 0.05em, 1px, -0.02em",
+    },
+    whatItDoes:
+      "Two small typographic dials. text-transform rewrites the case of text as it displays \u2014 uppercase for a label or button, capitalize for a title \u2014 without changing the HTML, so the source stays readable and copy-paste gives the original. letter-spacing adds (or removes) space between characters: a little positive spacing makes small uppercase text breathe; a touch of negative spacing tightens big headlines.",
+    whereItGoes:
+      "On the text element or a parent \u2014 both inherit. Common pairing: text-transform: uppercase; letter-spacing: 0.08em; font-size: 12px for an eyebrow label or nav link.",
+    mistakes: [
+      "Typing the text in capitals in the HTML instead \u2014 screen readers may spell out all-caps words letter by letter, and you can't undo it with CSS. Lowercase in HTML, uppercase in CSS.",
+      "Using px for letter-spacing on text that changes size \u2014 2px is loose on 12px text and invisible on 48px. em scales with the font.",
+      "Adding spacing to uppercase text and forgetting it also applies after the last letter \u2014 centred labels drift right. A matching negative margin-right, or padding-left equal to the spacing, recentres it.",
+    ],
+    example: ".eyebrow {\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  font-size: 12px;\n}\nh1 { letter-spacing: -0.02em; }",
+    related: ["font-family & font-size", "font-weight & line-height", "text-decoration / font-style"],
+  },
+  {
+    tag: "max-width / min-height",
+    category: "the box model",
+    stats: {
+      type: "properties",
+      appliesTo: "block and flex/grid items",
+      inherits: "no",
+      commonValues: "65ch, 1100px, 100%; 100vh, 3rem, 0",
+    },
+    whatItDoes:
+      "Limits rather than fixed sizes. width: 1100px is 1100px even on a 400px phone; max-width: 1100px means 'as wide as there is room, but never more than 1100px', which is how every centred content column is built. min-height says 'at least this tall, taller if the content needs it' \u2014 a full-screen hero with min-height: 100vh, or cards that line up at 3rem even when one is empty. max-height and min-width exist too and work the same way.",
+    whereItGoes:
+      "max-width on wrappers and text columns (65ch keeps lines readable), on images (max-width: 100% stops them overflowing their container), and on anything that must shrink on small screens. min-height on heroes, cards and footers that must not collapse.",
+    mistakes: [
+      "Using width for the content column and getting a horizontal scrollbar on phones \u2014 a fixed width can't shrink. max-width can.",
+      "Setting height: 100vh on a hero and then adding content \u2014 it overflows and overlaps the next section. min-height grows with the content.",
+      "Forgetting that max-width: 100% on an image measures the parent \u2014 with no parent width set, a 4000px photo still shows at 4000px. Give the container a width or use the img rule globally.",
+    ],
+    example: ".wrap {\n  max-width: 1100px;\n  margin: 0 auto;\n  padding: 0 16px;\n}\nimg { max-width: 100%; height: auto; }\n.hero { min-height: 100vh; }",
+    related: ["width / height", "margin", "rem / % / vw", "@media"],
+  },
+  {
+    tag: "box-shadow",
+    category: "the box model",
+    stats: {
+      type: "property",
+      appliesTo: "any element",
+      inherits: "no",
+      commonValues: "x y blur spread colour, e.g. 0 4px 12px rgba(0,0,0,.15); none",
+    },
+    whatItDoes:
+      "Draws a shadow around an element's box \u2014 the lift that makes a card look like it sits above the page. The value is offset-x, offset-y, then optional blur radius, optional spread, and a colour. 0 4px 12px rgba(0, 0, 0, 0.15) is a soft shadow slightly below the box; add inset to draw it inside instead. Several shadows can be stacked with commas, which is how subtle, realistic depth is built.",
+    whereItGoes:
+      "On cards, dropdowns, modals, buttons, and anything that should read as raised. It doesn't change layout \u2014 the shadow is painted outside the box without pushing neighbours \u2014 so it's safe to add anywhere, and it follows border-radius.",
+    mistakes: [
+      "Using opaque black (#000) \u2014 real shadows are translucent. A low-alpha rgba() lets the background show through and looks far less like a sticker.",
+      "Reaching for a big blur to make it 'pop' \u2014 a large hard shadow looks like a smear. Small y-offset, moderate blur, low alpha reads as depth; stack two for richness.",
+      "Expecting it to add space \u2014 it won't. If a shadow is clipped by a parent, the parent has overflow: hidden, not a missing margin.",
+    ],
+    example: ".card {\n  border-radius: 12px;\n  box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.12);\n}\n.card:hover { box-shadow: 0 12px 32px rgba(0,0,0,.18); }",
+    related: ["border", "border-radius", "transition", "overflow"],
+  },
+  {
+    tag: "list-style",
+    category: "display & flow",
+    stats: {
+      type: "shorthand property",
+      appliesTo: "<ul>, <ol>, <li>",
+      inherits: "yes",
+      commonValues: "none; disc | circle | square | decimal | lower-alpha; inside | outside",
+    },
+    whatItDoes:
+      "Controls the bullet or number on list items: which marker (disc, square, decimal, lower-roman...), whether it sits outside or inside the text block, and optionally an image. The single most-used value is none \u2014 it removes bullets entirely, which is step one of turning a <ul> into a nav bar or a card grid. list-style-type, list-style-position and list-style-image are the longhands.",
+    whereItGoes:
+      "On the <ul> or <ol> (it inherits down to the <li>s). Nav lists almost always get list-style: none plus margin: 0; padding: 0 to drop the browser's default indent.",
+    mistakes: [
+      "Removing the bullets and forgetting the default padding-left \u2014 the list still sits indented 40px. Reset padding and margin alongside list-style.",
+      "Using list-style: none and then also removing the <ul> for being 'pointless' \u2014 keep the list markup; the semantics are still a list, the styling is just different. (Safari drops list semantics when list-style is none; adding role=\"list\" restores them.)",
+      "Trying to colour the bullet with color \u2014 that colours the text too. Use the ::marker pseudo-element: li::marker { color: tomato; }.",
+    ],
+    example: "nav ul {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  display: flex;\n  gap: 16px;\n}\nol.steps { list-style: decimal inside; }",
+    related: ["display: flex", "padding", "margin", "::before / ::after"],
+  },
+  {
+    tag: "object-fit",
+    category: "display & flow",
+    stats: {
+      type: "property",
+      appliesTo: "<img>, <video>",
+      inherits: "no",
+      commonValues: "cover | contain | fill | none",
+    },
+    whatItDoes:
+      "How an image or video fills a box that isn't its natural shape. Give an <img> a fixed width and height and by default it squashes to fit (fill). object-fit: cover scales it to fill the box and crops the overflow \u2014 the right answer for thumbnails, avatars and card images. contain scales it to fit entirely inside, leaving empty bars. object-position chooses which part survives the crop (top, center, 20% 80%).",
+    whereItGoes:
+      "On the <img> or <video> itself, together with a width and height (or aspect-ratio) so there's a box for it to fit. Without a box of a different shape, object-fit has nothing to do.",
+    mistakes: [
+      "Setting width and height on a photo and shipping the squashed result \u2014 if the box isn't the image's ratio, you need object-fit: cover.",
+      "Putting object-fit on the wrapper <div> \u2014 it only applies to replaced elements like <img> and <video>. The wrapper needs overflow: hidden and the img needs object-fit.",
+      "Forgetting object-position when the crop cuts off faces \u2014 cover crops from the centre by default; object-position: top keeps heads in portraits.",
+    ],
+    example: ".avatar {\n  width: 64px;\n  height: 64px;\n  border-radius: 50%;\n  object-fit: cover;\n}\n.card img {\n  width: 100%;\n  aspect-ratio: 16 / 9;\n  object-fit: cover;\n  object-position: top;\n}",
+    related: ["width / height", "border-radius", "overflow"],
+  },
+  {
+    tag: "float / clear",
+    category: "display & flow",
+    stats: {
+      type: "properties",
+      appliesTo: "block elements",
+      inherits: "no",
+      commonValues: "left | right | none; clear: both",
+    },
+    whatItDoes:
+      "float pulls an element to the left or right edge of its container and lets text wrap around it \u2014 a photo beside a paragraph, a drop cap, a pull quote. clear tells a following element to drop below any floats instead of wrapping. Before flexbox and grid, floats were how every multi-column layout was built, which is why you'll meet them in older code and tutorials. Today they're for wrapping text around things, and nothing else.",
+    whereItGoes:
+      "On an image or figure inside running text, with a margin on the side the text wraps against. If a parent only contains floats it collapses to zero height; display: flow-root on the parent (the modern 'clearfix') makes it contain them.",
+    mistakes: [
+      "Building a page layout with floats in 2026 \u2014 columns, nav bars and card grids are flexbox or grid jobs. Floats need clearfix hacks and break the moment content heights differ.",
+      "Floating an element and wondering why the parent's background vanished \u2014 floated children are taken out of the flow, so the parent has no height. Add display: flow-root to the parent.",
+      "Floating the only child and then trying to centre it \u2014 a float can't be centred. Use flex or margin: auto on a block instead.",
+    ],
+    example: ".figure-left {\n  float: left;\n  margin: 0 16px 8px 0;\n}\n.article { display: flow-root; } /* contains the float */\n.footer { clear: both; }",
+    related: ["display", "display: flex", "display: grid", "margin"],
+  },
+  {
+    tag: ":focus / :focus-visible",
+    category: "selectors",
+    stats: {
+      type: "pseudo-classes",
+      appliesTo: "links, buttons, inputs, anything focusable",
+      inherits: "n/a",
+      commonValues: ":focus, :focus-visible, :focus-within",
+    },
+    whatItDoes:
+      "Styles the element that currently has keyboard focus \u2014 the one that will react to Enter or typing. Browsers draw a default outline ring so keyboard users can see where they are. :focus matches on any focus, including a mouse click; :focus-visible matches only when the browser thinks a visible ring is needed (keyboard navigation), which is usually what you want. :focus-within matches a parent while anything inside it is focused \u2014 handy for highlighting a whole form field.",
+    whereItGoes:
+      "Next to your :hover rules, on buttons, links and inputs. Replace the default ring with your own (outline: 2px solid var(--accent); outline-offset: 2px) rather than removing it.",
+    mistakes: [
+      "outline: none on :focus to get rid of the 'ugly ring' \u2014 this makes the site unusable by keyboard. Restyle the ring; never delete it.",
+      "Styling only :hover \u2014 a keyboard user never hovers. Every :hover state for an interactive element should have a :focus-visible twin, often the same rule: a:hover, a:focus-visible { ... }.",
+      "Using :focus for the fancy ring and getting it on every mouse click \u2014 that's what :focus-visible is for.",
+    ],
+    example: "button:focus-visible,\na:focus-visible {\n  outline: 2px solid #6366f1;\n  outline-offset: 2px;\n}\n.field:focus-within { border-color: #6366f1; }",
+    related: [":hover / :first-child", "border", "transition"],
+  },
+  {
+    tag: ":nth-child() / :not()",
+    category: "selectors",
+    stats: {
+      type: "pseudo-classes",
+      appliesTo: "any element",
+      inherits: "n/a",
+      commonValues: ":nth-child(2), :nth-child(odd), :nth-child(3n+1), :last-child, :not(.active)",
+    },
+    whatItDoes:
+      ":nth-child() picks elements by their position among siblings: tr:nth-child(odd) stripes a table, li:nth-child(3) hits the third item, .card:nth-child(3n) hits every third card (3, 6, 9). :first-child and :last-child are the common shortcuts. :not() flips a selector \u2014 li:not(:last-child) is every item except the last, which is the usual way to add a divider between items without one dangling at the end.",
+    whereItGoes:
+      "In the selector, after the element or class it narrows. Counting is 1-based and counts all siblings regardless of type; :nth-of-type counts only siblings of the same tag.",
+    mistakes: [
+      "Expecting :nth-child(2) to mean 'the second .card' \u2014 it means 'the element that is its parent's second child, if it's also a .card'. A heading before the cards shifts everything by one; :nth-of-type or a wrapper fixes it.",
+      "Writing :nth-child(0) or starting from 0 \u2014 the first child is 1. 3n+1 gives 1, 4, 7.",
+      "Using :not() to exclude by position but writing li:not(:last-child) when items are added dynamically out of order \u2014 still works, but if the 'last' item isn't visually last, prefer gap on the parent to spacing hacks.",
+    ],
+    example: "tr:nth-child(odd) { background: #f5f5f7; }\n.card:nth-child(3n) { margin-right: 0; }\nli:not(:last-child) { border-bottom: 1px solid #ddd; }\n.btn:not(.primary) { background: transparent; }",
+    related: [":hover / :first-child", "descendant & child selectors", "specificity & the cascade"],
+  },
+  {
+    tag: "!important",
+    category: "attaching css",
+    stats: {
+      type: "declaration flag",
+      appliesTo: "any declaration",
+      inherits: "n/a",
+      commonValues: "property: value !important;",
+    },
+    whatItDoes:
+      "A flag that makes one declaration beat every normal rule regardless of specificity or order. color: red !important wins over an id selector, an inline style, anything \u2014 except another !important with higher specificity. It exists for overriding styles you don't control (a third-party widget, a utility class that must always win) and for user stylesheets. Inside your own CSS it's almost always a sign that specificity has got away from you.",
+    whereItGoes:
+      "At the end of a declaration, before the semicolon. Realistic uses: utility classes like .hidden { display: none !important; }, overriding an embedded widget's inline styles, and print stylesheets. Not for 'making the rule work'.",
+    mistakes: [
+      "Reaching for it when a rule doesn't apply \u2014 the rule isn't applying for a reason (wrong selector, lower specificity, later rule). Find that; the fix is a better selector, not a bigger hammer.",
+      "Stacking it \u2014 once one rule is !important, the next override needs !important too, and the stylesheet becomes a war nobody wins. One is a smell; three is a rewrite.",
+      "Putting the space in the wrong place or the flag before the value \u2014 it's value !important;, with the flag last.",
+    ],
+    example: "/* legitimate: a utility that must always win */\n.visually-hidden { position: absolute !important; clip: rect(0 0 0 0) !important; }\n\n/* smell: fix the selector instead */\n.title { color: red !important; }",
+    related: ["specificity & the cascade", "<style>", "inherit / initial"],
+  },
+  {
+    tag: "inherit / initial",
+    category: "attaching css",
+    stats: {
+      type: "keyword values",
+      appliesTo: "any property",
+      inherits: "n/a",
+      commonValues: "inherit, initial, unset, revert",
+    },
+    whatItDoes:
+      "Four keywords every property accepts. inherit copies the parent's computed value, even for properties that don't inherit by default \u2014 a { color: inherit } is how links take the colour of surrounding text. initial resets to the property's spec default (often not what the browser's own stylesheet does). unset means inherit if the property normally inherits, otherwise initial. revert goes back to the browser's default stylesheet, which is usually what people mean when they say 'reset it'. Knowing which properties inherit (text and font properties do; box properties don't) explains half the 'why did that change' moments in CSS.",
+    whereItGoes:
+      "As the value of a property. Common: button, input { font: inherit; color: inherit } so form controls match the page; a { color: inherit }; and all: unset to strip a component bare before restyling it.",
+    mistakes: [
+      "Expecting initial to give the browser default \u2014 initial for display is inline, not the block that the browser gives a <div>. Use revert for 'browser default'.",
+      "Setting font-size on <body> and wondering why inputs ignore it \u2014 form controls don't inherit font by default in most browsers; font: inherit fixes it.",
+      "Using all: unset on a button and losing focus rings, cursor and keyboard behaviour \u2014 re-add outline on :focus-visible and cursor: pointer after.",
+    ],
+    example: "button, input, select {\n  font: inherit;\n  color: inherit;\n}\na { color: inherit; }\n.plain { all: unset; cursor: pointer; }",
+    related: ["specificity & the cascade", "--custom-property", "!important"],
+  },
+  {
+    tag: "@font-face",
+    category: "color & type",
+    stats: {
+      type: "at-rule",
+      appliesTo: "the whole stylesheet",
+      inherits: "n/a",
+      commonValues: "font-family, src: url(), font-weight, font-display",
+    },
+    whatItDoes:
+      "Loads a custom font file and gives it a name you can then use in font-family. Each @font-face block points at one file (one weight and style): src: url(inter-bold.woff2) with font-weight: 700. Once declared, font-family: 'Inter' works anywhere in the stylesheet, and the browser picks the right file for each weight. Google Fonts and similar services just generate these blocks for you.",
+    whereItGoes:
+      "At the top of the stylesheet, before any rule that uses the family. Use woff2 (smallest, universally supported), include font-display: swap so text shows in a fallback font while the file loads, and declare each weight you actually use \u2014 nothing more, because every file is a download.",
+    mistakes: [
+      "Declaring the family and then naming it differently in font-family \u2014 the names must match exactly, quotes and case included, or the fallback font shows.",
+      "Loading one weight and using several \u2014 the browser fakes bold and italic by smearing the glyphs (faux bold), which looks muddy. Declare a block per weight you use.",
+      "Skipping font-display \u2014 on a slow connection the text stays invisible until the font arrives. swap shows fallback text immediately.",
+    ],
+    example: "@font-face {\n  font-family: 'Inter';\n  src: url(/fonts/inter-regular.woff2) format('woff2');\n  font-weight: 400;\n  font-display: swap;\n}\nbody { font-family: 'Inter', system-ui, sans-serif; }",
+    related: ["font-family & font-size", "font-weight & line-height", "<link rel=\"stylesheet\">"],
+  },
+  {
+    tag: "grid-template-rows",
+    category: "grid",
+    stats: {
+      type: "property",
+      appliesTo: "grid containers",
+      inherits: "no",
+      commonValues: "auto 1fr auto; repeat(3, 120px); minmax(200px, auto)",
+    },
+    whatItDoes:
+      "The row-direction twin of grid-template-columns: explicitly sizes each row of the grid. Most grids leave rows alone and let content decide, but a few layouts need it \u2014 the classic sticky-footer page is grid-template-rows: auto 1fr auto on a min-height: 100vh container (header sized to content, main takes the rest, footer sized to content). Rows you don't define are 'implicit' and sized by grid-auto-rows.",
+    whereItGoes:
+      "On the grid container, alongside display: grid, when the rows need fixed or proportional heights. Combine with a tall container (min-height) or 1fr has no spare space to take.",
+    mistakes: [
+      "Writing grid-template-rows: 1fr 1fr and getting rows that grow to the tallest content anyway \u2014 1fr shares the container's height, so without a height on the container there's nothing to share.",
+      "Setting fixed px rows and watching content overflow them \u2014 content doesn't shrink to fit a row. minmax(120px, auto) gives a minimum but lets the row grow.",
+      "Defining three rows and adding a fourth item \u2014 the extra row is implicit and sized by grid-auto-rows (auto by default), not by your template.",
+    ],
+    example: ".page {\n  display: grid;\n  grid-template-rows: auto 1fr auto;\n  min-height: 100vh;\n}\n.gallery {\n  grid-template-columns: repeat(3, 1fr);\n  grid-auto-rows: minmax(160px, auto);\n}",
+    related: ["grid-template-columns", "display: grid", "max-width / min-height"],
+  },
+  {
+    tag: "grid-column / grid-row / grid-area",
+    category: "grid",
+    stats: {
+      type: "properties",
+      appliesTo: "grid items",
+      inherits: "no",
+      commonValues: "grid-column: 1 / 3; grid-column: span 2; grid-area: header",
+    },
+    whatItDoes:
+      "Tell a grid item which cells it occupies. grid-column: 1 / 3 stretches an item from line 1 to line 3 (two columns); span 2 says 'two columns from wherever you land'. grid-row works the same vertically. grid-area is the shortcut when the container names its regions with grid-template-areas \u2014 the item just says grid-area: sidebar. Lines are numbered from 1 at the start, and -1 is always the last line, so grid-column: 1 / -1 is 'full width' no matter how many columns there are.",
+    whereItGoes:
+      "On the child item, not the container. Count lines, not cells: a three-column grid has four column lines. For a named layout, put grid-template-areas on the container and grid-area on each child.",
+    mistakes: [
+      "Counting cells instead of lines \u2014 grid-column: 1 / 3 covers two cells, not three. Lines sit between and around the columns.",
+      "Placing items explicitly and leaving holes \u2014 items you don't place auto-flow into the next free cell, which is often not the one you expected. Place everything, or use grid-auto-flow: dense.",
+      "Using grid-area with a name the container never declared \u2014 the item is placed as if the property weren't there. The name must appear in grid-template-areas.",
+    ],
+    example: ".layout {\n  display: grid;\n  grid-template-columns: 240px 1fr;\n  grid-template-areas:\n    \"header header\"\n    \"sidebar main\";\n}\nheader { grid-area: header; }\naside { grid-area: sidebar; }\n.featured { grid-column: 1 / -1; }",
+    related: ["display: grid", "grid-template-columns", "grid-template-rows"],
+  },
+  {
+    tag: "opacity",
+    category: "interaction & polish",
+    stats: {
+      type: "property",
+      appliesTo: "any element",
+      inherits: "no",
+      commonValues: "0 to 1 (0.5 is half transparent)",
+    },
+    whatItDoes:
+      "How see-through an element is, from 1 (solid) to 0 (invisible). It fades the whole element \u2014 content, background, border, children \u2014 as one layer. Great for disabled states, hover fades, and fade-in animations, because it's cheap for the browser to animate. An element at opacity: 0 is still there: it takes up space and can still be clicked and tabbed to, unlike display: none.",
+    whereItGoes:
+      "On the element to fade, often paired with transition: opacity 200ms. For a transparent background that keeps text solid, use a colour with alpha (rgba, hsla, #rrggbbaa) on background-color instead of opacity.",
+    mistakes: [
+      "Using opacity to make a background translucent and discovering the text faded too \u2014 opacity fades everything. Use rgba() on the background.",
+      "Hiding things with opacity: 0 and leaving them clickable and focusable \u2014 invisible buttons still get tapped. Add visibility: hidden or pointer-events: none, or use display: none.",
+      "Dimming text with opacity for 'secondary' labels and failing contrast \u2014 opacity 0.5 grey on white is often unreadable. Pick an actual colour that passes contrast.",
+    ],
+    example: ".btn:disabled { opacity: 0.5; cursor: not-allowed; }\n.toast {\n  opacity: 0;\n  transition: opacity 200ms;\n}\n.toast.show { opacity: 1; }",
+    related: ["transition", "color & background-color", "display"],
+  },
+  {
+    tag: "cursor",
+    category: "interaction & polish",
+    stats: {
+      type: "property",
+      appliesTo: "any element",
+      inherits: "yes",
+      commonValues: "pointer | default | text | not-allowed | grab | move | wait | none",
+    },
+    whatItDoes:
+      "Which mouse pointer shows over an element. Browsers give links the hand (pointer) automatically but not buttons or anything else you make clickable, so cursor: pointer is the tiny rule that makes a custom button, card or icon feel interactive. not-allowed signals a disabled control; text is the I-beam; grab/grabbing suit drag handles. Touch screens ignore it entirely, so it's a hint, never the only one.",
+    whereItGoes:
+      "On anything with a click handler that isn't an <a> \u2014 buttons, clickable cards, tabs, close icons. Pair with a hover style; the cursor alone is easy to miss.",
+    mistakes: [
+      "Putting cursor: pointer on things that don't do anything \u2014 users click and nothing happens. Pointer is a promise.",
+      "Relying on it for affordance \u2014 there's no cursor on a phone. Make clickable things look clickable with colour, border or hover states too.",
+      "Forgetting cursor: not-allowed (or default) on a disabled button that inherited pointer from .btn \u2014 it still invites the click.",
+    ],
+    example: "button, .card[onclick], .tab { cursor: pointer; }\n.btn:disabled { cursor: not-allowed; }\n.handle { cursor: grab; }\n.handle:active { cursor: grabbing; }",
+    related: [":hover / :first-child", "opacity", "transition"],
+  },
+  {
+    tag: "transform",
+    category: "interaction & polish",
+    stats: {
+      type: "property",
+      appliesTo: "any element",
+      inherits: "no",
+      commonValues: "translateY(-2px), scale(1.05), rotate(45deg), translate(-50%, -50%)",
+    },
+    whatItDoes:
+      "Moves, scales, rotates or skews an element visually without touching the layout around it. The element keeps its original slot; only its painted result shifts. That makes transform the right tool for hover lifts (translateY(-2px)), subtle zooms (scale(1.03)), spinning icons (rotate(180deg)), and the centring trick: position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%). Browsers animate transforms on the GPU, so they stay smooth where animating top/left or width stutters.",
+    whereItGoes:
+      "On the element to move, usually in a :hover or active state with a transition on the base rule. Several functions can be combined in one value, applied right to left: transform: translateY(-2px) scale(1.02).",
+    mistakes: [
+      "Animating top/left/margin for movement \u2014 layout recalculates every frame and janks. Animate transform instead; same visual, far smoother.",
+      "Expecting neighbours to move out of the way \u2014 they won't; transform is purely visual. If space must change, use margin or layout.",
+      "Scaling text up with transform and getting blur \u2014 transform scales the rendered pixels. For text that should be bigger, change font-size.",
+    ],
+    example: ".card {\n  transition: transform 150ms, box-shadow 150ms;\n}\n.card:hover { transform: translateY(-4px); }\n.chev.open { transform: rotate(180deg); }\n.modal {\n  position: absolute; top: 50%; left: 50%;\n  transform: translate(-50%, -50%);\n}",
+    related: ["transition", "animation / @keyframes", "position", "box-shadow"],
+  },
+  {
+    tag: "animation / @keyframes",
+    category: "interaction & polish",
+    stats: {
+      type: "property + at-rule",
+      appliesTo: "any element",
+      inherits: "no",
+      commonValues: "name duration timing-function delay iteration-count; @keyframes name { from {} to {} }",
+    },
+    whatItDoes:
+      "Animation that runs on its own, without a state change to trigger it. @keyframes names a sequence of steps (from/to, or percentages) and animation plays it: animation: spin 1s linear infinite rotates a loading spinner forever; animation: fade-in 300ms ease-out plays a one-shot entrance. transition is for 'go from A to B when something changes'; animation is for 'play this sequence', including loops and multi-step choreography.",
+    whereItGoes:
+      "@keyframes at the top level of the stylesheet; the animation property on the element. Stick to transform and opacity inside keyframes for smoothness, and respect @media (prefers-reduced-motion: reduce) by shortening or removing animations for people who've asked for less motion.",
+    mistakes: [
+      "Writing the @keyframes name differently from the animation name \u2014 a typo means nothing plays, with no error.",
+      "Animating width, height, top or left \u2014 these force layout every frame and stutter. Animate transform and opacity.",
+      "Ignoring prefers-reduced-motion \u2014 looping or large motion can make some users ill. One media query at the bottom of the file turns it off for them.",
+    ],
+    example: "@keyframes spin {\n  from { transform: rotate(0deg); }\n  to { transform: rotate(360deg); }\n}\n.spinner { animation: spin 1s linear infinite; }\n\n@media (prefers-reduced-motion: reduce) {\n  .spinner { animation-duration: 3s; }\n}",
+    related: ["transition", "transform", "opacity", "@media"],
   },
 ];
 
