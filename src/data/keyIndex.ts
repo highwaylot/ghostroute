@@ -253,6 +253,12 @@ export const KEY_INDEX: KeyEntry[] = [
     example: '<link rel="stylesheet" href="style.css">',
   },
   {
+    tag: '<style>',
+    category: 'other',
+    desc: 'Holds CSS rules written directly inside the HTML page.',
+    example: '<style>\n  h1 { color: teal; }\n</style>',
+  },
+  {
     tag: '<iframe>',
     category: 'links & media',
     desc: 'Embeds a whole separate page inside this one. Always give it a title for accessibility.',

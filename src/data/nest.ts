@@ -787,7 +787,7 @@ export const NEST: NestEntry[] = [
       'Putting code inside a <script> that also has a src — the inline code is ignored; it\'s one or the other.',
     ],
     example: '<script src="app.js"></script>',
-    related: [],
+    related: ['<style>', '<link rel="stylesheet">'],
   },
   {
     tag: '<link rel="stylesheet">',
@@ -806,7 +806,28 @@ export const NEST: NestEntry[] = [
       'Getting the path wrong — the browser fails silently, so an unstyled page with no error message almost always means the href doesn\'t resolve.',
     ],
     example: '<link rel="stylesheet" href="style.css">',
-    related: ['<head>'],
+    related: ['<head>', '<style>'],
+  },
+  {
+    tag: '<style>',
+    category: 'other',
+    stats: {
+      closingTag: 'required',
+      voidElement: 'no',
+      livesInside: '<head>',
+      typicallyHolds: 'CSS rules — selectors and declaration blocks',
+    },
+    whatItDoes:
+      'A block of CSS written straight into the HTML page. Everything between <style> and </style> is read as CSS, not HTML, so a rule like h1 { color: teal; } works exactly as it would in a separate .css file. It is the quickest way to style a single page, and the reason most practice exercises here start with one.',
+    whereItGoes:
+      'Inside <head>, before the content it styles. A stylesheet file linked with <link rel="stylesheet"> is the better home once styles are shared across pages; <style> is for one-page or one-off rules.',
+    mistakes: [
+      'Writing HTML tags inside it — <style> switches the browser into CSS mode, so <h1> inside it is a syntax error. Select the element with a plain h1 selector instead.',
+      'Forgetting the closing </style> — the browser keeps treating everything after it as CSS, so the rest of the page simply vanishes.',
+      'Mixing it up with the style="" attribute — <style> is a block of rules in <head>; style="color: red" is a single inline declaration on one element. Inline wins over the block, which is usually not what you want.',
+    ],
+    example: '<head>\n  <style>\n    h1 { color: teal; }\n    p { line-height: 1.6; }\n  </style>\n</head>',
+    related: ['<link rel="stylesheet">', '<head>', '<script>'],
   },
   {
     tag: '<template>',

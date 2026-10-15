@@ -8,6 +8,12 @@ import type { NestEntry } from './nest';
 // the Nest's chapter order lines up with the Route the learner just did.
 export const CSS_KEY_INDEX: KeyEntry[] = [
   {
+    tag: '<style>',
+    category: 'attaching css',
+    desc: 'A block of CSS written directly inside the HTML page\'s <head>.',
+    example: '<style>\n  h1 { color: teal; }\n</style>',
+  },
+  {
     tag: '<link rel="stylesheet">',
     category: 'attaching css',
     desc: 'Connects an external .css file to an HTML page so its rules apply.',
@@ -228,6 +234,27 @@ export const CSS_KEY_CATEGORIES = Array.from(new Set(CSS_KEY_INDEX.map((e) => e.
 // needs a differently-shaped one.
 export const CSS_NEST: NestEntry[] = [
   {
+    tag: '<style>',
+    category: 'attaching css',
+    stats: {
+      type: 'HTML tag, lives in <head>',
+      appliesTo: 'the whole document',
+      inherits: 'n/a',
+      commonValues: 'any CSS rules between the opening and closing tag',
+    },
+    whatItDoes:
+      'An embedded stylesheet: everything between <style> and </style> is parsed as CSS and applied to the page it lives in. It is the simplest way to attach CSS — no second file, no path to get wrong — which is why every puzzle and project in this track starts with one. The rules inside behave exactly like rules in a .css file.',
+    whereItGoes:
+      'Inside <head>, so the styles are known before the body is painted. For a real site with more than one page, move the rules to a .css file and attach it with <link rel="stylesheet"> so every page shares them.',
+    mistakes: [
+      'Putting HTML inside it — <style> switches the parser into CSS mode, so writing <h1> { } is an error. Use the bare selector h1 { }.',
+      'Leaving off </style> — the browser keeps reading the rest of the document as CSS and the page goes blank below that point.',
+      'Reaching for the style="" attribute instead — an inline style on one element beats every rule in the <style> block (and in your .css file), so a stray style="" is the classic reason a rule "doesn\'t work".',
+    ],
+    example: '<head>\n  <style>\n    body { font-family: system-ui, sans-serif; }\n    h1 { color: teal; }\n  </style>\n</head>',
+    related: ['<link rel="stylesheet">', 'selector { }', 'specificity & the cascade'],
+  },
+  {
     tag: '<link rel="stylesheet">',
     category: 'attaching css',
     stats: {
@@ -245,7 +272,7 @@ export const CSS_NEST: NestEntry[] = [
       'Putting it at the bottom of <body> "to make the page load faster" — this usually backfires by causing a visible flash of unstyled content instead.',
     ],
     example: '<head>\n  <link rel="stylesheet" href="style.css">\n</head>',
-    related: ['selector { }'],
+    related: ['<style>', 'selector { }'],
   },
   {
     tag: 'selector { }',
