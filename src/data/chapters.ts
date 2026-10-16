@@ -6,6 +6,12 @@ export type Chapter = {
 
 export const CHAPTERS: Chapter[] = [
   {
+    id: 'start',
+    title: 'your first line',
+    blurb:
+      "Three words before anything else. A tag is a label in angle brackets, like <h1>, that tells the browser what a piece of content is. The browser is the app you're reading this in (Chrome, Safari, Firefox). Render means the browser reading your tags and drawing the page. That's all HTML is: labels, read by a browser, drawn on screen.",
+  },
+  {
     id: 'foundations',
     title: 'foundations',
     blurb:

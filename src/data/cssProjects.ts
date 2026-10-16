@@ -3,12 +3,13 @@ import { ruleBody, hasRule } from '../lib/cssCheck';
 
 export type { Project };
 
-// Two projects, not five like HTML's set — CSS mastery here means
-// styling something real well, not building a series of new page
-// skeletons from scratch (that's what the HTML projects already cover).
-// One medium-difficulty single-component project, one harder project
-// that integrates flexbox, positioning, responsive, interaction, and
-// custom properties together the way a real small page actually would.
+// Five projects. The first two: one medium single-component project and
+// one harder one that integrates flexbox, positioning, responsive,
+// interaction, and custom properties the way a real small page would.
+// The next three were added once the CSS Nest grew a grid chapter and
+// pages for typography and polish, so each project has somewhere to send
+// a stuck learner: a grid pricing table, a readable article (typography
+// and max-width), and a landing hero (background, transform, box-shadow).
 export const CSS_PROJECTS: Project[] = [
   {
     id: 'css-profile-card',
@@ -187,6 +188,294 @@ export const CSS_PROJECTS: Project[] = [
             const uses = code.match(new RegExp(`var\\(\\s*--${name}\\b`, 'gi'));
             return uses !== null && uses.length >= 2;
           });
+        },
+      },
+    ],
+  },
+  // --- the three added for the "Ha" stage: someone who can style a card
+  // and wants layouts that look like real pages. Each leans on a chapter
+  // the first two projects barely touch: grid, typography/max-width, and
+  // background/transform/box-shadow polish.
+  {
+    id: 'css-pricing-table',
+    title: 'pricing table',
+    difficulty: 'medium',
+    brief:
+      'Lay out three pricing tiers with CSS grid: three equal columns on desktop, one column on a phone, a highlighted middle tier, real card styling, and a button that looks like a button. Nothing here checks in a fixed order.',
+    starter: `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pricing</title>
+    <style>
+
+    </style>
+  </head>
+  <body>
+    <h1>Pick a plan</h1>
+    <div class="plans">
+      <div class="plan">
+        <h2>Starter</h2>
+        <p class="price">$0</p>
+        <ul>
+          <li>1 project</li>
+          <li>Community support</li>
+        </ul>
+        <a class="btn" href="#">Choose</a>
+      </div>
+      <div class="plan featured">
+        <h2>Pro</h2>
+        <p class="price">$12</p>
+        <ul>
+          <li>Unlimited projects</li>
+          <li>Email support</li>
+        </ul>
+        <a class="btn" href="#">Choose</a>
+      </div>
+      <div class="plan">
+        <h2>Team</h2>
+        <p class="price">$40</p>
+        <ul>
+          <li>Everything in Pro</li>
+          <li>Shared workspace</li>
+        </ul>
+        <a class="btn" href="#">Choose</a>
+      </div>
+    </div>
+  </body>
+</html>
+`,
+    requirements: [
+      {
+        id: 'grid',
+        desc: '.plans is a grid container (display: grid)',
+        hint: '.plans { display: grid; }',
+        check: (code) => hasRule(code, '\\.plans', 'display\\s*:\\s*grid'),
+      },
+      {
+        id: 'columns',
+        desc: 'Three columns on .plans using grid-template-columns (repeat(3, 1fr) or three values)',
+        hint: '.plans { grid-template-columns: repeat(3, 1fr); }',
+        check: (code) => {
+          const body = ruleBody(code, '\\.plans');
+          if (!body) return false;
+          const m = body.match(/grid-template-columns\s*:\s*([^;}]+)/i);
+          if (!m) return false;
+          const v = m[1].trim();
+          return /repeat\(\s*3\s*,/.test(v) || v.split(/\s+/).length === 3;
+        },
+      },
+      {
+        id: 'gap',
+        desc: 'A gap between the plans (gap on .plans)',
+        hint: '.plans { gap: 20px; }',
+        check: (code) => hasRule(code, '\\.plans', '(^|[^-])gap\\s*:'),
+      },
+      {
+        id: 'card',
+        desc: 'Each .plan reads as a card: padding plus a border or box-shadow',
+        hint: '.plan { padding: 24px; border: 1px solid #ddd; border-radius: 12px; }',
+        check: (code) => hasRule(code, '\\.plan(?![a-z-])', 'padding\\s*:') && hasRule(code, '\\.plan(?![a-z-])', '(border|box-shadow)\\s*:'),
+      },
+      {
+        id: 'featured',
+        desc: 'The .featured plan stands out: a different border, background, or transform than the others',
+        hint: '.featured { border-color: #6366f1; transform: scale(1.04); }',
+        check: (code) => hasRule(code, '\\.(?:plan\\.)?featured', '(border|background|transform|box-shadow)[a-z-]*\\s*:'),
+      },
+      {
+        id: 'button',
+        desc: '.btn looks like a button: display inline-block or block, padding, and a background color',
+        hint: '.btn { display: inline-block; padding: 10px 18px; background: #6366f1; color: #fff; border-radius: 8px; text-decoration: none; }',
+        check: (code) =>
+          hasRule(code, '\\.btn', 'display\\s*:\\s*(inline-block|block|inline-flex|flex)') &&
+          hasRule(code, '\\.btn', 'padding\\s*:') &&
+          hasRule(code, '\\.btn', 'background(-color)?\\s*:'),
+      },
+      {
+        id: 'responsive',
+        desc: 'A media query that makes .plans a single column on a narrow screen',
+        hint: '@media (max-width: 700px) {\n  .plans {\n    grid-template-columns: 1fr;\n  }\n}',
+        check: (code) => {
+          const m = code.match(/@media\s*\([^)]*max-width[^)]*\)\s*\{([\s\S]*?)\}\s*\}/i);
+          if (!m) return false;
+          return /\.plans\s*\{[^}]*grid-template-columns\s*:\s*(1fr|100%|none|auto)\s*(;|$)/im.test(m[1]);
+        },
+      },
+    ],
+  },
+  {
+    id: 'css-article-layout',
+    title: 'readable article',
+    difficulty: 'medium',
+    brief:
+      'Make this plain article pleasant to read: a readable measure with max-width, real line-height, a font stack, a styled blockquote with a left border, an image that never overflows, and a lead paragraph that reads differently from the rest. Typography is most of CSS in practice — this is that practice.',
+    starter: `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Why I switched to Linux</title>
+    <style>
+
+    </style>
+  </head>
+  <body>
+    <article>
+      <h1>Why I switched to Linux</h1>
+      <p class="lead">It started with a broken update and ended with a laptop I actually understand.</p>
+      <img src="https://picsum.photos/900/400" alt="A desk with a laptop">
+      <p>The first week was rough. Nothing was where I expected, and every forum answer assumed I already knew the answer.</p>
+      <blockquote>The terminal is not a punishment. It is a conversation.</blockquote>
+      <p>By the second month I'd stopped noticing the difference, except that the machine was faster and quieter and mine.</p>
+    </article>
+  </body>
+</html>
+`,
+    requirements: [
+      {
+        id: 'measure',
+        desc: 'A max-width on article (or body) so lines don\'t run the full screen width',
+        hint: 'article { max-width: 65ch; }',
+        check: (code) => hasRule(code, 'article', 'max-width\\s*:') || hasRule(code, 'body', 'max-width\\s*:'),
+      },
+      {
+        id: 'centered',
+        desc: 'The article is centered with margin: ... auto (left and right)',
+        hint: 'article { margin: 0 auto; }',
+        check: (code) =>
+          hasRule(code, 'article', 'margin\\s*:\\s*([^;}]*\\s)?auto(\\s|;|$)') ||
+          hasRule(code, 'article', 'margin-(left|right)\\s*:\\s*auto') ||
+          hasRule(code, 'body', 'margin\\s*:\\s*([^;}]*\\s)?auto(\\s|;|$)') ||
+          hasRule(code, 'article', 'margin-inline\\s*:\\s*auto'),
+      },
+      {
+        id: 'line-height',
+        desc: 'A line-height of at least 1.4 on body, article, or p',
+        hint: 'body { line-height: 1.6; }',
+        check: (code) => {
+          for (const sel of ['body', 'article', 'p(?![a-z-])']) {
+            const body = ruleBody(code, sel);
+            const m = body?.match(/line-height\s*:\s*([0-9.]+)/i);
+            if (m && Number(m[1]) >= 1.4) return true;
+          }
+          return false;
+        },
+      },
+      {
+        id: 'font-stack',
+        desc: 'A font-family with a fallback (at least two fonts, comma-separated) on body',
+        hint: 'body { font-family: Georgia, "Times New Roman", serif; }',
+        check: (code) => {
+          const body = ruleBody(code, 'body');
+          const m = body?.match(/font-family\s*:\s*([^;}]+)/i);
+          return !!m && m[1].split(',').length >= 2;
+        },
+      },
+      {
+        id: 'blockquote',
+        desc: 'blockquote gets a left border and padding-left (or padding) so it reads as a quote',
+        hint: 'blockquote { border-left: 4px solid #6366f1; padding-left: 16px; font-style: italic; }',
+        check: (code) => hasRule(code, 'blockquote', 'border(-left)?\\s*:') && hasRule(code, 'blockquote', 'padding(-left)?\\s*:'),
+      },
+      {
+        id: 'img',
+        desc: 'Images never overflow: img { max-width: 100% } (height: auto is a good habit too)',
+        hint: 'img { max-width: 100%; height: auto; }',
+        check: (code) => hasRule(code, 'img', 'max-width\\s*:\\s*100%'),
+      },
+      {
+        id: 'lead',
+        desc: 'The .lead paragraph is set apart: a larger font-size, a different color, or a different weight than body text',
+        hint: '.lead { font-size: 1.25rem; color: #555; }',
+        check: (code) => hasRule(code, '\\.lead', '(font-size|color|font-weight|font-style)\\s*:'),
+      },
+    ],
+  },
+  {
+    id: 'css-landing-hero',
+    title: 'landing hero',
+    difficulty: 'hard',
+    brief:
+      'Build the top of a landing page: a full-height hero with a background (color, gradient, or image), centered content with flexbox, a call-to-action button with a hover state that moves or lifts, a box-shadow somewhere, a custom property for the brand color used at least twice, and a media query that shrinks the heading on a phone. This is the polish chapter, applied.',
+    starter: `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tagsmiths — learn by building</title>
+    <style>
+
+    </style>
+  </head>
+  <body>
+    <section class="hero">
+      <div class="hero-inner">
+        <h1>Build the page you've been putting off.</h1>
+        <p>Small steps, real code, instant output.</p>
+        <a class="cta" href="#">Start for free</a>
+      </div>
+    </section>
+  </body>
+</html>
+`,
+    requirements: [
+      {
+        id: 'min-height',
+        desc: '.hero fills the screen: min-height using vh (or 100svh/100dvh)',
+        hint: '.hero { min-height: 100vh; }',
+        check: (code) => hasRule(code, '\\.hero(?![a-z-])', 'min-height\\s*:\\s*[0-9.]+(vh|svh|dvh)'),
+      },
+      {
+        id: 'background',
+        desc: '.hero has a background: a color, a gradient, or an image',
+        hint: '.hero { background: linear-gradient(135deg, #1e1b4b, #4338ca); color: #fff; }',
+        check: (code) => hasRule(code, '\\.hero(?![a-z-])', 'background(-color|-image)?\\s*:'),
+      },
+      {
+        id: 'centered',
+        desc: '.hero centers its content with flexbox: display flex plus justify-content and align-items set to center',
+        hint: '.hero { display: flex; justify-content: center; align-items: center; }',
+        check: (code) =>
+          hasRule(code, '\\.hero(?![a-z-])', 'display\\s*:\\s*flex') &&
+          hasRule(code, '\\.hero(?![a-z-])', 'justify-content\\s*:\\s*center') &&
+          hasRule(code, '\\.hero(?![a-z-])', 'align-items\\s*:\\s*center'),
+      },
+      {
+        id: 'cta',
+        desc: '.cta looks like a button: padding, a background, and a border-radius',
+        hint: '.cta { display: inline-block; padding: 14px 28px; background: var(--brand); color: #fff; border-radius: 999px; text-decoration: none; }',
+        check: (code) =>
+          hasRule(code, '\\.cta(?![a-z-:])', 'padding\\s*:') &&
+          hasRule(code, '\\.cta(?![a-z-:])', 'background(-color)?\\s*:') &&
+          hasRule(code, '\\.cta(?![a-z-:])', 'border-radius\\s*:'),
+      },
+      {
+        id: 'hover',
+        desc: '.cta:hover changes transform (lift or scale), with a transition on .cta so it animates',
+        hint: '.cta { transition: transform 150ms; }\n.cta:hover { transform: translateY(-2px); }',
+        check: (code) => hasRule(code, '\\.cta:hover', 'transform\\s*:') && hasRule(code, '\\.cta(?![a-z-:])', 'transition\\s*:'),
+      },
+      {
+        id: 'shadow',
+        desc: 'A box-shadow somewhere in the hero (on .cta or .hero-inner)',
+        hint: '.cta { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); }',
+        check: (code) => hasRule(code, '\\.cta(?![a-z-:])', 'box-shadow\\s*:') || hasRule(code, '\\.hero-inner', 'box-shadow\\s*:') || hasRule(code, '\\.cta:hover', 'box-shadow\\s*:'),
+      },
+      {
+        id: 'custom-property',
+        desc: 'A custom property (--something) declared on :root and used with var() at least twice',
+        hint: ':root { --brand: #6366f1; }\n.cta { background: var(--brand); }\n.hero { border-bottom: 4px solid var(--brand); }',
+        check: (code) => {
+          const root = ruleBody(code, ':root');
+          const decl = root?.match(/--([a-z0-9-]+)\s*:/i);
+          if (!decl) return false;
+          const uses = code.match(new RegExp(`var\\(\\s*--${decl[1]}\\s*[,)]`, 'gi'));
+          return !!uses && uses.length >= 2;
+        },
+      },
+      {
+        id: 'responsive',
+        desc: 'A media query that reduces the h1 font-size on a narrow screen',
+        hint: '@media (max-width: 600px) {\n  h1 {\n    font-size: 1.8rem;\n  }\n}',
+        check: (code) => {
+          const m = code.match(/@media\s*\([^)]*max-width[^)]*\)\s*\{([\s\S]*?)\}\s*\}/i);
+          return !!m && /h1[^{]*\{[^}]*font-size\s*:/i.test(m[1]);
         },
       },
     ],

@@ -5,6 +5,8 @@ import { StatsPanel } from './StatsPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
 import { PreviewFrame } from './PreviewFrame';
 import { saveAsMyProject } from './MyProjectsPane';
+import { ShareActions } from './ShareActions';
+import { consumeSharedCode } from '../lib/share';
 
 const SANDBOX_KEY = 'tagsmiths-sandbox';
 
@@ -29,12 +31,29 @@ function loadSandbox(): string {
 
 type PendingAction = 'save' | 'clear' | null;
 
-export function SandboxPane() {
-  const [code, setCode] = useState(loadSandbox);
+type Props = {
+  sandboxPath: string;
+};
+
+export function SandboxPane({ sandboxPath }: Props) {
+  // A share link someone sent lands here: its code replaces the sandbox so
+  // the receiver sees exactly what the sender saw, and can save it as theirs.
+  const [code, setCode] = useState(() => consumeSharedCode() ?? loadSandbox());
   const [justSaved, setJustSaved] = useState(false);
   const [pending, setPending] = useState<PendingAction>(null);
   const [nameDraft, setNameDraft] = useState('');
   const nameInputRef = useRef<HTMLInputElement>(null);
+
+  // Someone already on the sandbox who pastes a share link into the URL bar
+  // gets a hash change, not a reload — pick that up too.
+  useEffect(() => {
+    const onHash = () => {
+      const shared = consumeSharedCode();
+      if (shared !== null) setCode(shared);
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
 
   useEffect(() => {
     try {
@@ -108,6 +127,7 @@ export function SandboxPane() {
                 <button className="btn btn-secondary btn-sm" onClick={startSave}>
                   {justSaved ? 'saved to my projects ✓' : 'save to my projects'}
                 </button>
+                <ShareActions name="sandbox" code={code} sandboxPath={sandboxPath} />
                 <button
                   className="btn btn-destructive btn-sm"
                   onClick={() => (code.trim() === '' ? setCode('') : setPending('clear'))}

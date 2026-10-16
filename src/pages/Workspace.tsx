@@ -4,6 +4,7 @@ import { InstructionsRail } from '../components/InstructionsRail';
 import { KeySidebar } from '../components/KeySidebar';
 import { StatsPanel } from '../components/StatsPanel';
 import { DiagnosticsPanel } from '../components/DiagnosticsPanel';
+import { QuickfirePane } from '../components/QuickfirePane';
 import { CodeEditor } from '../components/CodeEditor';
 import { EditorPanel } from '../components/EditorPanel';
 import { PuzzlePane } from '../components/PuzzlePane';
@@ -91,7 +92,7 @@ function KeyIcon() {
 
 const ASSIST_KEY = 'tagsmiths-assist';
 
-type Mode = 'route' | 'solve' | 'sandbox' | 'myprojects' | 'nest';
+type Mode = 'route' | 'solve' | 'sandbox' | 'myprojects' | 'nest' | 'quickfire';
 type SolveSection = 'puzzles' | 'project';
 type Track = 'html' | 'css' | 'email';
 
@@ -107,7 +108,7 @@ const TRACK_CONFIG = {
     chapters: CHAPTERS,
     starter: '',
     codeKey: 'tagsmiths-code',
-    stepKey: 'tagsmiths-step-v2', // v2: route was condensed from 24 to 14 steps
+    stepKey: 'tagsmiths-step-v3', // v2: route was condensed from 24 to 14 steps; v3: a 'first win' step was inserted at index 0 (migrated below)
     puzzles: PUZZLES,
     projects: PROJECTS,
     nestLabel: 'the html book',
@@ -164,7 +165,8 @@ function resolveMode(modeParam: string | undefined): Mode {
     modeParam === 'solve' ||
     modeParam === 'sandbox' ||
     modeParam === 'myprojects' ||
-    modeParam === 'nest'
+    modeParam === 'nest' ||
+    modeParam === 'quickfire'
   ) {
     return modeParam;
   }
@@ -185,8 +187,23 @@ function loadSavedCode(track: Track): string {
   }
 }
 
+// One-time migration: the HTML route gained a step at index 0, so a learner
+// saved under the old key resumes one index later and keeps their place.
+function migrateHtmlStepKey() {
+  try {
+    if (localStorage.getItem('tagsmiths-step-v3') !== null) return;
+    const old = localStorage.getItem('tagsmiths-step-v2');
+    if (old === null) return;
+    const n = Number(old);
+    if (Number.isFinite(n) && n >= 0) localStorage.setItem('tagsmiths-step-v3', String(n + 1));
+  } catch {
+    // storage unavailable — nothing to migrate
+  }
+}
+
 function loadSavedStep(track: Track): number {
   const cfg = TRACK_CONFIG[track];
+  if (track === 'html') migrateHtmlStepKey();
   try {
     const raw = Number(localStorage.getItem(cfg.stepKey));
     return Number.isFinite(raw) && raw >= 0 ? Math.min(raw, cfg.steps.length) : 0;
@@ -338,6 +355,9 @@ export default function Workspace() {
           <button className={`tab ${mode === 'nest' ? 'active' : ''}`} onClick={() => setMode('nest')}>
             nest
           </button>
+          <button className={`tab ${mode === 'quickfire' ? 'active' : ''}`} onClick={() => setMode('quickfire')}>
+            quickfire
+          </button>
         </nav>
 
         <div className="topbar-actions">
@@ -392,7 +412,7 @@ export default function Workspace() {
                   <PreviewFrame code={code} title="preview" />
                 </EditorPanel>
 
-                <DiagnosticsPanel code={code} />
+                <DiagnosticsPanel code={code} context="route" />
               </div>
             </div>
           )}
@@ -522,12 +542,23 @@ export default function Workspace() {
             </>
           )}
 
+          {mode === 'quickfire' && (
+            <QuickfirePane
+              key={track}
+              steps={steps}
+              chapters={chapters}
+              passedCount={current}
+              storageKey={`tagsmiths-quickfire-best-${track}`}
+              onGoToRoute={() => setMode('route')}
+            />
+          )}
+
           {mode === 'sandbox' && (
             <>
               <p className="mode-blurb">
                 No route, no checks — just a blank page to build whatever you want.
               </p>
-              <SandboxPane />
+              <SandboxPane sandboxPath={`${basePath}/sandbox`} />
             </>
           )}
 
@@ -537,7 +568,7 @@ export default function Workspace() {
                 Your own saved projects — name them, come back to them, delete them. Start blank here,
                 or save a copy over from Sandbox.
               </p>
-              <MyProjectsPane />
+              <MyProjectsPane sandboxPath={`${basePath}/sandbox`} />
             </>
           )}
 

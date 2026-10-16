@@ -22,6 +22,26 @@
   flex-shrink: 0;
 }
 
+/* On narrow screens the icon cluster was painting over the last tabs
+   (sandbox, nest were under it and unreachable by touch). Let the bar wrap:
+   brand + icons on the first row, the tab row full-width underneath. */
+@media (max-width: 600px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+  .topbar .brand-row {
+    margin-right: auto;
+  }
+  /* .topbar prefix: this block sits above the base .tabs rule, whose
+     flex: 1 would otherwise win the basis and keep the tabs on row one. */
+  .topbar .tabs {
+    order: 3;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
 @media (max-width: 480px) {
   .topbar {
     gap: 8px;
@@ -2502,5 +2522,135 @@
 
   .nest-stat-row {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Quickfire — retrieval practice over passed route steps. One card, one
+   small editor, three buttons. Deliberately sparse: the point is recalling
+   with nothing in front of you, so there is nothing else to look at. */
+.quickfire {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 760px;
+}
+
+.quickfire-empty {
+  align-items: flex-start;
+}
+
+.quickfire-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+
+.quickfire-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quickfire-stat-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.quickfire-stat-value {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.quickfire-card {
+  background: var(--navy);
+  color: #fff;
+  border-radius: 14px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 200ms, transform 200ms;
+}
+
+.quickfire-card.correct {
+  box-shadow: 0 0 0 3px var(--ok);
+}
+
+.quickfire-card.shake {
+  animation: quickfire-shake 300ms;
+}
+
+@keyframes quickfire-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.quickfire-eyebrow {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9aa4d4;
+}
+
+.quickfire-prompt {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.quickfire-hint,
+.quickfire-reveal {
+  margin: 0;
+  font-size: 14px;
+  color: #b7c0f0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 10px;
+}
+
+.quickfire-reveal code {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+
+.quickfire-correct {
+  margin: 0;
+  font-weight: 700;
+  color: var(--ok);
+}
+
+.quickfire-editor {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 120px;
+  max-height: 260px;
+  background: var(--surface);
+}
+
+.quickfire-editor [class*='cm-theme'],
+.quickfire-editor .cm-editor {
+  height: 100%;
+  min-height: 120px;
+}
+
+.quickfire-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quickfire-card.shake {
+    animation: none;
   }
 }

@@ -3,6 +3,7 @@ import { CodeEditor } from './CodeEditor';
 import { EditorPanel } from './EditorPanel';
 import { PreviewFrame } from './PreviewFrame';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
+import { ShareActions } from './ShareActions';
 
 export const MY_PROJECTS_KEY = 'tagsmiths-my-projects';
 
@@ -44,7 +45,11 @@ export function saveAsMyProject(name: string, code: string): void {
   saveMyProjects([proj, ...projects]);
 }
 
-export function MyProjectsPane() {
+type Props = {
+  sandboxPath: string;
+};
+
+export function MyProjectsPane({ sandboxPath }: Props) {
   const [projects, setProjects] = useState<SavedProject[]>(loadMyProjects);
   const [activeId, setActiveId] = useState<string | null>(() => loadMyProjects()[0]?.id ?? null);
   const [creating, setCreating] = useState(false);
@@ -199,7 +204,11 @@ export function MyProjectsPane() {
 
       {active ? (
         <div className="myprojects-body">
-          <EditorPanel label={`active coding window — ${active.name}`} className="code-panel">
+          <EditorPanel
+            label={`active coding window — ${active.name}`}
+            className="code-panel"
+            actions={<ShareActions name={active.name} code={active.code} sandboxPath={sandboxPath} />}
+          >
             <CodeEditor value={active.code} onChange={handleCodeChange} />
           </EditorPanel>
           <EditorPanel label="output" className="output-panel">

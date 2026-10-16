@@ -20,11 +20,28 @@ const has = (code: string, re: RegExp) => re.test(code);
 // single steps so you're applying more than one idea at a time, and gets
 // you into Project sooner rather than exhaustively drilling every tag first.
 export const STEPS: Step[] = [
+  // --- start: one line, one win, under a minute. This exists so that a
+  // person who has never written code sees something they typed appear
+  // on screen before they meet the word "doctype". Every term it uses is
+  // defined in the chapter blurb beside it.
+  {
+    tag: '<h1>hello</h1>',
+    chapter: 'start',
+    why:
+      'Click in the coding window and type <h1>hello</h1> — the tag <h1> opens a big heading, the text goes in the middle, and </h1> (with the slash) closes it. Press Check my work and watch the output panel: the browser renders your line as a heading.',
+    hints: [
+      'Type an opening tag, some text, then a closing tag. The closing tag is the same word with a slash in front: </h1>.',
+      'Angle brackets go around the tag name: < then h1 then >. Then the word hello. Then < then /h1 then >.',
+      'Type exactly: <h1>hello</h1>',
+    ],
+    check: (code) => has(code, /<h1[^>]*>\s*\S[\s\S]*?<\/h1>/i),
+  },
+
   // --- foundations ---
   {
     tag: '<!DOCTYPE html>',
     chapter: 'foundations',
-    why: 'Every page starts by telling the browser "this is modern HTML." Nothing renders correctly without it.',
+    why: 'Every page starts by telling the browser "this is modern HTML." It goes on the very first line, above your heading. Nothing renders correctly without it.',
     hints: [
       'Every HTML page starts with one special line, before any tags.',
       'It starts with <!DOCTYPE and ends with a closing >.',

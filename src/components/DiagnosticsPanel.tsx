@@ -2,10 +2,14 @@ import { runDiagnostics } from '../lib/diagnostics';
 
 type Props = {
   code: string;
+  // 'route' sits next to a step check, so a clean lint must not read as
+  // "step done"; 'free' (sandbox, projects) has no step to confuse it with.
+  context?: 'route' | 'free';
 };
 
-export function DiagnosticsPanel({ code }: Props) {
-  const diagnostics = runDiagnostics(code);
+export function DiagnosticsPanel({ code, context = 'free' }: Props) {
+  const empty = code.trim() === '';
+  const diagnostics = empty ? [] : runDiagnostics(code);
   const errors = diagnostics.filter((d) => d.severity === 'error').length;
   const warnings = diagnostics.filter((d) => d.severity === 'warning').length;
 
@@ -13,7 +17,9 @@ export function DiagnosticsPanel({ code }: Props) {
     <div className="diagnostics-panel">
       <div className="diagnostics-head">
         <span className="diagnostics-title">diagnostics</span>
-        {diagnostics.length === 0 ? (
+        {empty ? (
+          <span className="diagnostics-summary">empty</span>
+        ) : diagnostics.length === 0 ? (
           <span className="diagnostics-summary ok">clean</span>
         ) : (
           <span className="diagnostics-summary">
@@ -24,8 +30,14 @@ export function DiagnosticsPanel({ code }: Props) {
         )}
       </div>
 
-      {diagnostics.length === 0 ? (
-        <p className="diagnostics-empty">No issues found in your HTML — looking good.</p>
+      {empty ? (
+        <p className="diagnostics-empty">Nothing here yet — click in the coding window above and start typing.</p>
+      ) : diagnostics.length === 0 ? (
+        <p className="diagnostics-empty">
+          {context === 'route'
+            ? 'No syntax issues. That isn\'t the same as the step being done — Check my work tells you that.'
+            : 'No issues found in your HTML — looking good.'}
+        </p>
       ) : (
         <div className="diagnostics-list">
           {diagnostics.map((d, i) => (
