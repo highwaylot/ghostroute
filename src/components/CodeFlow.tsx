@@ -38,6 +38,8 @@ const LETTERS = ['p', 'o', 'n', 'g'];
 const LETTER_HIT_RADIUS = 34;
 const LETTER_HOVER_RADIUS = 64; // a letter freezes while the cursor is this close, so it's catchable
 const LETTER_MARGIN = 36;
+const LETTER_SEPARATION = 56; // min distance between two letters' centres
+const TAP_SLOP = 10; // a touch that moves less than this is a tap, not a drag
 const CLICK_BOOST = 1.12; // mid-rally click: ball speed multiplier
 
 // Four draw buckets: 2 sizes × 2 tones. Particles are allocated in bucket
@@ -50,6 +52,7 @@ type Mode = 'static' | 'flow' | 'pong';
 
 export function CodeFlow() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const exitRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -59,6 +62,8 @@ export function CodeFlow() {
     if (!ctx) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // a coarse pointer (finger) gets touch-flavoured HUD copy
+    const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
     const mono = getComputedStyle(document.documentElement).getPropertyValue('--mono') || 'monospace';
 
     let width = 0;
@@ -127,8 +132,10 @@ export function CodeFlow() {
         lx[i] = leftSide ? 24 + Math.random() * (inner.left - 48) : inner.right + 24 + Math.random() * (width - inner.right - 48);
         ly[i] = fromBottom ? height + 20 : 40 + Math.random() * (height - 80);
       } else {
-        // narrow viewport: content spans the width, so use the top/bottom bands
-        lx[i] = 24 + Math.random() * (width - 48);
+        // narrow viewport: content spans the width, so use the top/bottom
+        // bands — and slot the x positions, so four letters in one band
+        // don't land on top of each other (they did, on phones).
+        lx[i] = (width / 4) * (i + 0.5) + (Math.random() * 2 - 1) * Math.min(20, width / 16);
         const topBand = inner.top > 80;
         ly[i] = fromBottom ? height + 20 : topBand ? 30 + Math.random() * (inner.top - 60) : inner.bottom + 20;
       }
@@ -160,11 +167,23 @@ export function CodeFlow() {
     let mx = -9999;
     let my = -9999;
     let mouseInside = false;
+    // Touch: a finger has no hover and no separate "move" and "click", so a
+    // press is read on release — moved less than TAP_SLOP is a tap (serve or
+    // boost), anything more is a drag that steered the paddle.
+    const touch = { active: false, x: 0, y: 0, moved: false };
     const onPointerMove = (e: PointerEvent) => {
       const r = host.getBoundingClientRect();
       mx = e.clientX - r.left;
       my = e.clientY - r.top;
       mouseInside = mx >= 0 && my >= 0 && mx <= width && my <= height;
+      if (touch.active && Math.hypot(mx - touch.x, my - touch.y) > TAP_SLOP) touch.moved = true;
+    };
+    const onPointerUp = (e: PointerEvent) => {
+      if (e.pointerType !== 'touch' || !touch.active) return;
+      touch.active = false;
+      if (mode !== 'pong' || touch.moved) return;
+      if (pong.serving) serve();
+      else boost();
     };
     const onPointerLeave = () => {
       mouseInside = false;
@@ -189,17 +208,19 @@ export function CodeFlow() {
       const cx = e.clientX - r.left;
       const cy = e.clientY - r.top;
       if (mode === 'pong') {
-        if (pong.serving) {
-          serve();
-        } else {
-          // click anywhere mid-rally to crank the ball up
-          const p = pong;
-          p.speed = Math.min(PONG_MAX_SPEED, p.speed * CLICK_BOOST);
-          const mag = Math.hypot(p.ballVX, p.ballVY) || 1;
-          p.ballVX = (p.ballVX / mag) * p.speed;
-          p.ballVY = (p.ballVY / mag) * p.speed;
-          burst(p.ballX, p.ballY);
+        if (e.pointerType === 'touch') {
+          // decided on release (tap vs drag); meanwhile the paddle follows
+          touch.active = true;
+          touch.x = cx;
+          touch.y = cy;
+          touch.moved = false;
+          mx = cx;
+          my = cy;
+          mouseInside = true;
+          return;
         }
+        if (pong.serving) serve();
+        else boost();
         return;
       }
       burst(cx, cy);
@@ -256,6 +277,15 @@ export function CodeFlow() {
       pong.aiOffset = (Math.random() * 2 - 1) * AI_AIM_ERROR;
       setServing(false);
     };
+    // click or tap anywhere mid-rally to crank the ball up
+    const boost = () => {
+      const p = pong;
+      p.speed = Math.min(PONG_MAX_SPEED, p.speed * CLICK_BOOST);
+      const mag = Math.hypot(p.ballVX, p.ballVY) || 1;
+      p.ballVX = (p.ballVX / mag) * p.speed;
+      p.ballVY = (p.ballVY / mag) * p.speed;
+      burst(p.ballX, p.ballY);
+    };
     const enterPong = () => {
       mode = 'pong';
       pong.playerScore = 0;
@@ -264,17 +294,21 @@ export function CodeFlow() {
       pong.aiX = width / 2;
       resetBall();
       canvas.style.pointerEvents = 'auto';
+      canvas.style.touchAction = 'none'; // dragging the paddle must not scroll the page
       canvas.dataset.mode = 'pong';
       host.classList.add('landing--pong');
     };
     const exitPong = () => {
       mode = reduced ? 'static' : 'flow';
       canvas.style.pointerEvents = 'none';
+      canvas.style.touchAction = '';
       canvas.dataset.mode = mode;
       host.classList.remove('landing--pong');
       resetLetters();
       if (reduced) drawStatic();
     };
+
+    exitRef.current = () => { if (mode === 'pong') exitPong(); };
 
     let keyBuf = '';
     const onKeyDown = (e: KeyboardEvent) => {
@@ -375,6 +409,22 @@ export function CodeFlow() {
         if (ly[i] < -24) spawnLetter(i, true);
         if (lx[i] < 12) lx[i] = 12;
         else if (lx[i] > width - 12) lx[i] = width - 12;
+      }
+      // keep letters apart: when the content box leaves only one band, they
+      // all drift in it and would otherwise stack into an unreadable pile
+      for (let i = 0; i < 4; i++) {
+        for (let j = i + 1; j < 4; j++) {
+          const dx = lx[j] - lx[i];
+          const dy = ly[j] - ly[i];
+          const d = Math.hypot(dx, dy) || 0.001;
+          if (d < LETTER_SEPARATION) {
+            const push = ((LETTER_SEPARATION - d) / 2) * Math.min(1, dt * 6);
+            const ux = dx / d;
+            const uy = dy / d;
+            if (!lhover[i]) { lx[i] -= ux * push; ly[i] -= uy * push; }
+            if (!lhover[j]) { lx[j] += ux * push; ly[j] += uy * push; }
+          }
+        }
       }
     };
 
@@ -539,7 +589,13 @@ export function CodeFlow() {
       ctx.fillStyle = 'rgba(200, 208, 255, 0.85)';
       ctx.fillText(`pong  ·  you ${p.playerScore} : ${p.aiScore} cpu`, width - 18, 20);
       ctx.fillStyle = 'rgba(154, 168, 232, 0.7)';
-      ctx.fillText(p.serving ? 'click or space to serve  ·  esc to quit' : 'click to speed up  ·  esc to quit', width - 18, 40);
+      ctx.fillText(
+        coarse
+          ? p.serving ? 'tap to serve  ·  drag to move' : 'tap to speed up  ·  drag to move'
+          : p.serving ? 'click or space to serve  ·  esc to quit' : 'click to speed up  ·  esc to quit',
+        width - 18,
+        40,
+      );
       ctx.textAlign = 'center';
     };
 
@@ -570,11 +626,13 @@ export function CodeFlow() {
     // through the DOM. A function property, so it costs nothing per frame.
     (canvas as HTMLCanvasElement & { __codeflow?: unknown }).__codeflow = {
       letters: () => LETTERS.map((ch, i) => ({ ch, x: lx[i], y: ly[i], lit: i < lit })),
-      ball: () => ({ x: pong.ballX, y: pong.ballY, serving: pong.serving, speed: pong.speed, aiX: pong.aiX }),
+      ball: () => ({ x: pong.ballX, y: pong.ballY, serving: pong.serving, speed: pong.speed, aiX: pong.aiX, playerX: pong.playerX }),
     };
     ro.observe(host);
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerdown', onPointerDown, { passive: true });
+    window.addEventListener('pointerup', onPointerUp, { passive: true });
+    window.addEventListener('pointercancel', onPointerUp, { passive: true });
     window.addEventListener('keydown', onKeyDown);
     document.addEventListener('pointerleave', onPointerLeave);
     const onVisibility = () => {
@@ -591,6 +649,8 @@ export function CodeFlow() {
       ro.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
       window.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('pointerleave', onPointerLeave);
       document.removeEventListener('visibilitychange', onVisibility);
@@ -598,5 +658,14 @@ export function CodeFlow() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="code-flow" aria-hidden="true" />;
+  return (
+    <>
+      <canvas ref={canvasRef} className="code-flow" aria-hidden="true" />
+      {/* The only way out of pong used to be the Escape key, which a phone
+          doesn't have. Shown by Home.css only while .landing--pong is on. */}
+      <button type="button" className="pong-quit" onClick={() => exitRef.current?.()}>
+        ✕ quit pong
+      </button>
+    </>
+  );
 }
