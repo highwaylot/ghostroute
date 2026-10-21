@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Theme } from '../lib/ThemeContext';
-import { clearAllSavedState, isSoundOn, setSoundOn } from '../lib/sound';
+import { isSoundOn, setSoundOn } from '../lib/sound';
 
 type Props = {
   theme: Theme;
@@ -8,6 +8,9 @@ type Props = {
   // Resets just the current track's route (position + code). The caller
   // owns that state, so it does the work; this menu only asks.
   onRestartRoute: () => void;
+  // Clears everything saved for the current track only (route, puzzles,
+  // projects, quickfire). Other tracks and shared things stay.
+  onRestartTrack: () => void;
   routeLabel: string;
 };
 
@@ -32,7 +35,7 @@ type Confirm = 'route' | 'all' | null;
 // bar carries only the things that are part of learning (route, solve,
 // sandbox, nest, quickfire) plus "my stuff" (projects, key index) and
 // this gear. The two resets each take a second click inside the menu.
-export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, routeLabel }: Props) {
+export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, onRestartTrack, routeLabel }: Props) {
   const [open, setOpen] = useState(false);
   const [sound, setSound] = useState(isSoundOn);
   const [confirm, setConfirm] = useState<Confirm>(null);
@@ -74,12 +77,8 @@ export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, routeLabel 
     setOpen(false);
   };
 
-  const startOver = () => {
-    clearAllSavedState();
-    // A full reload from the front door: every pane reads its state on
-    // mount, and this is the one action where a stale in-memory copy of
-    // anything would be a bug.
-    window.location.assign('/');
+  const restartTrack = () => {
+    onRestartTrack();
   };
 
   return (
@@ -136,7 +135,7 @@ export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, routeLabel 
 
           {confirm === 'route' ? (
             <div className="settings-confirm">
-              <p>Restart the {routeLabel} route from step 1? Your puzzles, projects and sandbox stay.</p>
+              <p>Restart the {routeLabel} route from step 1? Puzzles, projects and sandbox stay.</p>
               <div className="settings-confirm-actions">
                 <button className="btn btn-destructive btn-sm" onClick={restartRoute}>
                   yes, restart
@@ -155,10 +154,10 @@ export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, routeLabel 
 
           {confirm === 'all' ? (
             <div className="settings-confirm">
-              <p>Start over as a brand-new user? This clears every route, puzzle, project and sandbox saved on this device. It can&apos;t be undone.</p>
+              <p>Restart {routeLabel} fully? This clears the {routeLabel} route, puzzles and projects on this device. Other tracks, sandbox and my projects are untouched. It can&apos;t be undone.</p>
               <div className="settings-confirm-actions">
-                <button className="btn btn-destructive btn-sm" onClick={startOver}>
-                  yes, wipe everything
+                <button className="btn btn-destructive btn-sm" onClick={restartTrack}>
+                  yes, restart {routeLabel}
                 </button>
                 <button className="btn btn-secondary btn-sm" onClick={() => setConfirm(null)}>
                   cancel
@@ -168,7 +167,7 @@ export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, routeLabel 
           ) : (
             <button className="settings-item" onClick={() => setConfirm('all')}>
               Restart Fully
-              <span className="settings-item-sub">CLEARS ALL PROGRESS</span>
+              <span className="settings-item-sub">CLEARS ALL {routeLabel.toUpperCase()} PROGRESS</span>
             </button>
           )}
         </div>

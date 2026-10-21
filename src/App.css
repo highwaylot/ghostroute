@@ -2626,6 +2626,40 @@
   align-items: flex-start;
 }
 
+.quickfire-intro {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--blue);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.quickfire-intro h2 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.quickfire-intro p {
+  margin: 0 0 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.quickfire-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.quickfire-ask {
+  margin: 0;
+  font-size: 12px;
+  color: #9aa4d4;
+}
+
 .quickfire-stats {
   display: flex;
   flex-wrap: wrap;

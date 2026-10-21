@@ -19,22 +19,3 @@ export function setSoundOn(on: boolean): void {
     // storage unavailable — the setting lasts for this page only
   }
 }
-
-// Every piece of saved state uses this prefix (route position, code,
-// solved puzzles, projects, sandbox, theme, sound, quickfire bests...).
-// Clearing by prefix is what "start over as a new user" means, and it
-// stays correct when a new key is added as long as the prefix is kept.
-export const STORAGE_PREFIX = 'tagsmiths-';
-
-export function clearAllSavedState(): void {
-  try {
-    const doomed: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (k && k.startsWith(STORAGE_PREFIX)) doomed.push(k);
-    }
-    for (const k of doomed) localStorage.removeItem(k);
-  } catch {
-    // storage unavailable — nothing was saved in the first place
-  }
-}

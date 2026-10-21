@@ -6,6 +6,8 @@ import { StatsPanel } from '../components/StatsPanel';
 import { DiagnosticsPanel } from '../components/DiagnosticsPanel';
 import { QuickfirePane } from '../components/QuickfirePane';
 import { QUICKFIRE_ENABLED } from '../lib/env';
+import { clearSolvedPuzzles } from '../lib/puzzleProgress';
+import { PROJECT_STORAGE_PREFIX } from '../lib/projectProgress';
 import { CodeEditor } from '../components/CodeEditor';
 import { EditorPanel } from '../components/EditorPanel';
 import { PuzzlePane } from '../components/PuzzlePane';
@@ -335,6 +337,24 @@ export default function Workspace() {
     setMode('route');
   };
 
+  // Settings → "Restart Fully": everything saved for THIS track — route
+  // position and code, solved puzzles, project code, quickfire best — and
+  // nothing else. Other tracks, the sandbox, my projects, theme and sound
+  // are untouched. A full reload afterwards so no mounted pane writes a
+  // stale copy back.
+  const handleRestartTrack = () => {
+    try {
+      localStorage.removeItem(trackConfig.codeKey);
+      localStorage.removeItem(trackConfig.stepKey);
+      localStorage.removeItem(`tagsmiths-quickfire-best-${track}`);
+      for (const p of trackConfig.projects ?? []) localStorage.removeItem(PROJECT_STORAGE_PREFIX + p.id);
+      clearSolvedPuzzles((trackConfig.puzzles ?? []).map((p) => p.id));
+    } catch {
+      // storage unavailable — nothing was saved in the first place
+    }
+    window.location.assign(`${basePath}/route`);
+  };
+
   const stepLabel = `${Math.min(current + 1, steps.length)} / ${steps.length}`;
 
   const routeCompleteMessage =
@@ -396,7 +416,8 @@ export default function Workspace() {
             theme={theme}
             onToggleTheme={toggleTheme}
             onRestartRoute={handleRestartRoute}
-            routeLabel={track === 'html' ? 'html' : track === 'css' ? 'css' : 'email'}
+            onRestartTrack={handleRestartTrack}
+            routeLabel={track === 'html' ? 'html' : track === 'css' ? 'css' : 'email template'}
           />
         </div>
       </header>

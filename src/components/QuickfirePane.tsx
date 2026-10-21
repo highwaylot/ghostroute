@@ -17,6 +17,25 @@ type Props = {
 
 type Phase = 'ask' | 'correct';
 
+// Said once, at the top, in plain words — the mode is new and its name
+// does not explain it.
+function QuickfireIntro() {
+  return (
+    <div className="quickfire-intro">
+      <h2>What quickfire is</h2>
+      <p>
+        Flashcards for code you've already written. Every route step you pass goes into a pool. Quickfire picks one at random,
+        shows you its description, and you type the code from memory — no starter code, no hints until you miss.
+      </p>
+      <p>
+        The route checks each thing once; writing it again later, cold, is what makes it stick. Your answer is graded by the
+        same check the route used, so anything that passed there passes here. <strong>Check</strong> grades it,{' '}
+        <strong>show me</strong> reveals the answer (that one won't count toward your streak), <strong>skip</strong> moves on.
+      </p>
+    </div>
+  );
+}
+
 function loadBest(key: string): number {
   try {
     const n = Number(localStorage.getItem(key));
@@ -108,10 +127,8 @@ export function QuickfirePane({ steps, chapters, passedCount, storageKey, onGoTo
   if (pool.length === 0) {
     return (
       <div className="quickfire quickfire-empty">
-        <p className="mode-blurb">
-          Quickfire asks you to write, from memory, the things you've already passed on the route — in random order, with no code in front of you.
-          Nothing's been passed yet, so there's nothing to ask.
-        </p>
+        <QuickfireIntro />
+        <p className="mode-blurb">Nothing's been passed on the route yet, so the pool is empty.</p>
         <button className="btn btn-primary" onClick={onGoToRoute}>
           go pass a route step
         </button>
@@ -128,6 +145,7 @@ export function QuickfirePane({ steps, chapters, passedCount, storageKey, onGoTo
 
   return (
     <div className="quickfire">
+      <QuickfireIntro />
       <div className="quickfire-head">
         <div className="quickfire-stats">
           <span className="quickfire-stat">
@@ -147,13 +165,12 @@ export function QuickfirePane({ steps, chapters, passedCount, storageKey, onGoTo
             <span className="quickfire-stat-value">{pool.length} steps</span>
           </span>
         </div>
-        <p className="mode-blurb">
-          From memory: write the thing this step was about. Your own check from the route decides if it counts.
-        </p>
+
       </div>
 
       <div className={`quickfire-card ${phase === 'correct' ? 'correct' : ''} ${shake ? 'shake' : ''}`}>
-        <span className="quickfire-eyebrow">{chapter ? `chapter — ${chapter.title}` : 'step'}</span>
+        <span className="quickfire-eyebrow">{chapter ? `from chapter — ${chapter.title}` : 'from the route'}</span>
+        <p className="quickfire-ask">Write the code this describes:</p>
         <p className="quickfire-prompt">{prompt}</p>
         {revealed && (
           <p className="quickfire-reveal">

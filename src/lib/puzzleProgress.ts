@@ -18,3 +18,14 @@ export function markPuzzleSolved(id: string) {
     // storage unavailable — nothing to do
   }
 }
+
+// Forget a specific set of puzzles (one track's worth) and nothing else.
+export function clearSolvedPuzzles(ids: Iterable<string>) {
+  try {
+    const solved = loadSolvedPuzzles();
+    for (const id of ids) solved.delete(id);
+    localStorage.setItem(SOLVED_KEY, JSON.stringify([...solved]));
+  } catch {
+    // storage unavailable — nothing to do
+  }
+}
