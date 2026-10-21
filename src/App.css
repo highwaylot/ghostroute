@@ -51,8 +51,16 @@
     display: none;
   }
   .tab {
-    padding: 8px 10px;
+    padding: 0 10px;
     font-size: 12px;
+  }
+  /* .topbar prefix: the base .tab-short rule is written later in the file
+     and would otherwise win the tie. */
+  .topbar .tab-long {
+    display: none;
+  }
+  .topbar .tab-short {
+    display: inline;
   }
 }
 
@@ -92,7 +100,8 @@
   font-family: var(--sans);
   font-weight: 600;
   font-size: 13px;
-  padding: 8px 14px;
+  height: 36px;
+  padding: 0 14px;
   color: #9aa4d4;
   cursor: pointer;
   border-radius: 7px;
@@ -100,6 +109,12 @@
   border: none;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+/* "solve this code" is the one tab too long for a phone row; the short
+   form swaps in under 480px so all five tabs fit on one line. */
+.tab-short {
+  display: none;
 }
 
 .tab:hover {
@@ -129,7 +144,8 @@
   font-family: var(--sans);
   font-weight: 700;
   font-size: 12.5px;
-  padding: 9px 14px;
+  height: 36px;
+  padding: 0 14px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.06);
@@ -146,10 +162,6 @@
 .topbar-action.active {
   background: var(--blue);
   border-color: var(--blue);
-}
-
-.theme-toggle {
-  padding: 9px;
 }
 
 @media (max-width: 700px) {
@@ -614,6 +626,10 @@
   display: flex;
   align-items: center;
   overflow-x: auto;
+  /* Labels used to be cut off hard at both edges ("e></head>", a lone "<").
+     A soft mask says "this continues" instead of looking broken. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
   /* overflow-x: auto silently forces overflow-y to clip too, even though
      it's never set — this padding keeps the current-step glow ring from
      being cut off top and bottom. */
@@ -823,6 +839,22 @@
    with Reset/Check, so it sits left, sized to its own label. */
 .ghost-tip-actions .btn-ghost {
   flex: none;
+}
+
+/* Three buttons in one row don't fit a phone; let them wrap, with Reset
+   and Check sharing the second row. */
+@media (max-width: 600px) {
+  .ghost-tip-actions {
+    flex-wrap: wrap;
+  }
+  .ghost-tip-actions button {
+    flex: 1 1 120px;
+  }
+  .ghost-tip-actions .btn-ghost {
+    flex: 1 1 100%;
+    text-align: left;
+    justify-content: flex-start;
+  }
 }
 
 .ghost-tip code {
@@ -1368,6 +1400,55 @@
   .lower {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* Four numbers nobody needs on a phone, at the cost of a whole card;
+     the route position is already in the rail's track. */
+  .main .stats {
+    display: none;
+  }
+  /* The panel bar's label took one narrow column and its buttons ran off
+     the right edge. Label on its own row, buttons wrap underneath. */
+  .editor-panel-bar {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .editor-panel-bar > span:first-child {
+    flex: 1 1 100%;
+  }
+  /* The floating, resizable key index is a desktop idea; on a phone it
+     takes the screen. !important because KeySidebar writes the saved
+     width/height as inline styles. */
+  .sidebar {
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    resize: none;
+  }
+}
+
+/* Finger-sized controls where the pointer is a finger. */
+@media (pointer: coarse) {
+  .btn-sm {
+    padding: 8px 12px;
+  }
+  .assist-btn {
+    height: 32px;
+    min-width: 32px;
+  }
+  .key-cat {
+    padding: 7px 11px;
+  }
+  .copy-btn {
+    padding: 7px 12px;
+  }
+  .nest-related-chip {
+    padding: 9px 12px;
+  }
+  .tier-section-label {
+    padding: 8px 2px;
+  }
 }
 
 .code-panel {
@@ -1385,6 +1466,17 @@
    the moment dark mode was switched on. */
 .code-panel [class*='cm-theme'] {
   height: 100%;
+}
+
+/* The stock dark editor theme is a neutral grey; the rest of dark mode is
+   navy. Pull the editor onto the same surfaces so it stops looking pasted in. */
+.cm-theme-dark .cm-editor {
+  background: var(--surface);
+}
+
+.cm-theme-dark .cm-gutters {
+  background: var(--panel);
+  border-right: 1px solid var(--line);
 }
 
 .code-panel .cm-editor {
@@ -1728,6 +1820,10 @@
 @media (max-width: 700px) {
   .puzzle-pane {
     flex-direction: column;
+    /* The desktop align-items: flex-start stops stretching once the axis
+       flips, so the body sized to its content and ran 50px past the
+       viewport. Stretch to the column. */
+    align-items: stretch;
   }
   .puzzle-list {
     width: 100%;
@@ -1762,6 +1858,7 @@
 @media (max-width: 700px) {
   .project-pane {
     flex-direction: column;
+    align-items: stretch;
   }
   .project-list {
     width: 100%;
@@ -2303,22 +2400,10 @@
   line-height: 1.65;
 }
 
-.nest-diagram {
-  margin: 12px 0 0;
-  padding: 14px 16px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  font-family: var(--mono);
-  font-size: 12.5px;
-  line-height: 1.9;
-  color: var(--ink-dim);
-  overflow-x: auto;
-}
 
-.nest-diagram-hl {
-  background: rgba(59, 99, 232, 0.12);
-  color: var(--blue);
+.nest-example-hl {
+  background: rgba(84, 120, 240, 0.28);
+  color: #fff;
   font-weight: 700;
   border-radius: 4px;
   padding: 0 4px;
@@ -2532,7 +2617,9 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
   max-width: 760px;
+  margin: 0 auto;
 }
 
 .quickfire-empty {
@@ -2629,18 +2716,7 @@
 }
 
 .quickfire-editor {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  min-height: 120px;
-  max-height: 260px;
-  background: var(--surface);
-}
-
-.quickfire-editor [class*='cm-theme'],
-.quickfire-editor .cm-editor {
-  height: 100%;
-  min-height: 120px;
+  height: 180px;
 }
 
 .quickfire-actions {
@@ -2649,8 +2725,132 @@
   flex-wrap: wrap;
 }
 
+.quickfire-actions .btn {
+  flex: none;
+  margin-right: 0; /* .btn-ghost pushes siblings right elsewhere; not here */
+}
+
 @media (prefers-reduced-motion: reduce) {
   .quickfire-card.shake {
     animation: none;
   }
+}
+
+/* Settings menu — the gear in the top bar. Preferences and resets live
+   here so the bar itself only carries the learning tabs and "my stuff". */
+.settings {
+  position: relative;
+}
+
+.settings-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  max-width: calc(100vw - 24px);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(10, 14, 40, 0.22);
+  padding: 8px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+}
+
+.settings-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.settings-seg {
+  display: inline-flex;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.settings-seg-btn {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.settings-seg-btn.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.settings-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 4px 6px;
+}
+
+.settings-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.settings-item:hover {
+  background: var(--panel);
+}
+
+.settings-item-sub {
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.settings-confirm {
+  padding: 8px 10px 10px;
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.settings-confirm p {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.settings-confirm-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }

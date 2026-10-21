@@ -1,8 +1,11 @@
+import { isSoundOn } from './sound';
+
 // A short, synthesized three-note chime (no audio file to host or license).
 // Built with the Web Audio API directly from the click/keypress that
 // triggers it, so it counts as a user gesture and isn't blocked by
 // autoplay policies.
 export function playSuccessChime() {
+  if (!isSoundOn()) return;
   try {
     const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new AudioCtx();
@@ -32,6 +35,7 @@ export function playSuccessChime() {
 // A single, quiet tick for copy actions — deliberately much smaller than
 // the success chime, just enough to register that something happened.
 export function playCopyTick() {
+  if (!isSoundOn()) return;
   try {
     const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new AudioCtx();

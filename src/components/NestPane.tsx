@@ -31,10 +31,13 @@ function Diagram({ example, tag }: { example: string; tag: string }) {
   const lines = example.split('\n');
   const tagLineRe = name ? new RegExp(`</?${name}[\\s>]`) : null;
 
+  // One block, not two: this used to render as a light "diagram" under
+  // "Where it goes" and then again verbatim as the dark "Example" below it.
+  // Now the example itself carries the highlight on the tag's own lines.
   return (
-    <pre className="nest-diagram">
+    <pre className="nest-example">
       {lines.map((line, i) => (
-        <div key={i} className={tagLineRe && tagLineRe.test(line + '>') ? 'nest-diagram-hl' : undefined}>
+        <div key={i} className={tagLineRe && tagLineRe.test(line + '>') ? 'nest-example-hl' : undefined}>
           {line || ' '}
         </div>
       ))}
@@ -168,7 +171,6 @@ export function NestPane({ bookLabel, keyIndex, categories, getEntry, blueprints
           <div className="nest-section">
             <h2>Where it goes</h2>
             <p>{entry.whereItGoes}</p>
-            <Diagram example={entry.example} tag={entry.tag} />
           </div>
 
           <div className="nest-section">
@@ -176,7 +178,7 @@ export function NestPane({ bookLabel, keyIndex, categories, getEntry, blueprints
               <h2>Example</h2>
               <CopyButton text={entry.example} />
             </div>
-            <pre className="nest-example">{entry.example}</pre>
+            <Diagram example={entry.example} tag={entry.tag} />
           </div>
 
           <div className="nest-section">

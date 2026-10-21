@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Step } from '../data/steps';
 import type { Chapter } from '../data/chapters';
 import { CodeEditor } from './CodeEditor';
+import { EditorPanel } from './EditorPanel';
 import { playSuccessChime } from '../lib/celebrate';
 
 type Props = {
@@ -163,9 +164,9 @@ export function QuickfirePane({ steps, chapters, passedCount, storageKey, onGoTo
         {phase === 'correct' && <p className="quickfire-correct">✓ that's it</p>}
       </div>
 
-      <div className="quickfire-editor">
+      <EditorPanel label="your answer — from memory" className="code-panel quickfire-editor">
         <CodeEditor value={answer} onChange={setAnswer} />
-      </div>
+      </EditorPanel>
 
       <div className="quickfire-actions">
         <button className="btn btn-primary" onClick={check} disabled={phase !== 'ask' || answer.trim() === ''}>

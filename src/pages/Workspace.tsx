@@ -12,7 +12,7 @@ import { SandboxPane } from '../components/SandboxPane';
 import { ProjectPane } from '../components/ProjectPane';
 import { MyProjectsPane } from '../components/MyProjectsPane';
 import { NestPane } from '../components/NestPane';
-import { ThemeToggle } from '../components/ThemeToggle';
+import { SettingsMenu } from '../components/SettingsMenu';
 import { useTheme } from '../lib/ThemeContext';
 import { KEY_INDEX, KEY_CATEGORIES } from '../data/keyIndex';
 import { getNestEntry } from '../data/nest';
@@ -326,6 +326,14 @@ export default function Workspace() {
     setCode(trackConfig.starter);
   };
 
+  // Settings → "restart this route": position and code for this track only.
+  // The persistence effects write the fresh values straight back.
+  const handleRestartRoute = () => {
+    setCurrent(0);
+    setCode(trackConfig.starter);
+    setMode('route');
+  };
+
   const stepLabel = `${Math.min(current + 1, steps.length)} / ${steps.length}`;
 
   const routeCompleteMessage =
@@ -347,7 +355,8 @@ export default function Workspace() {
             route
           </button>
           <button className={`tab ${mode === 'solve' ? 'active' : ''}`} onClick={() => setMode('solve')}>
-            solve this code
+            <span className="tab-long">solve this code</span>
+            <span className="tab-short">solve</span>
           </button>
           <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} onClick={() => setMode('sandbox')}>
             sandbox
@@ -361,10 +370,11 @@ export default function Workspace() {
         </nav>
 
         <div className="topbar-actions">
-          <ThemeToggle theme={theme} onToggle={toggleTheme} />
           <button
             className={`topbar-action ${mode === 'myprojects' ? 'active' : ''}`}
             onClick={() => setMode('myprojects')}
+            aria-label="My projects"
+            title="My projects"
           >
             <FolderIcon />
             <span>my projects</span>
@@ -372,10 +382,19 @@ export default function Workspace() {
           <button
             className={`topbar-action ${keyOpen ? 'active' : ''}`}
             onClick={() => setKeyOpen((v) => !v)}
+            aria-label="Key index"
+            aria-expanded={keyOpen}
+            title="Key index"
           >
             <KeyIcon />
             <span>key index</span>
           </button>
+          <SettingsMenu
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            onRestartRoute={handleRestartRoute}
+            routeLabel={track === 'html' ? 'html' : track === 'css' ? 'css' : 'email'}
+          />
         </div>
       </header>
 

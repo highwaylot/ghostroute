@@ -36,6 +36,12 @@ const chrome = EditorView.theme({
   '.cm-lint-marker-warning': { color: 'var(--diff-medium)' },
 });
 
+// On a phone a puzzle's starter lines run past the screen and the editor
+// scrolls sideways, which is miserable to read. Wrap there; keep desktop
+// unwrapped so indentation stays legible. Read once at mount — the set of
+// extensions is not meant to change under a live view.
+const narrow = typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 700px)').matches;
+
 export function CodeEditor({ value, onChange }: Props) {
   const viewRef = useRef<EditorView | null>(null);
   const { theme } = useTheme();
@@ -74,7 +80,7 @@ export function CodeEditor({ value, onChange }: Props) {
       theme={theme}
       // autoCloseTags off — auto-inserting closing tags as you type was
       // fighting the point of the route, which is writing the tag yourself.
-      extensions={[html({ autoCloseTags: false }), diagnosticsLinter, lintGutter(), chrome]}
+      extensions={[html({ autoCloseTags: false }), diagnosticsLinter, lintGutter(), chrome, ...(narrow ? [EditorView.lineWrapping] : [])]}
       onChange={onChange}
       onCreateEditor={(view) => {
         viewRef.current = view;
