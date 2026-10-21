@@ -148,8 +148,8 @@ export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, routeLabel 
             </div>
           ) : (
             <button className="settings-item" onClick={() => setConfirm('route')}>
-              restart this route
-              <span className="settings-item-sub">back to step 1 of {routeLabel}</span>
+              Restart Route Training
+              <span className="settings-item-sub">Back To Step 1</span>
             </button>
           )}
 
@@ -167,8 +167,8 @@ export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, routeLabel 
             </div>
           ) : (
             <button className="settings-item" onClick={() => setConfirm('all')}>
-              start over as a new user
-              <span className="settings-item-sub">clears all progress on this device</span>
+              Restart Fully
+              <span className="settings-item-sub">CLEARS ALL PROGRESS</span>
             </button>
           )}
         </div>
