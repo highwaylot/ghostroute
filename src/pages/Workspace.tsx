@@ -5,6 +5,7 @@ import { KeySidebar } from '../components/KeySidebar';
 import { StatsPanel } from '../components/StatsPanel';
 import { DiagnosticsPanel } from '../components/DiagnosticsPanel';
 import { QuickfirePane } from '../components/QuickfirePane';
+import { QUICKFIRE_ENABLED } from '../lib/env';
 import { CodeEditor } from '../components/CodeEditor';
 import { EditorPanel } from '../components/EditorPanel';
 import { PuzzlePane } from '../components/PuzzlePane';
@@ -166,7 +167,7 @@ function resolveMode(modeParam: string | undefined): Mode {
     modeParam === 'sandbox' ||
     modeParam === 'myprojects' ||
     modeParam === 'nest' ||
-    modeParam === 'quickfire'
+    (modeParam === 'quickfire' && QUICKFIRE_ENABLED)
   ) {
     return modeParam;
   }
@@ -364,9 +365,11 @@ export default function Workspace() {
           <button className={`tab ${mode === 'nest' ? 'active' : ''}`} onClick={() => setMode('nest')}>
             nest
           </button>
-          <button className={`tab ${mode === 'quickfire' ? 'active' : ''}`} onClick={() => setMode('quickfire')}>
-            quickfire
-          </button>
+          {QUICKFIRE_ENABLED && (
+            <button className={`tab ${mode === 'quickfire' ? 'active' : ''}`} onClick={() => setMode('quickfire')}>
+              quickfire
+            </button>
+          )}
         </nav>
 
         <div className="topbar-actions">
@@ -561,7 +564,7 @@ export default function Workspace() {
             </>
           )}
 
-          {mode === 'quickfire' && (
+          {mode === 'quickfire' && QUICKFIRE_ENABLED && (
             <QuickfirePane
               key={track}
               steps={steps}
