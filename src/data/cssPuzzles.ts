@@ -121,13 +121,14 @@ export const CSS_PUZZLES: Puzzle[] = [
     id: 'css-specificity-id-beats-class',
     title: 'An override that refuses to override',
     difficulty: 'medium',
-    prompt: 'You\'re trying to make this warning orange with .warning, but it\'s still showing red because of an earlier id rule. Fix it so orange actually wins — moving the rule around won\'t help, an id always beats a class regardless of order.',
+    prompt:
+      "You want this warning to be orange, using .warning. It is still red, because of an id rule above it. Make orange win. Moving the rule will not help. An id beats a class no matter the order.",
     broken:
       '<p id="banner" class="warning">Careful, storm incoming.</p>\n<style>\n  #banner {\n    color: red;\n  }\n  .warning {\n    color: orange;\n  }\n</style>',
     hints: [
-      'An id selector is more specific than a class selector, so #banner wins this conflict no matter which rule comes later in the file.',
-      'Either the #banner rule needs to stop setting a conflicting color, or .warning\'s selector needs to become at least as specific.',
-      'Fix it either by removing #banner\'s color, or by writing a compound selector: #banner.warning { color: orange; }',
+      "An id selector is more specific than a class selector. So #banner wins, even if the .warning rule comes later.",
+      "Either stop #banner from setting a color, or make the .warning rule at least as specific as the id.",
+      "Fix it either by removing #banner's color, or by writing a compound selector: #banner.warning { color: orange; }",
     ],
     check: (code) => {
       const bannerBody = ruleBody(code, '#banner(?!\\.warning)');
@@ -156,13 +157,14 @@ export const CSS_PUZZLES: Puzzle[] = [
     id: 'css-align-vs-justify-mixup',
     title: 'Centered the wrong way',
     difficulty: 'medium',
-    prompt: 'The badge below is centered horizontally, but it\'s sitting at the top of its row, not vertically centered. Fix it.',
+    prompt:
+      "The badge is centered left to right, but it sits at the top of its row instead of the middle. Fix it.",
     broken:
       '<div class="badge-row">\n  <span class="badge">3</span>\n</div>\n<style>\n  .badge-row {\n    display: flex;\n    height: 60px;\n    justify-content: center;\n  }\n</style>',
     hints: [
-      'justify-content controls the main axis — in a default row, that\'s horizontal. Vertical centering in a row needs the other property.',
-      'align-items controls the cross axis — vertical, in a row-direction flex container.',
-      'Add to .badge-row: align-items: center;',
+      "justify-content moves items along the row, left to right. Up and down needs the other property.",
+      "align-items moves items up and down inside a flex row.",
+      "Add to .badge-row: align-items: center;",
     ],
     check: (code) => hasRule(code, '\\.badge-row', 'align-items\\s*:\\s*center'),
   },
@@ -170,13 +172,14 @@ export const CSS_PUZZLES: Puzzle[] = [
     id: 'css-missing-flex-wrap',
     title: 'Tags squeezed into one impossible line',
     difficulty: 'medium',
-    prompt: 'This row of tags is supposed to drop onto a new line once it runs out of room, but right now it just keeps squeezing everything onto one. Fix it.',
+    prompt:
+      "This row of tags should drop onto a new line when it runs out of room. Right now it squeezes everything onto one line. Fix it.",
     broken:
       '<div class="tag-list">\n  <span>design</span>\n  <span>css</span>\n  <span>layout</span>\n  <span>flexbox</span>\n  <span>responsive</span>\n</div>\n<style>\n  .tag-list {\n    display: flex;\n    gap: 8px;\n  }\n</style>',
     hints: [
-      'By default, flex items are forced to fit on one line, shrinking to squeeze in rather than wrapping.',
-      'One property lets them drop onto a new line instead.',
-      'Add to .tag-list: flex-wrap: wrap;',
+      "By default, flex items squeeze onto one line and shrink to fit instead of wrapping.",
+      "One property lets them drop onto a new line instead.",
+      "Add to .tag-list: flex-wrap: wrap;",
     ],
     check: (code) => hasRule(code, '\\.tag-list', 'flex-wrap\\s*:\\s*wrap'),
   },
@@ -228,13 +231,14 @@ export const CSS_PUZZLES: Puzzle[] = [
     id: 'css-custom-property-missing-dashes',
     title: 'A variable that was never actually declared',
     difficulty: 'medium',
-    prompt: 'This button is supposed to be blue, but var(--brand-color) isn\'t finding anything. Find why the definition doesn\'t count and fix it.',
+    prompt:
+      "This button should be blue, but var(--brand-color) finds nothing. Find why the definition does not count and fix it.",
     broken:
       '<button class="cta-btn">Get Started</button>\n<style>\n  :root {\n    brand-color: #2563eb;\n  }\n  .cta-btn {\n    background: var(--brand-color);\n    color: white;\n  }\n</style>',
     hints: [
-      'A custom property has to start with two dashes — without them, it\'s just an unrecognized regular property, silently ignored.',
-      'The definition in :root needs to match the -- prefix that var() is already looking for.',
-      'Fix it to: :root { --brand-color: #2563eb; }',
+      "A custom property must start with two dashes. Without them it is just an unknown property, and the browser ignores it.",
+      "The definition in :root needs the same -- prefix that var() is looking for.",
+      "Fix it to: :root { --brand-color: #2563eb; }",
     ],
     check: (code) => {
       const rootBody = ruleBody(code, ':root');
@@ -247,13 +251,14 @@ export const CSS_PUZZLES: Puzzle[] = [
     id: 'css-custom-property-typo',
     title: 'A variable name that\'s almost right',
     difficulty: 'hard',
-    prompt: 'This link is supposed to pick up the brand color, but it\'s rendering with the browser\'s default link color instead — no error, nothing obviously broken. Find the mismatch and fix it.',
+    prompt:
+      "This link should use the brand color. Instead it shows the browser's default link color. There is no error. Find the mismatch and fix it.",
     broken:
       '<a href="#" class="link">Read more</a>\n<style>\n  :root {\n    --brand-color: #2563eb;\n  }\n  .link {\n    color: var(--brand-colour);\n  }\n</style>',
     hints: [
-      'var() is referencing a custom property name that was never actually defined — check it letter for letter against the one in :root.',
-      'Custom property names are case- and spelling-sensitive, just like any other identifier — --brand-color and --brand-colour are two entirely different properties.',
-      'Fix it to: color: var(--brand-color);',
+      "var() is asking for a name that was never defined. Check it letter by letter against the one in :root.",
+      "Custom property names must match exactly. --brand-color and --brand-colour are two different names.",
+      "Fix it to: color: var(--brand-color);",
     ],
     check: (code) => {
       const rootBody = ruleBody(code, ':root');
@@ -268,12 +273,13 @@ export const CSS_PUZZLES: Puzzle[] = [
     id: 'css-z-index-without-position',
     title: 'A stacking order with no stack to join',
     difficulty: 'hard',
-    prompt: 'This dropdown is supposed to sit on top of everything else, but raising z-index isn\'t doing anything. Find what\'s missing and fix it.',
+    prompt:
+      "This dropdown should sit on top of everything else, but raising z-index does nothing. Find what is missing and fix it.",
     broken: '<div class="dropdown">Menu options here</div>\n<style>\n  .dropdown {\n    z-index: 10;\n  }\n</style>',
     hints: [
-      'z-index only has an effect on a positioned element — one with a position value other than the default, static.',
-      'Give .dropdown a position, in addition to its z-index.',
-      'Add to .dropdown: position: relative;',
+      "z-index only works on a box that has a position other than the default.",
+      "Give .dropdown a position, as well as its z-index.",
+      "Add to .dropdown: position: relative;",
     ],
     check: (code) => {
       const body = ruleBody(code, '\\.dropdown');
@@ -297,12 +303,13 @@ export const CSS_PUZZLES: Puzzle[] = [
     id: 'css-vw-overflow',
     title: 'A width that\'s wider than the window',
     difficulty: 'hard',
-    prompt: 'This section is supposed to fill the screen edge to edge, but it\'s actually causing a slight horizontal scrollbar to appear. Fix the width.',
+    prompt:
+      "This section should fill the screen edge to edge. Instead it causes a small sideways scrollbar. Fix the width.",
     broken: '<section class="hero">Welcome to the site</section>\n<style>\n  .hero {\n    width: 100vw;\n    padding: 40px;\n  }\n</style>',
     hints: [
-      '100vw is 100% of the viewport\'s width — including the space a scrollbar takes up, which the element itself doesn\'t occupy, causing overflow.',
-      'A percentage is relative to the parent\'s actual content width instead, which already accounts for the scrollbar.',
-      'Fix it to: width: 100%;',
+      "100vw is the full screen width, including the space the scrollbar takes. The box cannot use that space, so it spills over.",
+      "A percentage is measured from the parent box, which already leaves room for the scrollbar.",
+      "Fix it to: width: 100%;",
     ],
     check: (code) => {
       const body = ruleBody(code, '\\.hero');
@@ -313,12 +320,13 @@ export const CSS_PUZZLES: Puzzle[] = [
     id: 'css-em-compounding',
     title: 'A size that keeps changing itself',
     difficulty: 'hard',
-    prompt: 'This badge is supposed to render at a consistent size everywhere it\'s used, but it keeps coming out a different size depending on where it\'s nested. Fix the unit.',
+    prompt:
+      "This badge should be the same size everywhere. Instead its size changes depending on where it sits. Fix the unit.",
     broken: '<span class="badge">New</span>\n<style>\n  .badge {\n    font-size: 0.8em;\n  }\n</style>',
     hints: [
-      'em is relative to the parent\'s font-size — nest the badge inside something with a different font-size, and it compounds, drifting further with every level.',
-      'A unit relative to the root font-size instead stays consistent no matter how deep it\'s nested.',
-      'Fix it to: font-size: 0.8rem;',
+      "em is measured from the parent's text size. Put the badge inside something with a different text size and it changes, more with every level.",
+      "A unit measured from the page's base text size stays the same no matter how deep it sits.",
+      "Fix it to: font-size: 0.8rem;",
     ],
     check: (code) => {
       const body = ruleBody(code, '\\.badge');

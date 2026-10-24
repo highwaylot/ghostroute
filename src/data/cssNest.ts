@@ -351,13 +351,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'any CSS rules between the opening and closing tag',
     },
     whatItDoes:
-      'An embedded stylesheet: everything between <style> and </style> is parsed as CSS and applied to the page it lives in. It is the simplest way to attach CSS — no second file, no path to get wrong — which is why every puzzle and project in this track starts with one. The rules inside behave exactly like rules in a .css file.',
+      "<style> holds CSS written straight into the page. Everything between <style> and </style> is read as CSS, not HTML. A rule like h1 { color: teal; } works exactly as it would in a separate .css file. It is the simplest way to attach CSS, with no second file and no path to get wrong. That is why every exercise here starts with one.",
     whereItGoes:
-      'Inside <head>, so the styles are known before the body is painted. For a real site with more than one page, move the rules to a .css file and attach it with <link rel="stylesheet"> so every page shares them.',
+      "Inside <head>, so the browser knows the styles before it draws the page. For a real site with several pages, move the rules to a .css file and attach it with <link rel=\"stylesheet\">. Then every page shares them.",
     mistakes: [
-      'Putting HTML inside it — <style> switches the parser into CSS mode, so writing <h1> { } is an error. Use the bare selector h1 { }.',
-      'Leaving off </style> — the browser keeps reading the rest of the document as CSS and the page goes blank below that point.',
-      'Reaching for the style="" attribute instead — an inline style on one element beats every rule in the <style> block (and in your .css file), so a stray style="" is the classic reason a rule "doesn\'t work".',
+      "Writing HTML inside it. <style> switches the browser into CSS mode, so <h1> { } is an error. Write the bare selector: h1 { }.",
+      "Leaving off </style>. The browser reads the rest of the page as CSS, and the page goes blank from that point.",
+      "Using the style=\"\" attribute instead. A style on one tag beats every rule in the <style> block. A stray style=\"\" is the classic reason a rule \"does not work.\"",
     ],
     example: '<head>\n  <style>\n    body { font-family: system-ui, sans-serif; }\n    h1 { color: teal; }\n  </style>\n</head>',
     related: ['<link rel="stylesheet">', 'selector { }', 'specificity & the cascade', '!important'],
@@ -372,12 +372,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'rel="stylesheet" href="path/to/file.css"',
     },
     whatItDoes:
-      'The bridge between an HTML file and a CSS file — without it, a .css file full of rules just sits there unused, with nothing telling the browser to apply it.',
+      "<link rel=\"stylesheet\" href=\"style.css\"> attaches a CSS file to an HTML page. Without it, a .css file full of rules just sits there, and nothing tells the browser to use it.",
     whereItGoes:
-      'Inside <head>, so the browser loads the styles before it paints the page instead of flashing unstyled content first.',
+      "Inside <head>. Then the browser loads the styles before it draws the page, instead of showing an unstyled page for a moment first.",
     mistakes: [
-      'A wrong or misspelled href — the browser fails silently, no error in the page itself, just styles that never show up.',
-      'Putting it at the bottom of <body> "to make the page load faster" — this usually backfires by causing a visible flash of unstyled content instead.',
+      "A wrong or misspelled href. The browser says nothing. The styles just never show up.",
+      "Putting it at the bottom of <body> to \"make the page load faster.\" It usually backfires: the page flashes unstyled, then jumps.",
     ],
     example: '<head>\n  <link rel="stylesheet" href="style.css">\n</head>',
     related: ['<style>', 'selector { }'],
@@ -392,12 +392,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'property: value; pairs, one or more, semicolon-separated',
     },
     whatItDoes:
-      'Every single CSS rule has this exact shape: a selector naming what to target, then curly braces holding one or more declarations (a property, a colon, a value, a semicolon).',
+      "Every CSS rule has the same shape: h1 { color: teal; }. The part before the brace is the selector. It names what to change. Inside the braces are one or more declarations. Each declaration is a property, a colon, a value and a semicolon.",
     whereItGoes:
-      'In a linked .css file, or inside a <style> tag in <head>. Never directly inside an element like an attribute — that\'s the separate, more limited inline style="" syntax.',
+      "In a .css file, or inside a <style> tag in <head>. Never written inside a tag like an attribute. That is the separate, more limited style=\"\" form.",
     mistakes: [
-      'Forgetting the semicolon after a declaration — the browser usually recovers, but it can silently swallow the next declaration on the same line.',
-      'Mismatched braces (one { with no closing }) — everything after it in the file can end up inside that rule by accident.',
+      "Forgetting the semicolon after a declaration. The browser usually recovers, but it can quietly drop the next declaration on the same line.",
+      "A { with no matching }. Everything after it in the file can end up inside that rule by accident.",
     ],
     example: 'p {\n  color: navy;\n  font-size: 18px;\n}',
     related: ['.class', '#id'],
@@ -412,12 +412,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'inline > id > class > element, roughly, before !important',
     },
     whatItDoes:
-      'When two rules both target the same element with conflicting values, the cascade decides which one actually renders — based on specificity (how precise the selector is), then source order (later wins ties).',
+      "Two rules can change the same thing on the same tag. The cascade is how the browser picks the winner. First it looks at specificity: how precise the selector is. An id beats a class, and a class beats a tag name. If two rules are equally specific, the one written later wins.",
     whereItGoes:
-      "It's not something you write, it's how the browser reads everything you've already written — but it explains almost every \"css isn't working\" bug.",
+      "You do not write it. It is how the browser reads everything you have already written. It explains almost every \"my CSS is not working\" bug.",
     mistakes: [
-      'Reaching for !important to force a rule to win — it works, but it breaks the normal cascade for everyone who edits the file after, including future-you.',
-      'Assuming "the CSS further down the file always wins" — an id selector earlier in the file still beats a class selector later, regardless of order.',
+      "Reaching for !important to force a rule to win. It works, but it breaks the normal order for everyone who edits the file after you, including future you.",
+      "Assuming the rule further down the file always wins. An id selector earlier in the file still beats a class selector later. Order only breaks ties.",
     ],
     example: '/* both match the same <a>, the id wins regardless of order */\n#nav a { color: red; }\n.nav a { color: blue; }',
     related: ['.class', '#id', '!important', 'inherit / initial'],
@@ -432,12 +432,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: '--brand-color: #2563eb; used as var(--brand-color)',
     },
     whatItDoes:
-      "Defines a value once, under a name you choose, and lets any other declaration reference it with var(--name) instead of repeating the literal value. Change the one definition and every place that uses var() picks up the new value — the same problem a find-and-replace on a literal color across a whole file solves, except it's actually reliable and works live.",
+      "A custom property is a value you name once and reuse. Define it: --brand: #6366f1;. Use it anywhere: color: var(--brand);. Change the one definition and every place that uses var() updates. It is like find and replace for a color, except it is reliable and it works live.",
     whereItGoes:
-      'Defined inside a selector (:root, meaning the whole document, is the most common spot for a global one); referenced anywhere inside var() that a normal value would go.',
+      "Defined inside a rule. :root (which means the whole page) is the usual spot for one the whole site uses. Used anywhere a normal value would go, inside var().",
     mistakes: [
-      "Defining it somewhere too narrow (like a single .card rule) and then trying to use it outside that selector's descendants — a custom property is only visible to the element it's defined on and that element's children, same as any other inherited value.",
-      'Forgetting the -- prefix — custom-color: blue; is just an unrecognized (and ignored) regular property, not a custom property.',
+      "Defining it in a narrow rule like .card and then using it outside the card. A custom property is only visible to the tag it is defined on and the tags inside that one.",
+      "Forgetting the -- at the front. custom-color: blue; is just an unknown property the browser ignores.",
     ],
     example: ':root {\n  --brand-color: #2563eb;\n}\n\nbutton {\n  background: var(--brand-color);\n}\na {\n  color: var(--brand-color);\n}',
     related: ['specificity & the cascade'],
@@ -452,11 +452,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: '.card, .btn, .active',
     },
     whatItDoes:
-      'Targets every element that has this class in its class="" attribute, however many there are on the page. The reusable, day-to-day selector.',
-    whereItGoes: 'Anywhere a rule needs to reuse the same look across multiple, unrelated elements.',
+      ".card picks every tag that has class=\"card\", however many there are. It is the everyday selector: style the look once, reuse it everywhere.",
+    whereItGoes:
+      "Anywhere the same look is needed on several tags that are not related in any other way.",
     mistakes: [
-      'Naming classes after what something looks like (.red-text) instead of what it means (.error) — the look changes eventually, the name shouldn\'t have to.',
-      'Fighting specificity by adding more classes to the selector (.card.card) instead of just checking why the original rule isn\'t winning.',
+      "Naming classes after how something looks (.red-text) instead of what it is (.error). The look will change. The name should not have to.",
+      "Doubling up classes in the selector (.card.card) to force a rule to win, instead of checking why the first rule lost.",
     ],
     example: '.card {\n  border: 1px solid #ccc;\n  padding: 16px;\n}',
     related: ['#id', 'specificity & the cascade'],
@@ -471,11 +472,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: '#header, #main-nav',
     },
     whatItDoes:
-      'Targets the one element on the page with a matching id="" attribute. Much higher specificity than a class, which is exactly why it\'s used sparingly for styling.',
-    whereItGoes: 'Reserved for genuinely one-off elements — a page header, a specific landmark JS also hooks into.',
+      "#title picks the one tag with id=\"title\". An id selector is much more specific than a class, which is exactly why it is used sparingly for styling.",
+    whereItGoes:
+      "For things there is only one of: the page header, a tag JavaScript also needs to find.",
     mistakes: [
-      'Using an id selector for anything reusable — its high specificity makes it stubbornly hard to override later from a class.',
-      'Reusing the same id on multiple elements — ids must be unique; CSS won\'t error, but JS relying on getElementById will only ever find the first one.',
+      "Using an id selector for anything reusable. Its high specificity makes it stubbornly hard to override from a class later.",
+      "Using the same id on more than one tag. CSS will not complain, but ids must be unique, and JavaScript will only ever find the first one.",
     ],
     example: '#header {\n  background: black;\n  color: white;\n}',
     related: ['.class'],
@@ -490,11 +492,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'nav a, nav > a, .card + .card',
     },
     whatItDoes:
-      "Combines two selectors to target based on nesting: a space means anywhere inside (any depth), > means only a direct child, + means the very next sibling.",
-    whereItGoes: 'Whenever the same tag or class needs different styling depending on where it sits in the tree.',
+      "Two selectors joined together pick tags based on where they sit. A space means anywhere inside: nav a is every link inside a nav, at any depth. A > means directly inside only: nav > a. A + means the very next tag after: h1 + p.",
+    whereItGoes:
+      "Whenever the same tag or class should look different depending on where it is on the page.",
     mistakes: [
-      'Using a plain space (any depth) when > (direct child only) was meant — the space version can accidentally catch nested elements several levels deep.',
-      'Chaining too many descendant selectors (nav ul li a span) — it works, but it\'s brittle: restructure the HTML slightly and the rule silently stops matching.',
+      "Using a space when > was meant. The space version catches tags several levels deep, which can be more than you intended.",
+      "Chaining many selectors, like nav ul li a span. It works, but it is fragile. Change the HTML slightly and the rule quietly stops matching.",
     ],
     example: 'nav a { color: white; }      /* any <a> inside <nav>, any depth */\nnav > a { color: white; }    /* only <a> directly inside <nav> */',
     related: [':hover / :first-child', '::before / ::after'],
@@ -509,11 +512,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: ':hover, :focus, :first-child, :last-child, :nth-child()',
     },
     whatItDoes:
-      "Selects an element based on something other than its tag, class, or id — a live interaction state (:hover, :focus) or its position among siblings (:first-child).",
-    whereItGoes: 'Appended directly to another selector, with no space, to narrow what it matches.',
+      "A word after a colon narrows a selector by state or position. a:hover picks a link while the mouse is over it. li:first-child picks the first item in a list. :focus picks the field the keyboard is in.",
+    whereItGoes:
+      "Stuck directly onto the end of a selector, with no space before the colon.",
     mistakes: [
-      'Styling :hover on a touch device and expecting it to behave like a click — hover has no real equivalent on touchscreens, so that state may never trigger.',
-      'Adding a :hover style without a matching :focus style — a keyboard user tabbing through the page never triggers hover at all, and loses the same visual feedback.',
+      "Expecting :hover to work like a tap on a phone. Touch screens have no hover, so that state may never show.",
+      "Styling :hover without a matching :focus. Someone moving through the page with the keyboard never hovers, and loses the same visual cue.",
     ],
     example: 'button:hover, button:focus {\n  opacity: 0.8;\n}',
     related: ['descendant & child selectors', ':focus / :focus-visible', ':nth-child() / :not()', 'cursor'],
@@ -528,12 +532,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'content-box (default), border-box',
     },
     whatItDoes:
-      'Decides what width/height actually measure. content-box (the default) measures just the content, so padding and border add on top and inflate the final size. border-box includes them in the width you set.',
+      "box-sizing decides what width and height measure. The default, content-box, measures just the content. Padding and border get added on top, so the box ends up bigger than the number you wrote. border-box counts them inside the width you set, which is what people expect.",
     whereItGoes:
-      'Almost always set once, globally, at the top of a stylesheet — border-box is what most developers expect by default and the browser default fights that expectation.',
+      "Almost always set once, for everything, at the top of a stylesheet: * { box-sizing: border-box; }.",
     mistakes: [
-      'Setting width: 100% on an element with padding, under the default content-box — the padding adds on top and the element overflows its container.',
-      'Setting box-sizing: border-box on one element but forgetting * { box-sizing: border-box; } globally — the two models mixed on the same page produce inconsistent sizing.',
+      "Setting width: 100% on a box with padding under the default. The padding is added on top and the box spills out of its parent.",
+      "Setting border-box on one tag but not the rest. Two sizing models on the same page give sizes that do not line up.",
     ],
     example: '* {\n  box-sizing: border-box;\n}\n\n.card {\n  width: 300px;\n  padding: 20px; /* included in that 300px, not added to it */\n}',
     related: ['padding', 'border', 'margin', 'width / height'],
@@ -548,11 +552,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: '0, auto, 16px, 1rem, 1em',
     },
     whatItDoes:
-      "Adds invisible space outside an element's border, pushing away whatever is next to it. Two vertical margins between adjacent elements collapse into one (the larger of the two), rather than adding together.",
-    whereItGoes: 'On any element that needs breathing room from its neighbors.',
+      "Margin is empty space outside a box. It pushes other boxes away. When two boxes stack, their top and bottom margins overlap: you get the larger of the two, not the sum.",
+    whereItGoes:
+      "On any box that needs room from its neighbors.",
     mistakes: [
-      'Expecting two stacked elements\' margins to add together — vertical margins between siblings collapse to the larger single value, not the sum.',
-      'Using margin: auto to center something horizontally without giving it a fixed width first — auto centering only works once the element\'s width is set.',
+      "Expecting two stacked margins to add up. Between stacked boxes, only the larger one counts.",
+      "Using margin: auto to center a box that has no width set. Auto centering only works once the box has a width.",
     ],
     example: '.card {\n  margin: 0 auto 24px;\n  max-width: 600px;\n}',
     related: ['padding', 'box-sizing'],
@@ -567,11 +572,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: '0, 16px, 1rem, 8px 16px',
     },
     whatItDoes:
-      "Adds space inside an element, between its content and its border. Unlike margin, padding's background color still shows through it, since it's inside the box.",
-    whereItGoes: 'On any element whose content sits too close to its own edge.',
+      "Padding is space inside a box, between its content and its edge. The background color shows through the padding, because it is inside the box. Margin, outside the box, stays empty.",
+    whereItGoes:
+      "On any box whose content sits too close to its own edge.",
     mistakes: [
-      "Reaching for margin when the goal was actually padding (or vice versa) — margin pushes other elements away, padding just gives the content inside more room.",
-      'Forgetting box-sizing: border-box, then being surprised padding made the element wider than its set width.',
+      "Using margin when padding was meant, or the other way round. Margin pushes other boxes away. Padding gives the content inside more room.",
+      "Forgetting box-sizing: border-box, then being surprised that padding made the box wider than the width you set.",
     ],
     example: '.button {\n  padding: 10px 20px;\n}',
     related: ['margin', 'box-sizing'],
@@ -586,11 +592,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: '1px solid #ccc, none, 2px dashed red',
     },
     whatItDoes:
-      'Draws a visible line around an element, sitting between its padding and its margin. Shorthand for width, style, and color in one line.',
-    whereItGoes: 'On any element that needs a visible outline — a card, an input, a divider.',
+      "border draws a visible line around a box, between its padding and its margin. One value sets all three parts: thickness, style and color, like 1px solid #333.",
+    whereItGoes:
+      "On any box that needs a visible edge: a card, a text field, a divider.",
     mistakes: [
-      'Setting only border-color without border-style — border defaults to none, so without an explicit style like solid, nothing renders regardless of width or color.',
-      'Not accounting for border adding to an element\'s total size under the default box-sizing — same gotcha as padding.',
+      "Setting border-color without a style. The style defaults to none, so without a word like solid nothing shows, whatever the color.",
+      "Forgetting that the border adds to the box's size under the default box-sizing. Same gotcha as padding.",
     ],
     example: '.card {\n  border: 1px solid #ccc;\n  border-radius: 8px;\n}',
     related: ['padding', 'box-sizing', 'border-radius', 'box-shadow'],
@@ -605,11 +612,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'named (red), hex (#222), rgb(), hsl()',
     },
     whatItDoes:
-      "color sets the color of an element's own text (and inherits down to children, unless overridden). background-color fills the element's own box and does not inherit.",
-    whereItGoes: 'On text-containing elements for color; on any element for background-color.',
+      "color sets the color of the text. It passes down to every tag inside, unless a rule overrides it. background-color fills the box behind the content. It does not pass down. Each tag's background is clear by default.",
+    whereItGoes:
+      "color on anything with text in it. background-color on any box.",
     mistakes: [
-      'Setting a light background-color without checking the inherited text color still has enough contrast against it.',
-      'Expecting background-color to inherit like color does — a parent\'s background never bleeds down to children automatically; each element\'s own background is transparent by default.',
+      "Setting a light background without checking that the text color still stands out against it.",
+      "Expecting background-color to pass down like color does. A parent's background never spreads to the tags inside it on its own.",
     ],
     example: 'body {\n  color: #222;\n  background-color: #fafafa;\n}',
     related: ['font-family & font-size', 'background'],
@@ -624,12 +632,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'system-ui, sans-serif, 16px, 1rem',
     },
     whatItDoes:
-      'font-family lists which typefaces to try, in order, falling back to the next if one isn\'t available. font-size sets how large the text renders, and most other type-related sizing (line-height, em units) is relative to it.',
+      "font-family lists the typefaces to try, in order. If the first is missing, the browser tries the next. font-size sets how big the text is. Most other text sizes, like line-height, are measured from it.",
     whereItGoes:
-      'Usually set once on body and inherited everywhere, with overrides only where a specific element genuinely needs to differ.',
+      "Usually set once on body and passed down to everything. Override only where a specific tag really needs to differ.",
     mistakes: [
-      'Listing only one specific font with no generic fallback (sans-serif, serif) at the end — if that font fails to load, the browser falls back to something unpredictable instead.',
-      'Setting font-size in px everywhere — it ignores a user\'s browser-level font size preference, unlike rem, which scales with it.',
+      "Listing one font with no general fallback like sans-serif at the end. If that font fails to load, the browser picks something unpredictable.",
+      "Setting every font-size in px. That ignores a reader's own text-size setting. rem scales with it.",
     ],
     example: 'body {\n  font-family: system-ui, sans-serif;\n  font-size: 16px;\n}',
     related: ['font-weight & line-height', 'color & background-color', 'text-align', 'text-decoration / font-style', 'text-transform / letter-spacing', '@font-face'],
@@ -644,11 +652,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'font-weight: 400/700; line-height: 1.5, 24px',
     },
     whatItDoes:
-      'font-weight controls boldness (400 normal, 700 bold, and steps between if the font supports them). line-height sets the vertical space each line of text occupies, which is what actually controls how airy or cramped a paragraph feels.',
-    whereItGoes: 'Anywhere text needs emphasis (font-weight) or better readability in long-form text (line-height).',
+      "font-weight sets how bold text is: 400 is normal, 700 is bold. line-height sets how tall each line of text is. That is what makes a paragraph feel airy or cramped.",
+    whereItGoes:
+      "font-weight wherever text needs emphasis. line-height on body text, so long passages are easy to read.",
     mistakes: [
-      'Using a font-weight the loaded font file doesn\'t actually include — the browser fake-bolds it, which looks noticeably worse than a real bold weight.',
-      'Leaving line-height at the browser default for body text — dense paragraphs with a tight default line-height are measurably harder to read.',
+      "Using a weight the font file does not include. The browser fakes it by thickening the letters, and it looks noticeably worse than a real bold.",
+      "Leaving line-height at the browser default for body text. Tight lines in a dense paragraph are harder to read.",
     ],
     example: 'p {\n  font-weight: 400;\n  line-height: 1.6;\n}',
     related: ['font-family & font-size'],
@@ -663,11 +672,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'block, inline, inline-block, flex, grid, none',
     },
     whatItDoes:
-      "Sets how an element behaves in the page's layout flow — block elements stack and take the full width, inline elements sit in the middle of a line of text and ignore width/height, inline-block gets both a place in the line and a settable size.",
-    whereItGoes: 'Overrides an element\'s browser-default display when the built-in behavior isn\'t what\'s needed.',
+      "Every tag is either a block or inline. A block, like <p>, starts on its own line and stretches across the page. Inline, like <strong>, sits inside a line of text and only takes the room its words need. Inline tags ignore width and height. display lets you change which one a tag is. inline-block sits in the line but also accepts a size.",
+    whereItGoes:
+      "On a tag whose built-in behavior is not what you need.",
     mistakes: [
-      'Trying to set width/height on a naturally inline element (like <span>) without changing its display first — those properties are simply ignored on inline elements.',
-      'Using display: none to "hide" something that should stay in the accessibility tree (like a skip-navigation trick) — none removes it entirely, from sighted users and screen readers alike.',
+      "Setting width or height on an inline tag like <span> without changing its display first. Inline tags ignore those properties.",
+      "Using display: none to hide something that a screen reader (software that reads the page aloud) should still find. none removes it from everyone.",
     ],
     example: 'span.badge {\n  display: inline-block;\n  padding: 2px 8px;\n}',
     related: ['position', 'display: flex', 'display: grid', 'overflow', 'float / clear', 'list-style'],
@@ -682,11 +692,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'static (default), relative, absolute, fixed, sticky',
     },
     whatItDoes:
-      "Changes how an element is positioned relative to normal flow. relative shifts it from where it would've been, without affecting other elements. absolute removes it from flow entirely and positions it against its nearest positioned ancestor. fixed pins it to the viewport. sticky toggles between relative and fixed based on scroll.",
-    whereItGoes: 'Wherever an element needs to break out of normal document flow — an overlay, a pinned header, a badge in a corner.',
+      "position changes where a box sits compared to its normal place. relative nudges it from where it would have been, and nothing else moves. absolute takes it out of the flow and places it against the nearest parent that also has a position. fixed pins it to the screen. sticky acts normal until you scroll past it, then sticks.",
+    whereItGoes:
+      "Wherever a box needs to leave the normal flow: an overlay, a pinned header, a badge in a corner.",
     mistakes: [
-      'Using position: absolute without a position: relative ancestor — it then positions against the whole page instead of the intended nearby container.',
-      'Reaching for position to build a layout (like a row of cards) instead of flexbox or grid — position solves overlap/pinning problems, not general layout.',
+      "Using position: absolute with no parent that has position: relative. The box is then placed against the whole page instead of the box you meant.",
+      "Using position to build a layout like a row of cards. That is a flexbox or grid job. position is for overlaps and pinning.",
     ],
     example: '.badge-wrap {\n  position: relative;\n}\n.badge {\n  position: absolute;\n  top: 0;\n  right: 0;\n}',
     related: ['display', 'z-index'],
@@ -701,11 +712,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'auto (default), 0, 10, 100, -1',
     },
     whatItDoes:
-      'When two positioned elements overlap, z-index decides which one renders on top — higher numbers sit above lower ones. It only has any effect on an element that also has position set to something other than the default static; on a static element it\'s silently ignored.',
-    whereItGoes: 'On the same element as a position declaration, whenever it needs to explicitly sit above or below something else it overlaps.',
+      "When two boxes overlap, z-index decides which is on top. A higher number sits above a lower one. It only works on a box that also has a position other than the default. On a normal box it is silently ignored.",
+    whereItGoes:
+      "On the same box as its position rule, whenever that box must sit above or below something it overlaps.",
     mistakes: [
-      "Setting z-index on an element without also setting position — nothing happens, and it's easy to miss why.",
-      'Reaching for increasingly large values (999, 9999, 99999) to "win" a stacking fight instead of figuring out why the actual stacking order is wrong — usually a sign two unrelated parts of the page are fighting over the same numeric range with no real system.',
+      "Setting z-index on a box with no position. Nothing happens, and it is easy to miss why.",
+      "Reaching for bigger and bigger numbers (999, 9999) to win a fight. That is a sign two parts of the page are using the same range with no plan. Find the real order instead.",
     ],
     example: '.dropdown {\n  position: absolute;\n  z-index: 10;\n}\n.modal-overlay {\n  position: fixed;\n  z-index: 100;\n}',
     related: ['position'],
@@ -720,11 +732,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'flex, inline-flex',
     },
     whatItDoes:
-      'Turns an element into a flex container. Its direct children (only direct — not grandchildren) become flex items that line up in a row by default, and a handful of new properties become available to control how they space and align.',
-    whereItGoes: 'On any container whose children need to sit in a row (or column) instead of stacking.',
+      "display: flex goes on a parent tag. The tags directly inside it become flex items and line up in a row. Only the direct children, not their children. A few new properties then control how the items space out and line up.",
+    whereItGoes:
+      "On any parent whose children should sit in a row or column instead of stacking.",
     mistakes: [
-      'Expecting display: flex to affect grandchildren, not just direct children — nested elements two levels down are untouched until their own parent is also flexed.',
-      'Setting flex properties (justify-content, align-items) on the children instead of the container — those properties only do anything on the flex container itself.',
+      "Expecting display: flex to reach grandchildren. Tags two levels down are untouched until their own parent is also flex.",
+      "Putting justify-content or align-items on the children. Those properties only do something on the parent that has display: flex.",
     ],
     example: '.row {\n  display: flex;\n  gap: 12px;\n}',
     related: ['justify-content & align-items', 'flex-wrap & gap', 'flex-direction', 'flex (grow / shrink / basis)', 'display: grid'],
@@ -739,11 +752,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'justify-content: flex-start/center/space-between; align-items: stretch/center',
     },
     whatItDoes:
-      "justify-content positions items along the main axis (the row direction, by default). align-items positions them along the cross axis (perpendicular to that — vertically, in a row). Together they solve most 'how do I center this' questions.",
-    whereItGoes: 'On the flex container, alongside display: flex — never on the individual flex items.',
+      "Both go on the flex parent. justify-content spaces the items along the row: left, right, center, or spread out. align-items lines them up the other way: top, bottom or middle. Together they answer most \"how do I center this\" questions.",
+    whereItGoes:
+      "On the parent that has display: flex. Never on the items themselves.",
     mistakes: [
-      'Mixing up which axis each one controls — in the default row direction, justify-content is horizontal and align-items is vertical, and it\'s easy to reach for the wrong one.',
-      'Trying to use justify-content to center a single item vertically — that\'s align-items\' job in a row-direction flex container.',
+      "Mixing up which one goes which way. In a row, justify-content is left to right and align-items is top to bottom.",
+      "Using justify-content to center one item top to bottom. In a row, that is align-items.",
     ],
     example: '.row {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}',
     related: ['display: flex', 'flex-wrap & gap', 'flex-direction'],
@@ -758,11 +772,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'flex-wrap: nowrap (default)/wrap; gap: 12px',
     },
     whatItDoes:
-      'By default, flex items are squeezed to fit on one line even if they overflow. flex-wrap: wrap lets them drop onto new lines instead. gap adds even spacing between items without needing margin hacks on each one.',
-    whereItGoes: 'On the flex container, whenever items need to wrap responsively or need consistent spacing.',
+      "By default, flex items squeeze onto one line even when they do not fit. flex-wrap: wrap lets them drop onto a new line instead. gap adds even space between the items, with no margin on each one.",
+    whereItGoes:
+      "On the flex parent, whenever items should wrap on small screens or need even spacing.",
     mistakes: [
-      'Forgetting flex-wrap on a row of items meant to reflow on small screens — without it, they just shrink and squeeze instead of wrapping.',
-      'Using margin on individual items for spacing instead of gap on the container — gap doesn\'t add extra space at the very start/end the way per-item margins do.',
+      "Forgetting flex-wrap on a row that should reflow on phones. Without it, the items shrink and squeeze instead of wrapping.",
+      "Using margin on each item for spacing instead of gap on the parent. gap does not add extra space at the ends the way margins do.",
     ],
     example: '.row {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 16px;\n}',
     related: ['display: flex', 'justify-content & align-items'],
@@ -777,12 +792,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: '(max-width: 600px), (min-width: 900px)',
     },
     whatItDoes:
-      "Wraps a block of CSS so it only applies when a condition is true — almost always a screen width. This is the mechanism behind a layout that reflows for phones vs. desktops.",
+      "A media query wraps rules that only apply when a condition is true. Almost always the condition is a screen width: @media (max-width: 600px) { ... } means \"on screens 600 pixels wide or less.\" It is how one page can lay out differently on a phone and a desktop.",
     whereItGoes:
-      'Anywhere in a stylesheet; rules inside only take effect once the condition matches, and normal cascade/specificity rules still apply within it.',
+      "Anywhere in a stylesheet. The rules inside only take effect when the condition matches. Specificity and order still apply inside it.",
     mistakes: [
-      "Only writing a max-width breakpoint for \"mobile\" and never testing the in-between sizes — a tablet-width viewport can fall through the cracks of two rules that don't account for it.",
-      "Designing desktop-first with max-width queries added on top, instead of mobile-first with min-width — mobile-first is usually less CSS to override.",
+      "Writing one rule for \"mobile\" and never testing the sizes between phone and desktop. A tablet can fall between two rules that do not account for it.",
+      "Designing for desktop first and adding max-width queries on top. Starting from the phone and adding min-width queries is usually less CSS to undo.",
     ],
     example: '.row {\n  flex-direction: row;\n}\n\n@media (max-width: 600px) {\n  .row {\n    flex-direction: column;\n  }\n}',
     related: ['rem / % / vw', 'flex-direction', 'calc()', 'grid-template-columns'],
@@ -797,11 +812,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'rem (root font size), % (parent), vw/vh (viewport)',
     },
     whatItDoes:
-      "Relative units scale instead of staying fixed. rem is always relative to the root (<html>) font size, making it predictable even in deeply nested elements. % is relative to the parent. vw/vh are relative to the viewport's width/height.",
-    whereItGoes: 'Anywhere a fixed px value would fight against user preferences or different screen sizes.',
+      "Units that scale instead of staying fixed. rem is measured from the page's base text size, usually 16px, so 2rem is 32px. % is measured from the parent box. vw and vh are a percent of the screen's width and height.",
+    whereItGoes:
+      "Anywhere a fixed px value would fight a reader's settings or a different screen size.",
     mistakes: [
-      'Using em instead of rem for font sizes inside nested components — em compounds with every ancestor\'s font-size, producing sizes that drift unpredictably as nesting gets deeper.',
-      'Setting width: 100vw on an element inside a page that also has a vertical scrollbar — 100vw includes the scrollbar\'s width, causing a slight horizontal overflow.',
+      "Using em instead of rem for text sizes inside nested tags. em multiplies through every parent, so sizes drift as nesting gets deeper.",
+      "Setting width: 100vw on a page that has a vertical scrollbar. 100vw includes the scrollbar's width, so the page gets a small sideways scroll.",
     ],
     example: '.container {\n  width: 90%;\n  max-width: 60rem;\n  padding: 2vw;\n}',
     related: ['@media', 'calc()', 'width / height', 'max-width / min-height'],
@@ -816,11 +832,12 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'opacity 0.2s ease, all 0.3s ease-in-out',
     },
     whatItDoes:
-      'Animates a property smoothly from its old value to its new one over a set duration, instead of the change happening instantly. Needs something else (like :hover or a class toggle) to actually trigger the value change.',
-    whereItGoes: 'On the element whose property will change, set on its default/resting state, not on the :hover rule itself.',
+      "transition makes a change glide instead of snapping. transition: color 0.2s; means \"when color changes, take 0.2 seconds to get there.\" Something else, like :hover, has to cause the change.",
+    whereItGoes:
+      "On the tag in its normal state, not on the :hover rule.",
     mistakes: [
-      'Putting transition inside the :hover rule instead of the base rule — the transition then only applies on the way in, and the reverse (mouse leaving) snaps back instantly.',
-      'Transitioning all as a lazy catch-all — it can quietly animate properties that were never meant to (like layout-affecting ones), sometimes hurting performance.',
+      "Putting transition inside the :hover rule. Then it only glides on the way in. When the mouse leaves, it snaps back.",
+      "Using transition: all as a catch-all. It can quietly animate things it should not, like layout sizes, and slow the page down.",
     ],
     example: 'button {\n  opacity: 1;\n  transition: opacity 0.2s ease;\n}\nbutton:hover {\n  opacity: 0.8;\n}',
     related: [':hover / :first-child', 'transform', 'animation / @keyframes', 'opacity'],
@@ -835,13 +852,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'content: ""; content: "→"; content: attr(data-label)',
     },
     whatItDoes:
-      'Creates an extra box inside an element — one just before its real content, one just after — that you can style like anything else, without adding a tag to the HTML. Decorative quote marks, an arrow after a link, a colored stripe down a card\'s edge, a dimming overlay: all ::before/::after. The box only appears if content is set, even to an empty string.',
+      "::before and ::after add an extra box inside a tag without adding a tag to the HTML. One goes before the real content, one after. Style it like anything else. Decorative quote marks, an arrow after a link, a colored stripe on a card, a dimming overlay. The box only appears if content is set, even to an empty string.",
     whereItGoes:
-      'Appended to a selector with two colons: .card::before. Set content (required), then style it — most layouts give it position: absolute so it sits on top of or beside the element without pushing text around.',
+      "On the end of a selector with two colons: .card::before. Set content (required), then style it. Most layouts give it position: absolute so it sits over or beside the tag without pushing text around.",
     mistakes: [
-      'Forgetting the content property — without it the pseudo-element doesn\'t render at all, even with a width, height, and background set. content: "" is enough.',
-      'Putting real text or meaning in it — screen readers mostly skip generated content, so anything a visitor needs to know belongs in the HTML, not in content.',
-      'Trying to use it on an <img> or <input> — elements that can\'t have children can\'t have ::before/::after either. Wrap them in a <span> and attach it there.',
+      "Forgetting content. Without it the box does not appear at all, even with a size and a background. content: \"\" is enough.",
+      "Putting real text or meaning in it. A screen reader (software that reads the page aloud) mostly skips it. Anything a visitor needs belongs in the HTML.",
+      "Using it on an <img> or <input>. Tags that cannot hold children cannot hold these either. Wrap them in a <span> and attach it there.",
     ],
     example: '.quote::before {\n  content: "“";\n  font-size: 2em;\n  color: gray;\n}\n.card::after {\n  content: "";\n  position: absolute;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.3);\n}',
     related: ['descendant & child selectors', ':hover / :first-child', 'position'],
@@ -856,12 +873,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'auto, 100%, 480px, 60rem; min-width / max-width to set limits',
     },
     whatItDoes:
-      'Sets how big an element is. auto (the default) means "as wide as the container, as tall as the content," which is right far more often than a fixed number. min-* and max-* set a floor and a ceiling, so width: 100% with max-width: 480px fills a phone screen and stops growing on a monitor.',
-    whereItGoes: 'On the element being sized. Remember box-sizing: without border-box, padding and border get added on top of whatever width you set.',
+      "width and height set how big a box is. auto, the default, means as wide as the parent and as tall as the content. That is right more often than a fixed number. min- and max- versions set a floor and a ceiling. width: 100% with max-width: 480px fills a phone screen and stops growing on a monitor.",
+    whereItGoes:
+      "On the box being sized. Remember box-sizing: without border-box, padding and border are added on top of the width you set.",
     mistakes: [
-      'Setting a fixed height on a box that holds text — the moment the text wraps one more line, it spills out the bottom. Let height stay auto, or use min-height.',
-      'Setting width on an inline element like <a> or <span> and seeing nothing happen — inline elements ignore width and height. Change display first.',
-      'Using width: 100% plus padding, then wondering why it overflows — under the default box-sizing the padding is added to the 100%. Set box-sizing: border-box.',
+      "Setting a fixed height on a box that holds text. The moment the text wraps one more line, it spills out the bottom. Leave height auto, or use min-height.",
+      "Setting width on an inline tag like <a> or <span> and seeing nothing. Inline tags ignore width and height. Change display first.",
+      "Using width: 100% plus padding, then wondering why it spills over. Under the default box-sizing the padding is added to the 100%. Set border-box.",
     ],
     example: '.card {\n  width: 100%;\n  max-width: 480px;\n  min-height: 120px;\n}',
     related: ['box-sizing', 'padding', 'rem / % / vw', 'overflow', 'max-width / min-height', 'object-fit'],
@@ -876,12 +894,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: '4px, 8px, 50%, 999px (a pill)',
     },
     whatItDoes:
-      'Rounds the corners of an element\'s box — the border, the background, and anything clipped by overflow all follow the curve. A small value softens a card; 50% on a square makes a circle; a huge value on a wide element makes a pill.',
-    whereItGoes: 'On the element whose corners should round. Works with or without a visible border — the background rounds too.',
+      "border-radius rounds the corners of a box. The border, the background and anything clipped inside all follow the curve. A small value softens a card. 50% on a square makes a circle. A huge value on a wide box makes a pill.",
+    whereItGoes:
+      "On the box whose corners should round. It works with or without a visible border, because the background rounds too.",
     mistakes: [
-      'Expecting the corners of a child image to round when only the parent has border-radius — the parent needs overflow: hidden to actually clip its children to the curve.',
-      'Using 50% on a non-square element hoping for a circle — it makes an ellipse. Make the width and height equal first.',
-      'Rounding every single element — a few consistent radii (say 4px for inputs, 12px for cards) read as a system; a different value on everything reads as noise.',
+      "Expecting a child image to round when only the parent has border-radius. The parent also needs overflow: hidden to clip its children to the curve.",
+      "Using 50% on a box that is not square and hoping for a circle. You get an oval. Make the width and height equal first.",
+      "Rounding every single box with a different value. A few consistent sizes (4px for inputs, 12px for cards) read as a system. Random values read as noise.",
     ],
     example: '.avatar {\n  width: 48px;\n  height: 48px;\n  border-radius: 50%;\n  overflow: hidden;\n}',
     related: ['border', 'overflow', 'width / height', 'box-shadow'],
@@ -896,12 +915,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'left (default), center, right, justify',
     },
     whatItDoes:
-      'Lines up the text — and any inline things like images or inline-block buttons — inside a block. It\'s set on the container, not on the text itself: text-align: center on a <div> centers everything inline inside that <div>.',
-    whereItGoes: 'On the block whose contents should align. It inherits, so setting it on <body> or a section cascades to everything inside.',
+      "text-align lines up the text inside a box: left, right or center. It also moves inline things like images and inline-block buttons. It goes on the box, not on the text. text-align: center on a <div> centers everything inline inside that <div>.",
+    whereItGoes:
+      "On the box whose contents should line up. It passes down, so setting it on <body> or a section affects everything inside.",
     mistakes: [
-      'Using it to center a block element like a <div> or a card — it only moves inline content. A block centers with margin: 0 auto (plus a width), or with flexbox on its parent.',
-      'Setting it on the element you want moved rather than on its parent — text-align: center on a <span> does nothing; the <span> is the thing being aligned, not the thing aligning.',
-      'Reaching for justify on web text — it stretches spaces to fill the line, which without hyphenation produces rivers of white space in narrow columns.',
+      "Using it to center a block like a <div> or a card. It only moves inline content. A block centers with margin: 0 auto plus a width, or with flexbox on its parent.",
+      "Putting it on the thing you want moved instead of its parent. text-align: center on a <span> does nothing. The <span> is the thing being lined up.",
+      "Using justify on web text. It stretches the spaces to fill each line, which leaves ugly gaps in narrow columns.",
     ],
     example: 'h1 {\n  text-align: center;\n}\n.price {\n  text-align: right;\n}',
     related: ['font-family & font-size', 'justify-content & align-items', 'margin'],
@@ -916,12 +936,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'text-decoration: none / underline / line-through; font-style: italic / normal',
     },
     whatItDoes:
-      'text-decoration draws a line through, under, or over text — underline is what every link gets by default, none removes it, line-through strikes it out. font-style switches between upright and italic. Together they cover most "make this text look different" needs that aren\'t weight or size.',
-    whereItGoes: 'On the text element. The single most common use is a { text-decoration: none; } to drop link underlines — then giving links some other signal they\'re clickable.',
+      "text-decoration draws a line under, through or over text. underline is what every link gets by default. none removes it. line-through strikes text out. font-style switches between upright and italic.",
+    whereItGoes:
+      "On the text. The most common use is a { text-decoration: none; } to drop link underlines. Then give links some other sign that they are clickable.",
     mistakes: [
-      'Removing underlines from links in running text and giving them nothing else — color alone fails for colorblind readers; keep the underline there, or add it back on hover and focus at minimum.',
-      'Using font-style: italic on text that should be <em>, or text-decoration: line-through on text that should be <del> — the look is right but the meaning is lost. Use the semantic tag and let it style itself.',
-      'Trying to un-underline a child when the parent is underlined — text-decoration propagates to children and can\'t be removed from inside. Remove it on the parent.',
+      "Removing underlines from links in running text and giving them nothing else. Color alone fails for colorblind readers. Keep the underline, or bring it back on hover and focus.",
+      "Using font-style: italic on text that should be <em>, or line-through on text that should be <del>. The look is right but the meaning is lost. Use the tag and let it style itself.",
+      "Trying to remove an underline from a child when the parent is underlined. The line passes down and cannot be removed from inside. Remove it on the parent.",
     ],
     example: 'a {\n  text-decoration: none;\n}\na:hover,\na:focus {\n  text-decoration: underline;\n}\n.old-price {\n  text-decoration: line-through;\n}',
     related: ['font-weight & line-height', ':hover / :first-child'],
@@ -936,12 +957,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'visible (default), hidden, auto, scroll; overflow-x / overflow-y for one axis',
     },
     whatItDoes:
-      'Decides what happens when the content inside a box is bigger than the box. visible lets it spill out over whatever\'s next (the default, and usually the surprise). hidden clips it. auto adds a scrollbar only when needed; scroll always shows one. It only does anything once the box has a size the content can exceed.',
-    whereItGoes: 'On the container that has a fixed width or height. A box that just grows with its content never overflows, so there\'s nothing for the property to decide.',
+      "overflow decides what happens when the content inside a box is bigger than the box. visible, the default, lets it spill out over whatever is next. hidden clips it. auto adds a scrollbar only when needed. scroll always shows one. It only matters once the box has a size the content can exceed.",
+    whereItGoes:
+      "On the box that has a fixed width or height. A box that just grows with its content never overflows, so there is nothing to decide.",
     mistakes: [
-      'Setting overflow: auto on a box with no height — it never overflows, so nothing scrolls. The box needs a height, max-height, or a flex/grid parent constraining it.',
-      'Using overflow: hidden to "fix" a layout problem without finding the cause — it clips the symptom. The content is still too big, and whatever got cut off is now invisible to everyone.',
-      'Forgetting that overflow: hidden also kills position: absolute children that reach outside the box — a dropdown menu inside an overflow: hidden container gets clipped at the edge.',
+      "Setting overflow: auto on a box with no height. It never overflows, so nothing scrolls. The box needs a height, a max-height, or a flex or grid parent holding it in.",
+      "Using overflow: hidden to fix a layout problem without finding the cause. It hides the symptom. The content is still too big, and whatever got cut off is now invisible to everyone.",
+      "Forgetting that overflow: hidden also clips absolute-positioned children that reach past the edge. A dropdown menu inside such a box gets cut off.",
     ],
     example: '.log {\n  height: 240px;\n  overflow: auto;\n}\n.avatar {\n  border-radius: 50%;\n  overflow: hidden;\n}',
     related: ['width / height', 'display', 'position', 'border-radius'],
@@ -956,12 +978,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'row (default), column, row-reverse, column-reverse',
     },
     whatItDoes:
-      'Sets which way a flex container lays its items out — side by side (row) or stacked (column). It also rotates the whole axis system: in a column, justify-content works vertically and align-items works horizontally, the reverse of a row. That swap is what trips people up.',
-    whereItGoes: 'On the flex container, next to display: flex. The classic use is a row on desktop that becomes a column inside a @media query on phones.',
+      "flex-direction sets which way a flex parent lays its items out: side by side (row, the default) or stacked (column). It also turns the whole axis system. In a column, justify-content works top to bottom and align-items works left to right, the reverse of a row. That swap is what trips people up.",
+    whereItGoes:
+      "On the flex parent, next to display: flex. The classic use is a row on desktop that becomes a column inside a @media query on phones.",
     mistakes: [
-      'Switching to column and then wondering why justify-content: center no longer centers horizontally — in a column, justify-content is the vertical axis. Use align-items: center for horizontal.',
-      'Reaching for flex-direction: column on a single element that should just stack normally — block elements already stack. Flex column is for when you also need the gap, alignment, or flex-grow behavior.',
-      'Using row-reverse or column-reverse to change visual order — keyboard and screen-reader order still follow the HTML, so visitors tab through it backwards. Reorder the HTML instead.',
+      "Switching to column and then wondering why justify-content: center no longer centers left to right. In a column, justify-content is the vertical axis. Use align-items: center.",
+      "Using flex-direction: column on a tag whose children should just stack. Blocks already stack. Flex column is for when you also need gap, alignment or stretching.",
+      "Using row-reverse or column-reverse to change the visual order. Keyboard and a screen reader (software that reads the page aloud) order still follow the HTML, so visitors tab through it backwards. Reorder the HTML instead.",
     ],
     example: '.stack {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n\n@media (max-width: 600px) {\n  .row {\n    flex-direction: column;\n  }\n}',
     related: ['display: flex', 'justify-content & align-items', '@media'],
@@ -976,12 +999,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'flex: 1; flex: 0 0 240px; flex: 1 1 auto',
     },
     whatItDoes:
-      'The one flex property that goes on the items, not the container. flex-grow says how much of the spare space this item takes; flex-shrink says how much it gives up when there isn\'t enough; flex-basis is its starting size. flex: 1 means "grow to share the room equally"; flex: 0 0 240px means "exactly 240px, never grow, never shrink" — a fixed sidebar next to a stretchy main area.',
-    whereItGoes: 'On individual flex items — the children of whatever has display: flex. Different items can have different values; that\'s the point.',
+      "flex is the one flex property that goes on the items, not the parent. flex-grow says how much of the spare space this item takes. flex-shrink says how much it gives up when there is not enough. flex-basis is its starting size. flex: 1 means \"share the room equally.\" flex: 0 0 240px means \"exactly 240px, never grow, never shrink,\" like a fixed sidebar next to a stretchy main area.",
+    whereItGoes:
+      "On the items inside whatever has display: flex. Different items can have different values. That is the point.",
     mistakes: [
-      'Setting flex: 1 on the container instead of the items — it only means something on a child of a flex parent.',
-      'Expecting equal columns from flex: 1 when the items have very different content — flex: 1 shares the *spare* space equally, on top of each item\'s own content size. flex: 1 1 0 (or just flex: 1, which sets basis to 0) makes them truly equal.',
-      'Fighting a flex item that won\'t shrink below its content — a long word or an image sets a minimum. Add min-width: 0 to the item to let it shrink past that.',
+      "Setting flex: 1 on the parent instead of the items. It only means something on a child of a flex parent.",
+      "Expecting equal columns from flex: 1 when the items hold very different content. flex: 1 sets the starting size to 0 and shares all the room, so it does give equal columns. flex: 1 1 auto does not, because it starts from each item's own size.",
+      "Fighting an item that will not shrink below its content. A long word or an image sets a minimum. Add min-width: 0 to the item to let it shrink past that.",
     ],
     example: '.layout {\n  display: flex;\n}\n.sidebar {\n  flex: 0 0 240px;\n}\n.content {\n  flex: 1;\n  min-width: 0;\n}',
     related: ['display: flex', 'flex-wrap & gap', 'width / height'],
@@ -996,12 +1020,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'grid, inline-grid',
     },
     whatItDoes:
-      'Turns an element into a grid container: its direct children snap into rows and columns you define, in two dimensions at once. Flexbox is one line that wraps; grid is a true table of cells. A photo gallery, a dashboard of cards, a page with a header, sidebar, and main area — anything you\'d sketch as boxes on graph paper is grid.',
-    whereItGoes: 'On the container. On its own it does almost nothing visible — pair it with grid-template-columns to actually define the columns, and gap for spacing.',
+      "display: grid turns a parent into a grid. Its direct children snap into rows and columns you define, both directions at once. Flexbox is one line that wraps. Grid is a true table of cells. A photo gallery, a dashboard of cards, a page with a header, sidebar and main area. Anything you would sketch as boxes on graph paper is grid.",
+    whereItGoes:
+      "On the parent. On its own it does almost nothing you can see. Pair it with grid-template-columns to define the columns, and gap for spacing.",
     mistakes: [
-      'Using grid for a simple row of items that just need to sit side by side — flexbox is simpler there. Grid earns its keep when both rows and columns need to line up.',
-      'Setting grid properties on the children and expecting a layout — like flexbox, the container owns the layout; children only need rules if they span cells.',
-      'Forgetting gap and adding margin to every child — gap puts even spacing between cells without the extra space at the edges that margins leave behind.',
+      "Using grid for a simple row of items that just need to sit side by side. Flexbox is simpler there. Grid earns its keep when both rows and columns must line up.",
+      "Setting grid properties on the children and expecting a layout. Like flexbox, the parent owns the layout. Children only need rules if they span cells.",
+      "Forgetting gap and adding margin to every child. gap puts even space between cells without the extra space at the edges that margins leave.",
     ],
     example: '.gallery {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 16px;\n}',
     related: ['grid-template-columns', 'display: flex', 'flex-wrap & gap', 'display', 'grid-template-rows', 'grid-column / grid-row / grid-area'],
@@ -1016,12 +1041,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: '1fr 1fr 1fr; repeat(3, 1fr); 240px 1fr; repeat(auto-fit, minmax(200px, 1fr))',
     },
     whatItDoes:
-      'Defines the columns of a grid — how many, and how wide. The fr unit is the key: it means "one share of whatever space is left," so 1fr 1fr 1fr is three equal columns and 240px 1fr is a fixed sidebar beside a stretchy main area. repeat(auto-fit, minmax(200px, 1fr)) fits as many 200px-minimum columns as will fit, then stretches them — a responsive grid with no media query at all.',
-    whereItGoes: 'On the grid container, alongside display: grid. grid-template-rows is the same idea for rows, though rows are usually left to size themselves from the content.',
+      "grid-template-columns defines the columns of a grid: how many, and how wide. The fr unit is the key. It means \"one share of whatever space is left.\" 1fr 1fr 1fr is three equal columns. 240px 1fr is a fixed sidebar beside a stretchy main area. repeat(auto-fit, minmax(200px, 1fr)) fits as many 200px columns as the width allows, then stretches them. That is a responsive grid with no media query at all.",
+    whereItGoes:
+      "On the grid parent, next to display: grid. grid-template-rows is the same idea for rows, though rows are usually left to size themselves.",
     mistakes: [
-      'Writing percentages instead of fr — 33% 33% 33% plus a gap overflows the container, because the percentages don\'t know about the gap. fr does.',
-      'Hard-coding a column count and then needing a media query to change it on phones — repeat(auto-fit, minmax(…)) handles that on its own.',
-      'Expecting items to span columns automatically because they\'re wide — each child takes exactly one cell unless you tell it otherwise with grid-column: span 2.',
+      "Writing percentages instead of fr. 33% 33% 33% plus a gap spills out of the box, because the percentages do not know about the gap. fr does.",
+      "Hard-coding a column count and then needing a media query to change it on phones. repeat(auto-fit, minmax(...)) handles that on its own.",
+      "Expecting a wide item to span two columns on its own. Each child takes one cell unless you say otherwise with grid-column: span 2.",
     ],
     example: '.gallery {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 16px;\n}\n.sidebar-layout {\n  grid-template-columns: 240px 1fr;\n}',
     related: ['display: grid', 'rem / % / vw', '@media', 'grid-template-rows', 'grid-column / grid-row / grid-area'],
@@ -1036,12 +1062,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: 'calc(100% - 240px), calc(100vh - 64px), calc(1rem + 2vw)',
     },
     whatItDoes:
-      'Lets a value be arithmetic, and — the real power — lets that arithmetic mix units the browser otherwise can\'t combine. calc(100% - 240px) is "the container\'s width minus a fixed sidebar"; calc(100vh - 64px) is "the viewport minus the header." Neither is expressible as a single number.',
-    whereItGoes: 'Anywhere a length goes: width, height, padding, margin, font-size, top/left. Written as the function around the expression.',
+      "calc() lets a value be a sum, and it can mix units the browser could not otherwise combine. calc(100% - 240px) is \"the parent's width minus a fixed sidebar.\" calc(100vh - 64px) is \"the screen height minus the header.\" Neither can be written as a single number.",
+    whereItGoes:
+      "Anywhere a length goes: width, height, padding, margin, font-size, top, left. Write the math inside the parentheses.",
     mistakes: [
-      'Leaving out the spaces around + and - : calc(100%-240px) is invalid and the whole declaration is dropped. The spaces are required (multiply and divide don\'t need them, but it\'s consistent to space everything).',
-      'Using it where a simpler tool exists — calc(100% - 32px) for padding is what box-sizing: border-box already solves; calc for equal columns is what fr already solves.',
-      'Dividing by a value with a unit — calc(100% / 50px) isn\'t allowed; only the divisor must be a plain number.',
+      "Leaving out the spaces around + and -. calc(100%-240px) is invalid and the whole declaration is dropped. The spaces are required.",
+      "Using it where a simpler tool exists. calc(100% - 32px) for padding is what box-sizing: border-box already solves. calc for equal columns is what fr already solves.",
+      "Dividing by a value with a unit. calc(100% / 50px) is not allowed. The number you divide by must be plain.",
     ],
     example: '.main {\n  width: calc(100% - 240px);\n  min-height: calc(100vh - 64px);\n}',
     related: ['rem / % / vw', 'width / height', '@media'],
@@ -1056,13 +1083,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "a colour, url(image.jpg), a gradient, plus size / position / repeat",
     },
     whatItDoes:
-      "The shorthand for everything behind an element's content: colour, an image, a gradient, and how that image sits (background-size, background-position, background-repeat). background: #222 is the same as background-color: #222; background: url(hero.jpg) center / cover no-repeat drops an image in, centres it, scales it to fill, and stops it tiling. Gradients count as images: background: linear-gradient(to right, #0ea5e9, #6366f1).",
+      "background is the shorthand for everything behind a box's content: a color, an image, a gradient, and how the image sits. background: #222 is the same as background-color: #222. background: url(hero.jpg) center / cover no-repeat puts an image in, centers it, scales it to fill, and stops it repeating. A gradient counts as an image: background: linear-gradient(to right, #0ea5e9, #6366f1).",
     whereItGoes:
-      "On the element whose box should carry the colour or image \u2014 a hero <section>, a card, <body> for the page. The image sits behind the padding box and under the content, so text on top stays readable only if you keep contrast in mind.",
+      "On the box that should carry the color or image: a hero section, a card, <body> for the whole page. The image sits behind the content, so keep the text readable on top of it.",
     mistakes: [
-      "Writing background: red after a background-image rule and losing the image \u2014 the shorthand resets every background-* property you don't mention. Use background-color when you only mean the colour.",
-      "Forgetting background-size: cover (or the / cover part of the shorthand) \u2014 a large photo shows at its natural size and tiles, so you see the top-left corner four times.",
-      "Putting meaningful images in the background \u2014 a CSS background has no alt text. If the picture is content, it's an <img>; if it's decoration, background is right.",
+      "Writing background: red after a background-image rule and losing the image. The shorthand resets every background property you leave out. Use background-color when you only mean the color.",
+      "Forgetting background-size: cover (or the / cover part of the shorthand). A large photo shows at its real size and repeats, so you see the top-left corner four times.",
+      "Putting meaningful pictures in the background. A CSS background has no alt text. If the picture is content, it is an <img>. If it is decoration, background is right.",
     ],
     example: ".hero {\n  background: url(hero.jpg) center / cover no-repeat;\n  color: white;\n}\n.btn {\n  background: linear-gradient(to right, #0ea5e9, #6366f1);\n}\n.card { background-color: #fff; }",
     related: ["color & background-color", "width / height", "opacity"],
@@ -1077,13 +1104,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "uppercase | capitalize | none; 0.05em, 1px, -0.02em",
     },
     whatItDoes:
-      "Two small typographic dials. text-transform rewrites the case of text as it displays \u2014 uppercase for a label or button, capitalize for a title \u2014 without changing the HTML, so the source stays readable and copy-paste gives the original. letter-spacing adds (or removes) space between characters: a little positive spacing makes small uppercase text breathe; a touch of negative spacing tightens big headlines.",
+      "Two small dials for text. text-transform changes the case as it displays: uppercase for a label or button, capitalize for a title. The HTML stays as typed, so copy and paste gives the original. letter-spacing adds or removes space between letters. A little extra space helps small capitals breathe. A touch of negative space tightens a big headline.",
     whereItGoes:
-      "On the text element or a parent \u2014 both inherit. Common pairing: text-transform: uppercase; letter-spacing: 0.08em; font-size: 12px for an eyebrow label or nav link.",
+      "On the text or a parent. Both pass down. A common pair: text-transform: uppercase; letter-spacing: 0.08em; font-size: 12px for a small label or a nav link.",
     mistakes: [
-      "Typing the text in capitals in the HTML instead \u2014 screen readers may spell out all-caps words letter by letter, and you can't undo it with CSS. Lowercase in HTML, uppercase in CSS.",
-      "Using px for letter-spacing on text that changes size \u2014 2px is loose on 12px text and invisible on 48px. em scales with the font.",
-      "Adding spacing to uppercase text and forgetting it also applies after the last letter \u2014 centred labels drift right. A matching negative margin-right, or padding-left equal to the spacing, recentres it.",
+      "Typing the text in capitals in the HTML instead. A screen reader (software that reads the page aloud) may spell all-caps words letter by letter, and CSS cannot undo it. Lowercase in HTML, uppercase in CSS.",
+      "Using px for letter-spacing on text that changes size. 2px is loose on 12px text and invisible on 48px. em scales with the text.",
+      "Adding spacing to capitals and forgetting it also lands after the last letter. Centered labels drift right. A matching negative margin-right fixes it.",
     ],
     example: ".eyebrow {\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  font-size: 12px;\n}\nh1 { letter-spacing: -0.02em; }",
     related: ["font-family & font-size", "font-weight & line-height", "text-decoration / font-style"],
@@ -1098,13 +1125,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "65ch, 1100px, 100%; 100vh, 3rem, 0",
     },
     whatItDoes:
-      "Limits rather than fixed sizes. width: 1100px is 1100px even on a 400px phone; max-width: 1100px means 'as wide as there is room, but never more than 1100px', which is how every centred content column is built. min-height says 'at least this tall, taller if the content needs it' \u2014 a full-screen hero with min-height: 100vh, or cards that line up at 3rem even when one is empty. max-height and min-width exist too and work the same way.",
+      "Limits instead of fixed sizes. width: 1100px is 1100px even on a 400px phone. max-width: 1100px means \"as wide as there is room, but never more than 1100px.\" That is how every centered content column is built. min-height means \"at least this tall, and taller if the content needs it.\" A full-screen hero uses min-height: 100vh. max-height and min-width work the same way.",
     whereItGoes:
-      "max-width on wrappers and text columns (65ch keeps lines readable), on images (max-width: 100% stops them overflowing their container), and on anything that must shrink on small screens. min-height on heroes, cards and footers that must not collapse.",
+      "max-width on wrappers and text columns, where 65ch keeps lines readable. On images, where max-width: 100% stops them spilling out. On anything that must shrink on small screens. min-height on heroes, cards and footers that must not collapse.",
     mistakes: [
-      "Using width for the content column and getting a horizontal scrollbar on phones \u2014 a fixed width can't shrink. max-width can.",
-      "Setting height: 100vh on a hero and then adding content \u2014 it overflows and overlaps the next section. min-height grows with the content.",
-      "Forgetting that max-width: 100% on an image measures the parent \u2014 with no parent width set, a 4000px photo still shows at 4000px. Give the container a width or use the img rule globally.",
+      "Using width for the content column and getting a sideways scrollbar on phones. A fixed width cannot shrink. max-width can.",
+      "Setting height: 100vh on a hero and then adding content. It spills out and overlaps the next section. min-height grows with the content.",
+      "Forgetting that max-width: 100% on an image measures the parent. With no parent width, a 4000px photo still shows at 4000px. Give the parent a width.",
     ],
     example: ".wrap {\n  max-width: 1100px;\n  margin: 0 auto;\n  padding: 0 16px;\n}\nimg { max-width: 100%; height: auto; }\n.hero { min-height: 100vh; }",
     related: ["width / height", "margin", "rem / % / vw", "@media"],
@@ -1119,13 +1146,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "x y blur spread colour, e.g. 0 4px 12px rgba(0,0,0,.15); none",
     },
     whatItDoes:
-      "Draws a shadow around an element's box \u2014 the lift that makes a card look like it sits above the page. The value is offset-x, offset-y, then optional blur radius, optional spread, and a colour. 0 4px 12px rgba(0, 0, 0, 0.15) is a soft shadow slightly below the box; add inset to draw it inside instead. Several shadows can be stacked with commas, which is how subtle, realistic depth is built.",
+      "box-shadow draws a shadow around a box. It is the lift that makes a card look like it floats above the page. The value is: sideways offset, downward offset, blur, spread, color. 0 4px 12px rgba(0, 0, 0, 0.15) is a soft shadow just below the box. Add inset to draw it inside instead. Several shadows can be listed with commas for a more realistic depth.",
     whereItGoes:
-      "On cards, dropdowns, modals, buttons, and anything that should read as raised. It doesn't change layout \u2014 the shadow is painted outside the box without pushing neighbours \u2014 so it's safe to add anywhere, and it follows border-radius.",
+      "On cards, dropdowns, popups, buttons, and anything that should look raised. It does not change layout. The shadow is painted outside the box without pushing neighbors, and it follows border-radius.",
     mistakes: [
-      "Using opaque black (#000) \u2014 real shadows are translucent. A low-alpha rgba() lets the background show through and looks far less like a sticker.",
-      "Reaching for a big blur to make it 'pop' \u2014 a large hard shadow looks like a smear. Small y-offset, moderate blur, low alpha reads as depth; stack two for richness.",
-      "Expecting it to add space \u2014 it won't. If a shadow is clipped by a parent, the parent has overflow: hidden, not a missing margin.",
+      "Using solid black. Real shadows are see-through. A low-alpha rgba() lets the background show through and looks far less like a sticker.",
+      "Reaching for a huge blur to make it \"pop.\" A big hard shadow looks like a smear. Small offset, moderate blur, low alpha reads as depth.",
+      "Expecting it to add space. It does not. If a shadow is cut off by a parent, the parent has overflow: hidden, not a missing margin.",
     ],
     example: ".card {\n  border-radius: 12px;\n  box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.12);\n}\n.card:hover { box-shadow: 0 12px 32px rgba(0,0,0,.18); }",
     related: ["border", "border-radius", "transition", "overflow"],
@@ -1140,13 +1167,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "none; disc | circle | square | decimal | lower-alpha; inside | outside",
     },
     whatItDoes:
-      "Controls the bullet or number on list items: which marker (disc, square, decimal, lower-roman...), whether it sits outside or inside the text block, and optionally an image. The single most-used value is none \u2014 it removes bullets entirely, which is step one of turning a <ul> into a nav bar or a card grid. list-style-type, list-style-position and list-style-image are the longhands.",
+      "list-style controls the bullet or number on a list. Which marker: disc, square, decimal, lower-roman. Whether it sits outside or inside the text. Optionally, an image. The most used value is none. It removes the bullets, which is step one of turning a <ul> into a nav bar or a card grid.",
     whereItGoes:
-      "On the <ul> or <ol> (it inherits down to the <li>s). Nav lists almost always get list-style: none plus margin: 0; padding: 0 to drop the browser's default indent.",
+      "On the <ul> or <ol>. It passes down to the <li> tags. Nav lists almost always get list-style: none plus margin: 0; padding: 0 to drop the default indent.",
     mistakes: [
-      "Removing the bullets and forgetting the default padding-left \u2014 the list still sits indented 40px. Reset padding and margin alongside list-style.",
-      "Using list-style: none and then also removing the <ul> for being 'pointless' \u2014 keep the list markup; the semantics are still a list, the styling is just different. (Safari drops list semantics when list-style is none; adding role=\"list\" restores them.)",
-      "Trying to colour the bullet with color \u2014 that colours the text too. Use the ::marker pseudo-element: li::marker { color: tomato; }.",
+      "Removing the bullets and forgetting the default padding-left. The list still sits indented 40px. Reset padding and margin as well.",
+      "Removing the bullets and then removing the <ul> as \"pointless.\" Keep the list tags. It is still a list; only the look changed. Safari drops list meaning when list-style is none, and role=\"list\" restores it.",
+      "Trying to color the bullet with color. That colors the text too. Use li::marker { color: tomato; }.",
     ],
     example: "nav ul {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  display: flex;\n  gap: 16px;\n}\nol.steps { list-style: decimal inside; }",
     related: ["display: flex", "padding", "margin", "::before / ::after"],
@@ -1161,13 +1188,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "cover | contain | fill | none",
     },
     whatItDoes:
-      "How an image or video fills a box that isn't its natural shape. Give an <img> a fixed width and height and by default it squashes to fit (fill). object-fit: cover scales it to fill the box and crops the overflow \u2014 the right answer for thumbnails, avatars and card images. contain scales it to fit entirely inside, leaving empty bars. object-position chooses which part survives the crop (top, center, 20% 80%).",
+      "object-fit decides how an image or video fills a box that is not its natural shape. Give an <img> a fixed width and height and by default it squashes to fit. object-fit: cover scales it to fill the box and crops what spills over. That is the right answer for thumbnails, avatars and card images. contain scales it to fit inside, leaving empty bars. object-position chooses which part survives the crop.",
     whereItGoes:
-      "On the <img> or <video> itself, together with a width and height (or aspect-ratio) so there's a box for it to fit. Without a box of a different shape, object-fit has nothing to do.",
+      "On the <img> or <video> itself, with a width and height (or aspect-ratio) so there is a box to fit. Without a box of a different shape, object-fit has nothing to do.",
     mistakes: [
-      "Setting width and height on a photo and shipping the squashed result \u2014 if the box isn't the image's ratio, you need object-fit: cover.",
-      "Putting object-fit on the wrapper <div> \u2014 it only applies to replaced elements like <img> and <video>. The wrapper needs overflow: hidden and the img needs object-fit.",
-      "Forgetting object-position when the crop cuts off faces \u2014 cover crops from the centre by default; object-position: top keeps heads in portraits.",
+      "Setting width and height on a photo and shipping the squashed result. If the box is not the image's shape, you need object-fit: cover.",
+      "Putting object-fit on the wrapper <div>. It only works on <img> and <video>. The wrapper needs overflow: hidden, and the img needs object-fit.",
+      "Forgetting object-position when the crop cuts off faces. cover crops from the center by default. object-position: top keeps heads in portraits.",
     ],
     example: ".avatar {\n  width: 64px;\n  height: 64px;\n  border-radius: 50%;\n  object-fit: cover;\n}\n.card img {\n  width: 100%;\n  aspect-ratio: 16 / 9;\n  object-fit: cover;\n  object-position: top;\n}",
     related: ["width / height", "border-radius", "overflow"],
@@ -1182,13 +1209,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "left | right | none; clear: both",
     },
     whatItDoes:
-      "float pulls an element to the left or right edge of its container and lets text wrap around it \u2014 a photo beside a paragraph, a drop cap, a pull quote. clear tells a following element to drop below any floats instead of wrapping. Before flexbox and grid, floats were how every multi-column layout was built, which is why you'll meet them in older code and tutorials. Today they're for wrapping text around things, and nothing else.",
+      "float pulls a box to the left or right edge of its parent and lets text wrap around it. A photo beside a paragraph, a pull quote. clear tells a later box to drop below any floats instead of wrapping. Before flexbox and grid, floats were how every column layout was built, which is why you will meet them in older code. Today they are for wrapping text around things, and nothing else.",
     whereItGoes:
-      "On an image or figure inside running text, with a margin on the side the text wraps against. If a parent only contains floats it collapses to zero height; display: flow-root on the parent (the modern 'clearfix') makes it contain them.",
+      "On an image or figure inside running text, with a margin on the side the text wraps against. If a parent only contains floats it collapses to zero height. display: flow-root on the parent makes it contain them.",
     mistakes: [
-      "Building a page layout with floats in 2026 \u2014 columns, nav bars and card grids are flexbox or grid jobs. Floats need clearfix hacks and break the moment content heights differ.",
-      "Floating an element and wondering why the parent's background vanished \u2014 floated children are taken out of the flow, so the parent has no height. Add display: flow-root to the parent.",
-      "Floating the only child and then trying to centre it \u2014 a float can't be centred. Use flex or margin: auto on a block instead.",
+      "Building a page layout with floats today. Columns, nav bars and card grids are flexbox or grid jobs. Floats need hacks and break the moment content heights differ.",
+      "Floating a box and wondering why the parent's background vanished. Floated children leave the flow, so the parent has no height. Add display: flow-root to the parent.",
+      "Floating the only child and then trying to center it. A float cannot be centered. Use flex, or margin: auto on a block.",
     ],
     example: ".figure-left {\n  float: left;\n  margin: 0 16px 8px 0;\n}\n.article { display: flow-root; } /* contains the float */\n.footer { clear: both; }",
     related: ["display", "display: flex", "display: grid", "margin"],
@@ -1203,13 +1230,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: ":focus, :focus-visible, :focus-within",
     },
     whatItDoes:
-      "Styles the element that currently has keyboard focus \u2014 the one that will react to Enter or typing. Browsers draw a default outline ring so keyboard users can see where they are. :focus matches on any focus, including a mouse click; :focus-visible matches only when the browser thinks a visible ring is needed (keyboard navigation), which is usually what you want. :focus-within matches a parent while anything inside it is focused \u2014 handy for highlighting a whole form field.",
+      ":focus picks the tag the keyboard is currently in, the one that reacts to Enter or typing. Browsers draw a ring around it so keyboard users can see where they are. :focus matches on any focus, including a mouse click. :focus-visible matches only when the browser thinks a ring is needed, mostly keyboard use. That is usually what you want. :focus-within matches a parent while anything inside it is focused.",
     whereItGoes:
-      "Next to your :hover rules, on buttons, links and inputs. Replace the default ring with your own (outline: 2px solid var(--accent); outline-offset: 2px) rather than removing it.",
+      "Next to your :hover rules, on buttons, links and inputs. Replace the default ring with your own, like outline: 2px solid #6366f1; outline-offset: 2px. Never just remove it.",
     mistakes: [
-      "outline: none on :focus to get rid of the 'ugly ring' \u2014 this makes the site unusable by keyboard. Restyle the ring; never delete it.",
-      "Styling only :hover \u2014 a keyboard user never hovers. Every :hover state for an interactive element should have a :focus-visible twin, often the same rule: a:hover, a:focus-visible { ... }.",
-      "Using :focus for the fancy ring and getting it on every mouse click \u2014 that's what :focus-visible is for.",
+      "Writing outline: none to get rid of the \"ugly ring.\" That makes the site unusable by keyboard. Restyle the ring. Never delete it.",
+      "Styling only :hover. A keyboard user never hovers. Every :hover state needs a :focus-visible twin, often the same rule: a:hover, a:focus-visible { ... }.",
+      "Using :focus for a fancy ring and getting it on every mouse click. That is what :focus-visible is for.",
     ],
     example: "button:focus-visible,\na:focus-visible {\n  outline: 2px solid #6366f1;\n  outline-offset: 2px;\n}\n.field:focus-within { border-color: #6366f1; }",
     related: [":hover / :first-child", "border", "transition"],
@@ -1224,13 +1251,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: ":nth-child(2), :nth-child(odd), :nth-child(3n+1), :last-child, :not(.active)",
     },
     whatItDoes:
-      ":nth-child() picks elements by their position among siblings: tr:nth-child(odd) stripes a table, li:nth-child(3) hits the third item, .card:nth-child(3n) hits every third card (3, 6, 9). :first-child and :last-child are the common shortcuts. :not() flips a selector \u2014 li:not(:last-child) is every item except the last, which is the usual way to add a divider between items without one dangling at the end.",
+      ":nth-child() picks tags by their position among their siblings. tr:nth-child(odd) stripes a table. li:nth-child(3) is the third item. .card:nth-child(3n) is every third card. :first-child and :last-child are the common shortcuts. :not() flips a selector. li:not(:last-child) is every item except the last, which is how you add a divider between items without one hanging off the end.",
     whereItGoes:
-      "In the selector, after the element or class it narrows. Counting is 1-based and counts all siblings regardless of type; :nth-of-type counts only siblings of the same tag.",
+      "In the selector, after the tag or class it narrows. Counting starts at 1 and counts every sibling, whatever its tag. :nth-of-type counts only siblings with the same tag.",
     mistakes: [
-      "Expecting :nth-child(2) to mean 'the second .card' \u2014 it means 'the element that is its parent's second child, if it's also a .card'. A heading before the cards shifts everything by one; :nth-of-type or a wrapper fixes it.",
-      "Writing :nth-child(0) or starting from 0 \u2014 the first child is 1. 3n+1 gives 1, 4, 7.",
-      "Using :not() to exclude by position but writing li:not(:last-child) when items are added dynamically out of order \u2014 still works, but if the 'last' item isn't visually last, prefer gap on the parent to spacing hacks.",
+      "Expecting :nth-child(2) to mean \"the second .card.\" It means \"the parent's second child, if it is also a .card.\" A heading before the cards shifts everything by one. :nth-of-type fixes it.",
+      "Starting the count at 0. The first child is 1. 3n+1 gives 1, 4, 7.",
+      "Using :not(:last-child) for spacing when items can be added out of order. It still works, but gap on the parent is simpler and never leaves a stray divider.",
     ],
     example: "tr:nth-child(odd) { background: #f5f5f7; }\n.card:nth-child(3n) { margin-right: 0; }\nli:not(:last-child) { border-bottom: 1px solid #ddd; }\n.btn:not(.primary) { background: transparent; }",
     related: [":hover / :first-child", "descendant & child selectors", "specificity & the cascade"],
@@ -1245,13 +1272,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "property: value !important;",
     },
     whatItDoes:
-      "A flag that makes one declaration beat every normal rule regardless of specificity or order. color: red !important wins over an id selector, an inline style, anything \u2014 except another !important with higher specificity. It exists for overriding styles you don't control (a third-party widget, a utility class that must always win) and for user stylesheets. Inside your own CSS it's almost always a sign that specificity has got away from you.",
+      "!important makes one declaration beat every normal rule, whatever the specificity or order. color: red !important wins over an id selector and even an inline style. It exists for overriding styles you do not control, like a third-party widget, and for utility classes that must always win. Inside your own CSS it is almost always a sign that specificity got away from you.",
     whereItGoes:
-      "At the end of a declaration, before the semicolon. Realistic uses: utility classes like .hidden { display: none !important; }, overriding an embedded widget's inline styles, and print stylesheets. Not for 'making the rule work'.",
+      "At the end of a declaration, before the semicolon. Honest uses: .hidden { display: none !important; }, overriding a widget's inline styles, print styles. Not for making a rule work.",
     mistakes: [
-      "Reaching for it when a rule doesn't apply \u2014 the rule isn't applying for a reason (wrong selector, lower specificity, later rule). Find that; the fix is a better selector, not a bigger hammer.",
-      "Stacking it \u2014 once one rule is !important, the next override needs !important too, and the stylesheet becomes a war nobody wins. One is a smell; three is a rewrite.",
-      "Putting the space in the wrong place or the flag before the value \u2014 it's value !important;, with the flag last.",
+      "Reaching for it when a rule does not apply. The rule is losing for a reason: wrong selector, lower specificity, an earlier rule. Find that. A better selector is the fix.",
+      "Stacking it. Once one rule has !important, the next override needs it too, and the stylesheet becomes a war nobody wins. One is a smell. Three is a rewrite.",
+      "Putting the flag before the value. It is value !important; with the flag last.",
     ],
     example: "/* legitimate: a utility that must always win */\n.visually-hidden { position: absolute !important; clip: rect(0 0 0 0) !important; }\n\n/* smell: fix the selector instead */\n.title { color: red !important; }",
     related: ["specificity & the cascade", "<style>", "inherit / initial"],
@@ -1266,13 +1293,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "inherit, initial, unset, revert",
     },
     whatItDoes:
-      "Four keywords every property accepts. inherit copies the parent's computed value, even for properties that don't inherit by default \u2014 a { color: inherit } is how links take the colour of surrounding text. initial resets to the property's spec default (often not what the browser's own stylesheet does). unset means inherit if the property normally inherits, otherwise initial. revert goes back to the browser's default stylesheet, which is usually what people mean when they say 'reset it'. Knowing which properties inherit (text and font properties do; box properties don't) explains half the 'why did that change' moments in CSS.",
+      "Four keywords every property accepts. inherit copies the parent's value, even for properties that do not pass down on their own. a { color: inherit } is how links take the color of the text around them. initial resets to the property's built-in default, which is often not what the browser's own stylesheet does. unset means inherit if the property normally passes down, otherwise initial. revert goes back to the browser's default stylesheet, which is usually what people mean by \"reset it.\"",
     whereItGoes:
-      "As the value of a property. Common: button, input { font: inherit; color: inherit } so form controls match the page; a { color: inherit }; and all: unset to strip a component bare before restyling it.",
+      "As the value of a property. Common: button, input { font: inherit; color: inherit } so form fields match the page, and a { color: inherit }.",
     mistakes: [
-      "Expecting initial to give the browser default \u2014 initial for display is inline, not the block that the browser gives a <div>. Use revert for 'browser default'.",
-      "Setting font-size on <body> and wondering why inputs ignore it \u2014 form controls don't inherit font by default in most browsers; font: inherit fixes it.",
-      "Using all: unset on a button and losing focus rings, cursor and keyboard behaviour \u2014 re-add outline on :focus-visible and cursor: pointer after.",
+      "Expecting initial to give the browser default. initial for display is inline, not the block the browser gives a <div>. Use revert for the browser default.",
+      "Setting font-size on <body> and wondering why inputs ignore it. Form fields do not inherit fonts by default in most browsers. font: inherit fixes it.",
+      "Using all: unset on a button and losing the focus ring, the cursor and keyboard behavior. Add outline on :focus-visible and cursor: pointer back afterwards.",
     ],
     example: "button, input, select {\n  font: inherit;\n  color: inherit;\n}\na { color: inherit; }\n.plain { all: unset; cursor: pointer; }",
     related: ["specificity & the cascade", "--custom-property", "!important"],
@@ -1287,13 +1314,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "font-family, src: url(), font-weight, font-display",
     },
     whatItDoes:
-      "Loads a custom font file and gives it a name you can then use in font-family. Each @font-face block points at one file (one weight and style): src: url(inter-bold.woff2) with font-weight: 700. Once declared, font-family: 'Inter' works anywhere in the stylesheet, and the browser picks the right file for each weight. Google Fonts and similar services just generate these blocks for you.",
+      "@font-face loads a font file and gives it a name you can use in font-family. Each block points at one file for one weight and style: src: url(inter-bold.woff2) with font-weight: 700. After that, font-family: 'Inter' works anywhere, and the browser picks the right file for each weight. Google Fonts and similar services just write these blocks for you.",
     whereItGoes:
-      "At the top of the stylesheet, before any rule that uses the family. Use woff2 (smallest, universally supported), include font-display: swap so text shows in a fallback font while the file loads, and declare each weight you actually use \u2014 nothing more, because every file is a download.",
+      "At the top of the stylesheet, before any rule that uses the family. Use woff2, add font-display: swap so text shows in a fallback font while the file loads, and declare only the weights you use. Every file is a download.",
     mistakes: [
-      "Declaring the family and then naming it differently in font-family \u2014 the names must match exactly, quotes and case included, or the fallback font shows.",
-      "Loading one weight and using several \u2014 the browser fakes bold and italic by smearing the glyphs (faux bold), which looks muddy. Declare a block per weight you use.",
-      "Skipping font-display \u2014 on a slow connection the text stays invisible until the font arrives. swap shows fallback text immediately.",
+      "Naming the family differently in font-family than in @font-face. The names must match exactly, quotes and case included, or the fallback font shows.",
+      "Loading one weight and using several. The browser fakes bold and italic by smearing the letters, which looks muddy. Declare a block for each weight you use.",
+      "Skipping font-display. On a slow connection the text stays invisible until the font arrives. swap shows fallback text right away.",
     ],
     example: "@font-face {\n  font-family: 'Inter';\n  src: url(/fonts/inter-regular.woff2) format('woff2');\n  font-weight: 400;\n  font-display: swap;\n}\nbody { font-family: 'Inter', system-ui, sans-serif; }",
     related: ["font-family & font-size", "font-weight & line-height", "<link rel=\"stylesheet\">"],
@@ -1308,13 +1335,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "auto 1fr auto; repeat(3, 120px); minmax(200px, auto)",
     },
     whatItDoes:
-      "The row-direction twin of grid-template-columns: explicitly sizes each row of the grid. Most grids leave rows alone and let content decide, but a few layouts need it \u2014 the classic sticky-footer page is grid-template-rows: auto 1fr auto on a min-height: 100vh container (header sized to content, main takes the rest, footer sized to content). Rows you don't define are 'implicit' and sized by grid-auto-rows.",
+      "grid-template-rows is the row twin of grid-template-columns. It sizes each row. Most grids leave rows alone and let content decide, but some layouts need it. The classic sticky-footer page is grid-template-rows: auto 1fr auto on a min-height: 100vh parent. The header is sized to its content, the main area takes the rest, the footer is sized to its content. Rows you do not define are sized by grid-auto-rows.",
     whereItGoes:
-      "On the grid container, alongside display: grid, when the rows need fixed or proportional heights. Combine with a tall container (min-height) or 1fr has no spare space to take.",
+      "On the grid parent, next to display: grid, when rows need fixed or shared heights. Give the parent a height or min-height, or 1fr has no spare room to take.",
     mistakes: [
-      "Writing grid-template-rows: 1fr 1fr and getting rows that grow to the tallest content anyway \u2014 1fr shares the container's height, so without a height on the container there's nothing to share.",
-      "Setting fixed px rows and watching content overflow them \u2014 content doesn't shrink to fit a row. minmax(120px, auto) gives a minimum but lets the row grow.",
-      "Defining three rows and adding a fourth item \u2014 the extra row is implicit and sized by grid-auto-rows (auto by default), not by your template.",
+      "Writing grid-template-rows: 1fr 1fr and getting rows that grow to the tallest content anyway. 1fr shares the parent's height, so with no height on the parent there is nothing to share.",
+      "Setting fixed px rows and watching content spill out of them. Content does not shrink to fit a row. minmax(120px, auto) sets a minimum but lets the row grow.",
+      "Defining three rows and adding a fourth item. The extra row is sized by grid-auto-rows (auto by default), not by your list.",
     ],
     example: ".page {\n  display: grid;\n  grid-template-rows: auto 1fr auto;\n  min-height: 100vh;\n}\n.gallery {\n  grid-template-columns: repeat(3, 1fr);\n  grid-auto-rows: minmax(160px, auto);\n}",
     related: ["grid-template-columns", "display: grid", "max-width / min-height"],
@@ -1329,13 +1356,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "grid-column: 1 / 3; grid-column: span 2; grid-area: header",
     },
     whatItDoes:
-      "Tell a grid item which cells it occupies. grid-column: 1 / 3 stretches an item from line 1 to line 3 (two columns); span 2 says 'two columns from wherever you land'. grid-row works the same vertically. grid-area is the shortcut when the container names its regions with grid-template-areas \u2014 the item just says grid-area: sidebar. Lines are numbered from 1 at the start, and -1 is always the last line, so grid-column: 1 / -1 is 'full width' no matter how many columns there are.",
+      "These tell a grid item which cells it fills. grid-column: 1 / 3 stretches an item from line 1 to line 3, which is two columns. span 2 means \"two columns from wherever you land.\" grid-row works the same up and down. grid-area is the shortcut when the parent names its regions with grid-template-areas: the item just says grid-area: sidebar. Lines are numbered from 1, and -1 is always the last line, so grid-column: 1 / -1 means full width however many columns there are.",
     whereItGoes:
-      "On the child item, not the container. Count lines, not cells: a three-column grid has four column lines. For a named layout, put grid-template-areas on the container and grid-area on each child.",
+      "On the child item, not the parent. Count lines, not cells: a three-column grid has four column lines. For a named layout, put grid-template-areas on the parent and grid-area on each child.",
     mistakes: [
-      "Counting cells instead of lines \u2014 grid-column: 1 / 3 covers two cells, not three. Lines sit between and around the columns.",
-      "Placing items explicitly and leaving holes \u2014 items you don't place auto-flow into the next free cell, which is often not the one you expected. Place everything, or use grid-auto-flow: dense.",
-      "Using grid-area with a name the container never declared \u2014 the item is placed as if the property weren't there. The name must appear in grid-template-areas.",
+      "Counting cells instead of lines. grid-column: 1 / 3 covers two cells, not three. Lines sit between and around the columns.",
+      "Placing some items by hand and leaving holes. Items you do not place flow into the next free cell, which is often not the one you expected. Place everything, or use grid-auto-flow: dense.",
+      "Using grid-area with a name the parent never declared. The item is placed as if the rule were not there. The name must appear in grid-template-areas.",
     ],
     example: ".layout {\n  display: grid;\n  grid-template-columns: 240px 1fr;\n  grid-template-areas:\n    \"header header\"\n    \"sidebar main\";\n}\nheader { grid-area: header; }\naside { grid-area: sidebar; }\n.featured { grid-column: 1 / -1; }",
     related: ["display: grid", "grid-template-columns", "grid-template-rows"],
@@ -1350,13 +1377,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "0 to 1 (0.5 is half transparent)",
     },
     whatItDoes:
-      "How see-through an element is, from 1 (solid) to 0 (invisible). It fades the whole element \u2014 content, background, border, children \u2014 as one layer. Great for disabled states, hover fades, and fade-in animations, because it's cheap for the browser to animate. An element at opacity: 0 is still there: it takes up space and can still be clicked and tabbed to, unlike display: none.",
+      "opacity sets how see-through a box is, from 1 (solid) to 0 (invisible). It fades the whole box as one layer: content, background, border, children. Good for disabled states, hover fades and fade-ins, because it is cheap for the browser to animate. A box at opacity: 0 is still there. It takes up space and can still be clicked and tabbed to, unlike display: none.",
     whereItGoes:
-      "On the element to fade, often paired with transition: opacity 200ms. For a transparent background that keeps text solid, use a colour with alpha (rgba, hsla, #rrggbbaa) on background-color instead of opacity.",
+      "On the box to fade, often paired with transition: opacity 200ms. For a see-through background with solid text, use a color with alpha (rgba) on background-color instead.",
     mistakes: [
-      "Using opacity to make a background translucent and discovering the text faded too \u2014 opacity fades everything. Use rgba() on the background.",
-      "Hiding things with opacity: 0 and leaving them clickable and focusable \u2014 invisible buttons still get tapped. Add visibility: hidden or pointer-events: none, or use display: none.",
-      "Dimming text with opacity for 'secondary' labels and failing contrast \u2014 opacity 0.5 grey on white is often unreadable. Pick an actual colour that passes contrast.",
+      "Using opacity to make a background see-through and finding the text faded too. opacity fades everything. Use rgba() on the background.",
+      "Hiding things with opacity: 0 and leaving them clickable. Invisible buttons still get tapped. Add visibility: hidden or pointer-events: none, or use display: none.",
+      "Dimming labels with opacity and failing contrast. Half-faded grey on white is often unreadable. Pick a real color that passes.",
     ],
     example: ".btn:disabled { opacity: 0.5; cursor: not-allowed; }\n.toast {\n  opacity: 0;\n  transition: opacity 200ms;\n}\n.toast.show { opacity: 1; }",
     related: ["transition", "color & background-color", "display"],
@@ -1371,13 +1398,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "pointer | default | text | not-allowed | grab | move | wait | none",
     },
     whatItDoes:
-      "Which mouse pointer shows over an element. Browsers give links the hand (pointer) automatically but not buttons or anything else you make clickable, so cursor: pointer is the tiny rule that makes a custom button, card or icon feel interactive. not-allowed signals a disabled control; text is the I-beam; grab/grabbing suit drag handles. Touch screens ignore it entirely, so it's a hint, never the only one.",
+      "cursor sets which mouse pointer shows over a box. Browsers give links the hand on their own, but not buttons or anything else you make clickable. cursor: pointer is the tiny rule that makes a custom button, card or icon feel clickable. not-allowed signals a disabled control. grab and grabbing suit drag handles. Touch screens ignore it, so it is a hint, never the only one.",
     whereItGoes:
-      "On anything with a click handler that isn't an <a> \u2014 buttons, clickable cards, tabs, close icons. Pair with a hover style; the cursor alone is easy to miss.",
+      "On anything clickable that is not an <a>: buttons, clickable cards, tabs, close icons. Pair it with a hover style. The cursor alone is easy to miss.",
     mistakes: [
-      "Putting cursor: pointer on things that don't do anything \u2014 users click and nothing happens. Pointer is a promise.",
-      "Relying on it for affordance \u2014 there's no cursor on a phone. Make clickable things look clickable with colour, border or hover states too.",
-      "Forgetting cursor: not-allowed (or default) on a disabled button that inherited pointer from .btn \u2014 it still invites the click.",
+      "Putting cursor: pointer on things that do nothing. People click and nothing happens. The pointer is a promise.",
+      "Relying on it to show what is clickable. There is no cursor on a phone. Use color, a border or a hover state too.",
+      "Forgetting cursor: not-allowed on a disabled button that inherited pointer from .btn. It still invites the click.",
     ],
     example: "button, .card[onclick], .tab { cursor: pointer; }\n.btn:disabled { cursor: not-allowed; }\n.handle { cursor: grab; }\n.handle:active { cursor: grabbing; }",
     related: [":hover / :first-child", "opacity", "transition"],
@@ -1392,13 +1419,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "translateY(-2px), scale(1.05), rotate(45deg), translate(-50%, -50%)",
     },
     whatItDoes:
-      "Moves, scales, rotates or skews an element visually without touching the layout around it. The element keeps its original slot; only its painted result shifts. That makes transform the right tool for hover lifts (translateY(-2px)), subtle zooms (scale(1.03)), spinning icons (rotate(180deg)), and the centring trick: position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%). Browsers animate transforms on the GPU, so they stay smooth where animating top/left or width stutters.",
+      "transform moves, scales, rotates or skews a box visually without moving anything around it. The box keeps its slot. Only the drawn result shifts. That makes it the right tool for hover lifts (translateY(-2px)), gentle zooms (scale(1.03)) and spinning icons (rotate(180deg)). It is also the centering trick: position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%). Browsers animate transforms on the graphics chip, so they stay smooth where animating top, left or width stutters.",
     whereItGoes:
-      "On the element to move, usually in a :hover or active state with a transition on the base rule. Several functions can be combined in one value, applied right to left: transform: translateY(-2px) scale(1.02).",
+      "On the box to move, usually in a :hover state with a transition on the normal rule. Several functions can be combined in one value: transform: translateY(-2px) scale(1.02).",
     mistakes: [
-      "Animating top/left/margin for movement \u2014 layout recalculates every frame and janks. Animate transform instead; same visual, far smoother.",
-      "Expecting neighbours to move out of the way \u2014 they won't; transform is purely visual. If space must change, use margin or layout.",
-      "Scaling text up with transform and getting blur \u2014 transform scales the rendered pixels. For text that should be bigger, change font-size.",
+      "Animating top, left or margin to move something. The browser recalculates the layout every frame and it stutters. Animate transform instead.",
+      "Expecting neighbors to move out of the way. They do not. transform is purely visual. If space must change, use margin or layout.",
+      "Scaling text up with transform and getting blur. transform scales the drawn pixels. For bigger text, change font-size.",
     ],
     example: ".card {\n  transition: transform 150ms, box-shadow 150ms;\n}\n.card:hover { transform: translateY(-4px); }\n.chev.open { transform: rotate(180deg); }\n.modal {\n  position: absolute; top: 50%; left: 50%;\n  transform: translate(-50%, -50%);\n}",
     related: ["transition", "animation / @keyframes", "position", "box-shadow"],
@@ -1413,13 +1440,13 @@ export const CSS_NEST: NestEntry[] = [
       commonValues: "name duration timing-function delay iteration-count; @keyframes name { from {} to {} }",
     },
     whatItDoes:
-      "Animation that runs on its own, without a state change to trigger it. @keyframes names a sequence of steps (from/to, or percentages) and animation plays it: animation: spin 1s linear infinite rotates a loading spinner forever; animation: fade-in 300ms ease-out plays a one-shot entrance. transition is for 'go from A to B when something changes'; animation is for 'play this sequence', including loops and multi-step choreography.",
+      "animation plays on its own, with no hover or click to trigger it. @keyframes names a sequence of steps (from and to, or percentages). animation plays it: animation: spin 1s linear infinite rotates a loading spinner forever. animation: fade-in 300ms ease-out plays a one-time entrance. transition is for \"go from A to B when something changes.\" animation is for \"play this sequence,\" including loops.",
     whereItGoes:
-      "@keyframes at the top level of the stylesheet; the animation property on the element. Stick to transform and opacity inside keyframes for smoothness, and respect @media (prefers-reduced-motion: reduce) by shortening or removing animations for people who've asked for less motion.",
+      "@keyframes at the top level of the stylesheet. The animation property on the box. Stick to transform and opacity inside the steps for smoothness. Respect @media (prefers-reduced-motion: reduce) by shortening or removing animations for people who asked for less motion.",
     mistakes: [
-      "Writing the @keyframes name differently from the animation name \u2014 a typo means nothing plays, with no error.",
-      "Animating width, height, top or left \u2014 these force layout every frame and stutter. Animate transform and opacity.",
-      "Ignoring prefers-reduced-motion \u2014 looping or large motion can make some users ill. One media query at the bottom of the file turns it off for them.",
+      "Spelling the @keyframes name differently from the animation name. A typo means nothing plays, with no error.",
+      "Animating width, height, top or left. These force a layout recalculation every frame and stutter. Animate transform and opacity.",
+      "Ignoring prefers-reduced-motion. Looping or large motion makes some people ill. One media query at the bottom of the file turns it off for them.",
     ],
     example: "@keyframes spin {\n  from { transform: rotate(0deg); }\n  to { transform: rotate(360deg); }\n}\n.spinner { animation: spin 1s linear infinite; }\n\n@media (prefers-reduced-motion: reduce) {\n  .spinner { animation-duration: 3s; }\n}",
     related: ["transition", "transform", "opacity", "@media"],

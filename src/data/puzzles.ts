@@ -386,12 +386,13 @@ export const PUZZLES: Puzzle[] = [
     id: 'form-not-required',
     title: 'A required field that lets you skip it',
     difficulty: 'medium',
-    prompt: 'This field is supposed to be mandatory, but nothing stops the form from submitting empty. Fix it.',
+    prompt:
+      "This field must be filled in, but the form sends even when it is empty. Fix it.",
     broken: '<form>\n  <label for="email">Email</label>\n  <input type="email" id="email">\n</form>',
     hints: [
-      'An input needs to actually say it\'s mandatory — the browser can\'t guess that from the label.',
-      'The required attribute is a boolean attribute, same family as checked — just being present is enough.',
-      'Fix it to: <input type="email" id="email" required>',
+      "The input has to say it is required. The browser cannot guess that from the label.",
+      "required is a switch attribute, like checked. Just the word turns it on.",
+      "Fix it to: <input type=\"email\" id=\"email\" required>",
     ],
     check: (code) => {
       const m = code.match(/<input\b[^>]*>/i);

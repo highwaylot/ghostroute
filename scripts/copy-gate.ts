@@ -1,8 +1,7 @@
 // The writing standard in docs/WRITING.md, as a check.
-//   npx tsx scripts/copy-gate.ts            -> report + exit 1 on any failure
-//   npx tsx scripts/copy-gate.ts --all      -> also gate the Nest and puzzles
-// Routes and chapters are always gated. The Nest and puzzles are reported
-// but only gated with --all, until their own rewrite rounds land.
+//   npx tsx scripts/copy-gate.ts   -> report, exit 1 on any failure
+// Everything is gated: routes, chapters, both Nests, puzzles. (--report-only
+// prints without failing, for a quick look while drafting.)
 
 import { STEPS, type Step } from '../src/data/steps';
 import { CSS_STEPS } from '../src/data/cssSteps';
@@ -15,7 +14,7 @@ import { CSS_NEST } from '../src/data/cssNest';
 import { PUZZLES } from '../src/data/puzzles';
 import { CSS_PUZZLES } from '../src/data/cssPuzzles';
 
-const gateAll = process.argv.includes('--all');
+const gateAll = !process.argv.includes('--report-only');
 
 // ---------------------------------------------------------------- readability
 function syllables(w: string): number {
