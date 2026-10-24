@@ -10,48 +10,48 @@ export const CSS_CHAPTERS: Chapter[] = [
     id: 'attach',
     title: 'getting css onto the page',
     blurb:
-      "CSS doesn't do anything sitting on its own — it has to be connected to HTML first, and then paired into rules: a selector (what to style) plus a declaration (how to style it).",
+      "HTML says what is on your page. CSS says what it looks like. One line of CSS looks like this: h1 { color: teal; }. The part before the brace picks what to change. The part inside says how. This chapter gets that first line onto your page.",
   },
   {
     id: 'selectors',
     title: 'selectors',
     blurb:
-      'Remember class and id from HTML? This is what they were for — selectors are how a CSS rule says which elements it applies to.',
+      "The part of a rule before the brace is called the selector. It picks which tags the rule changes. Remember class and id from HTML? They were made for this. This chapter shows three ways to pick exactly the tags you want.",
   },
   {
     id: 'box-model',
     title: 'the box model',
     blurb:
-      'Every element is secretly a rectangle with four layers around its content: padding, border, and margin. Almost every spacing bug comes from mixing these up.',
+      "Every tag on a page is a box, even when you cannot see its edges. Around the content there are three layers: padding (space inside the edge), border (the edge itself) and margin (space outside the edge). Most spacing problems come from mixing these up.",
   },
   {
     id: 'color-type',
     title: 'color & type',
     blurb:
-      "The most immediately visible layer of CSS — what color things are, and what the text looks like.",
+      "The changes you see first: what color things are, and what the text looks like. Two properties for color, two for text.",
   },
   {
     id: 'display',
     title: 'display & flow',
     blurb:
-      'Every element already has a default display behavior before you write a line of CSS. This is where that becomes something you control on purpose.',
+      "Every tag already behaves one of two ways before you write any CSS. A block tag takes its own line. An inline tag sits inside a line of text. This chapter is where you start choosing that yourself.",
   },
   {
     id: 'flexbox',
     title: 'flexbox',
     blurb:
-      "The layout tool you'll reach for constantly — one line turns a pile of stacked elements into a row, evenly spaced, that actually behaves.",
+      "Flexbox turns a pile of stacked tags into a row. One line does it. Two more lines control the spacing and the alignment. You will use it on almost every page you build.",
   },
   {
     id: 'responsive',
     title: 'responsive basics',
     blurb:
-      'A page that only looks right at one screen size is broken for most visitors. Media queries and relative units are how it adapts.',
+      "A page that only looks right on one screen size is broken on most phones. This chapter shows how to give the page different rules on small screens, and how to size text so it scales.",
   },
   {
     id: 'interaction',
     title: 'interaction & polish',
     blurb:
-      'The small stuff that makes a page feel alive instead of static — a hover state, a smooth change instead of an instant jump.',
+      "The small things that make a page feel alive. A link that changes when you point at it. A change that glides instead of snapping.",
   },
 ];

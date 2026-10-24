@@ -9,42 +9,42 @@ export const CHAPTERS: Chapter[] = [
     id: 'start',
     title: 'your first line',
     blurb:
-      "Three words before anything else. A tag is a label in angle brackets, like <h1>, that tells the browser what a piece of content is. The browser is the app you're reading this in (Chrome, Safari, Firefox). Render means the browser reading your tags and drawing the page. That's all HTML is: labels, read by a browser, drawn on screen.",
+      "Three words before anything else. A tag is a label in angle brackets, like <h1>. It tells the browser what a piece of content is. The browser is the app you are reading this in (Chrome, Safari, Firefox). Render means the browser reads your tags and draws the page. That is all HTML is: labels, read by a browser, drawn on screen.",
   },
   {
     id: 'foundations',
     title: 'foundations',
     blurb:
-      "Every HTML page needs the same handful of wrapper tags before anything else works. Write this skeleton once, and you'll recognize it in every website you ever look at.",
+      "Every web page starts with the same five lines. They tell the browser what kind of page this is and where the visible part begins. You will write them once here, and you will see them at the top of every website for the rest of your life.",
   },
   {
     id: 'text',
     title: 'text basics',
     blurb:
-      'Headings, paragraphs, and simple formatting are how you put words on a page and tell the browser (and readers) which words matter most.',
+      "Words on a page come in two kinds: headings and paragraphs. A heading is a title. A paragraph is the normal text under it. This chapter also shows how to make a word bold or italic.",
   },
   {
     id: 'lists',
     title: 'lists',
     blurb:
-      'Lists group related items — steps, ingredients, links — in a way that both looks organized and tells screen readers "this is a set of things."',
+      "A list is a set of things that belong together: steps in a recipe, items in a menu, links in a sidebar. HTML has a tag for the list and a tag for each item in it.",
   },
   {
     id: 'links-media',
     title: 'links & media',
     blurb:
-      "The web is pages linking to other pages, plus images that aren't just text. These two tags are how a page stops being an island.",
+      "A link takes the reader to another page. An image puts a picture on this one. These two tags are what make a web page more than a document.",
   },
   {
     id: 'grouping',
     title: 'grouping & attributes',
     blurb:
-      'div and span carry no meaning of their own — they exist purely to group things so you (or CSS, later) can target them. class and id are how you name those groups.',
+      "Sometimes you need to treat a few tags as one thing, so you can style them together later. This chapter shows the two tags that do that, and the two ways to give a tag a name.",
   },
   {
     id: 'semantic',
     title: 'semantic layout',
     blurb:
-      "These tags don't look like anything by default, but they tell browsers, screen readers, and search engines what each part of your page actually is.",
+      "A page has parts: the top, the menu, the main content, the bottom. These four tags name those parts. They look like nothing on their own. They matter because browsers, search engines and screen readers use them to understand your page.",
   },
 ];

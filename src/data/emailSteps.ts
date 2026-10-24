@@ -34,11 +34,12 @@ export const EMAIL_STEPS: Step[] = [
   {
     tag: 'email doctype',
     chapter: 'layout',
-    why: "Outlook renders with Word's engine, and it behaves more predictably with the older XHTML Transitional doctype than the HTML5 one you'd use for a website.",
+    why:
+      "A website uses the short <!DOCTYPE html>. Email uses an older, longer doctype called XHTML 1.0 Transitional. Outlook draws the page more predictably with it. Replace your first line with the long version.",
     hints: [
-      'Replace the whole first line — there\'s a much longer, older-style doctype used specifically for email.',
-      'It\'s the XHTML 1.0 Transitional public doctype.',
-      'Replace the first line with:\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+      "Replace the whole first line. Email uses a much longer, older doctype.",
+      "It is the XHTML 1.0 Transitional doctype.",
+      "Replace the first line with:\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">",
     ],
     check: (code) =>
       has(code, /<!DOCTYPE\s+html\s+PUBLIC\s+"-\/\/W3C\/\/DTD XHTML 1\.0 Transitional\/\/EN"/i),
@@ -46,22 +47,24 @@ export const EMAIL_STEPS: Step[] = [
   {
     tag: 'role="presentation"',
     chapter: 'layout',
-    why: 'This table isn\'t real tabular data, it\'s a layout hack — role="presentation" tells screen readers to skip announcing it as a table.',
+    why:
+      "This table is not a table of data. It is only here to lay the email out. role=\"presentation\" tells screen readers to skip past it instead of announcing a table.",
     hints: [
-      'Add an attribute to your outer <table> that says "this isn\'t data, it\'s just layout."',
-      'The attribute is role, and the value is presentation.',
-      'Add to your <table>: role="presentation"',
+      "Add an attribute to your outer <table> that says \"this is layout, not data.\"",
+      "The attribute is role, and the value is presentation.",
+      "Add to your <table>: role=\"presentation\"",
     ],
     check: (code) => has(code, /<table\b[^>]*\brole\s*=\s*"presentation"/i),
   },
   {
     tag: 'width="600"',
     chapter: 'layout',
-    why: 'Without a fixed width, your layout table stretches to fill whatever window it\'s viewed in — unpredictable and often ugly. 600px is the long-standing safe width for email.',
+    why:
+      "Without a width, your table stretches to fill the whole window, and that looks different everywhere. 600 pixels is the width email has used for years. Set it as an attribute on the table.",
     hints: [
-      'Add a width attribute directly on the outer <table>.',
-      'It\'s a plain number, no "px" — HTML attributes don\'t use units.',
-      'Add to your <table>: width="600"',
+      "Add a width attribute directly on the outer <table>.",
+      "It is a plain number, no px. HTML attributes do not use units.",
+      "Add to your <table>: width=\"600\"",
     ],
     check: (code) => has(code, /<table\b[^>]*\bwidth\s*=\s*"600"/i),
   },
@@ -70,22 +73,24 @@ export const EMAIL_STEPS: Step[] = [
   {
     tag: 'style="" on <h1>',
     chapter: 'styling',
-    why: "A <style> block in <head> gets stripped by a lot of email clients — Gmail among them. Styling has to live directly on the tag via the style attribute to be reliable.",
+    why:
+      "Gmail and others throw away the <style> tag. The CSS that survives is written on the tag itself: style=\"color: #1e2440;\". Inside the quotes you write the same property: value pairs, with no braces. Style your <h1> this way.",
     hints: [
-      'Add a style attribute directly to your <h1>, not a <style> block.',
-      'Inside the quotes, write CSS declarations the same way you would inside curly braces, just without them.',
-      'Add to <h1>: style="font-family: sans-serif; color: #1e2440;"',
+      "Add a style attribute directly on your <h1>, not a <style> block.",
+      "Inside the quotes, write CSS the same way you would inside braces, just without the braces.",
+      "Add to <h1>: style=\"font-family: sans-serif; color: #1e2440;\"",
     ],
     check: (code) => has(code, /<h1\b[^>]*\bstyle\s*=\s*"[^"]*font-family[^"]*"/i),
   },
   {
     tag: 'bgcolor + style background',
     chapter: 'styling',
-    why: 'bgcolor is an old HTML attribute some clients still need, while background-color in a style attribute is what modern clients read — setting both together covers the widest range.',
+    why:
+      "Two ways to set a background, for two generations of email client. bgcolor=\"...\" is an old attribute some clients still need. style=\"background-color: ...;\" is what modern clients read. Set both on the <td>, with the same color.",
     hints: [
-      'Add two things to your <td>: a legacy attribute, and a modern style property, both doing the same job.',
-      'bgcolor="..." is the attribute; style="background-color: ...;" is the modern one.',
-      'Add to <td>: bgcolor="#f4f5fa" style="background-color: #f4f5fa;"',
+      "Add two things to your <td>: an old attribute and a modern style property, both setting the same color.",
+      "bgcolor=\"...\" is the attribute. style=\"background-color: ...;\" is the modern one.",
+      "Add to <td>: bgcolor=\"#f4f5fa\" style=\"background-color: #f4f5fa;\"",
     ],
     check: (code) =>
       has(code, /<td\b[^>]*\bbgcolor\s*=\s*"[^"]+"[^>]*\bstyle\s*=\s*"[^"]*background-color[^"]*"/i) ||
@@ -96,11 +101,12 @@ export const EMAIL_STEPS: Step[] = [
   {
     tag: 'alt text (email-critical)',
     chapter: 'images-buttons',
-    why: 'Most email clients block images by default until the reader clicks "show images" — alt text isn\'t just accessibility here, it\'s often the only thing anyone sees at all.',
+    why:
+      "Most clients hide images until the reader clicks \"show images.\" Until then, the alt text is all they see. In email, alt is not a nicety. It is often the whole message.",
     hints: [
-      'Your <img> is missing the attribute that shows as fallback text.',
-      'alt takes a short description of what the image would show.',
-      'Fix it to: <img src="sale.jpg" alt="30% off everything this week">',
+      "Your <img> is missing the attribute that shows as text when the image is hidden.",
+      "alt takes a short description of what the image would show.",
+      "Fix it to: <img src=\"sale.jpg\" alt=\"30% off everything this week\">",
     ],
     check: (code) => {
       const m = code.match(/<img\b[^>]*>/i);
@@ -111,11 +117,12 @@ export const EMAIL_STEPS: Step[] = [
   {
     tag: 'bulletproof button',
     chapter: 'images-buttons',
-    why: 'A CSS-styled <a> with padding and a background color looks fine almost everywhere except Outlook, which frequently ignores both. Putting the background and padding on a <td> around the link, instead of the link itself, survives there too.',
+    why:
+      "A link with padding and a background color looks like a button in most clients. Outlook ignores both. The fix: put the background and padding on a <td> around the link, not on the link. Outlook respects a cell.",
     hints: [
-      'Wrap your "Shop Now" link in a table cell, and move the background color and padding onto that cell instead of the link.',
-      'Something like: <td style="background-color: ...; padding: ...;"><a href="...">Shop Now</a></td>',
-      'Fix it to: <td style="background-color: #3b63e8; padding: 12px 24px;"><a href="https://example.com/shop" style="color: #fff;">Shop Now</a></td>',
+      "Wrap your \"Shop Now\" link in a table cell, and move the background color and padding onto that cell.",
+      "Something like: <td style=\"background-color: ...; padding: ...;\"><a href=\"...\">Shop Now</a></td>",
+      "Fix it to: <td style=\"background-color: #3b63e8; padding: 12px 24px;\"><a href=\"https://example.com/shop\" style=\"color: #fff;\">Shop Now</a></td>",
     ],
     check: (code) =>
       // Tight wrapper only — the <a> has to sit directly inside the
@@ -131,11 +138,12 @@ export const EMAIL_STEPS: Step[] = [
   {
     tag: 'preheader text',
     chapter: 'compatibility',
-    why: 'The preheader is the snippet an inbox shows next to the subject line before the email is even opened — without one, it just shows whatever text happens to come first in your body, which is rarely what you\'d choose.',
+    why:
+      "The preheader is the short line an inbox shows next to the subject, before the email is opened. If you do not write one, the inbox shows whatever text comes first in your body. Put a hidden line at the very top so you choose that text.",
     hints: [
-      'Add a short hidden line of text right at the very top of <body>, before your table.',
-      'Hide it with an inline style that sets display: none, so it never shows in the actual email — only in the inbox preview.',
-      'Add right after <body>: <div style="display: none;">30% off everything — this week only.</div>',
+      "Add a short hidden line of text right at the top of <body>, before your table.",
+      "Hide it with a style attribute that sets display: none. It shows in the inbox preview, not in the opened email.",
+      "Add right after <body>: <div style=\"display: none;\">30% off everything \u2014 this week only.</div>",
     ],
     check: (code) => {
       const bodyMatch = code.match(/<body[^>]*>([\s\S]*?)<table/i);
