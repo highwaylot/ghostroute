@@ -37,7 +37,8 @@ function prose(text: string): string {
     .replace(/[{}();:]/g, ' ');
 }
 function sentencesOf(text: string): string[] {
-  return prose(text).split(/(?<=[.!?])\s+|\n+/).map((s) => s.trim()).filter((s) => s.split(/\s+/).length > 2);
+  // a period inside closing quotes (`...30." colspan`) still ends a sentence
+  return prose(text).split(/(?<=[.!?]["')\]]?)\s+|\n+/).map((s) => s.trim()).filter((s) => s.split(/\s+/).length > 2);
 }
 function grade(text: string): number {
   const sents = sentencesOf(text);
