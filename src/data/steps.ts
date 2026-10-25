@@ -28,7 +28,7 @@ export const STEPS: Step[] = [
     tag: '<h1>hello</h1>',
     chapter: 'start',
     why:
-      "Click in the coding window and type <h1>hello</h1>. The first part, <h1>, is an opening tag: it says a big heading starts here. The word hello is your text. The last part, </h1>, is the closing tag. The slash means the heading ends here. Press Check my work and look at the output panel. The browser draws your line as a heading.",
+      "Type <h1>hello</h1> in the coding window. <h1> starts a heading and </h1> ends it. Then press Check my work.",
     hints: [
       "Type an opening tag, then some text, then a closing tag. The closing tag is the same word with a slash in front: </h1>.",
       "Angle brackets go around the tag name: < then h1 then >. Then the word hello. Then < then /h1 then >.",
@@ -42,7 +42,7 @@ export const STEPS: Step[] = [
     tag: '<!DOCTYPE html>',
     chapter: 'foundations',
     why:
-      "Every page starts with this one line: <!DOCTYPE html>. It is a note to the browser that says \"this is a modern web page.\" It goes on the very first line, above your heading. Without it, the browser guesses how to draw your page, and it guesses wrong.",
+      "Put <!DOCTYPE html> on the very first line, above your heading. It tells the browser this is a modern web page.",
     hints: [
       "Every web page starts with one special line, before any tags.",
       "It starts with <!DOCTYPE and ends with a closing >.",
@@ -54,7 +54,7 @@ export const STEPS: Step[] = [
     tag: '<html></html>',
     chapter: 'foundations',
     why:
-      "<html> and </html> wrap your whole page. Every other tag you write goes between them, like everything in a house goes inside its walls. Put <html> on the line after your doctype, and </html> at the very bottom.",
+      "<html> and </html> wrap your whole page, like walls around a house. Put <html> after the doctype and </html> at the very end.",
     hints: [
       "Add a tag that wraps everything on the page except the doctype line.",
       "It has an opening and a closing form: <html> ... </html>.",
@@ -66,7 +66,7 @@ export const STEPS: Step[] = [
     tag: '<head><title></title></head>',
     chapter: 'foundations',
     why:
-      "Inside <html>, a page has two parts. The first is <head>: information about the page that visitors do not see on it. The one thing every <head> needs is a <title>. That is the text in the browser tab. Write <head>, then <title>My First Page</title> inside it, then </head>.",
+      "<head> holds page info that visitors do not see. Inside it, <title> sets the text in the browser tab.",
     hints: [
       "Add a part for page information, and put a browser-tab title inside it.",
       "<head> wraps it. <title> goes inside <head>, with your text inside that.",
@@ -81,7 +81,7 @@ export const STEPS: Step[] = [
     tag: '<body></body>',
     chapter: 'foundations',
     why:
-      "The second part of a page is <body>. Everything visitors see and click goes inside it: your headings, text, pictures, links. It goes right after </head>, not inside it. Move your <h1>hello</h1> line inside the body.",
+      "<body> holds everything visitors see. Put it right after </head>, and move your heading inside it.",
     hints: [
       "Add the part that holds everything visible. It comes right after </head>.",
       "It has an opening and a closing form: <body> ... </body>.",
@@ -95,7 +95,7 @@ export const STEPS: Step[] = [
     tag: '<h1></h1> + <p></p>',
     chapter: 'text',
     why:
-      "A heading and a paragraph are the two most common tags on any page. <h1> is the main title. <p> is a paragraph of normal text. Put a <p> under your <h1>, inside <body>.",
+      "<h1> is the page title. <p> is a paragraph of normal text. Add a <p> under your heading.",
     hints: [
       "Add two tags inside <body>: a big heading and a normal paragraph.",
       "<h1> is the heading. <p> is the paragraph. Both need an opening and a closing tag.",
@@ -108,7 +108,7 @@ export const STEPS: Step[] = [
     tag: '<h2></h2>',
     chapter: 'text',
     why:
-      "Headings come in six sizes, <h1> down to <h6>. <h1> is the page title, so use it once. <h2> is the next size down. Use it for the title of a section.",
+      "Headings come in six sizes, <h1> to <h6>. Use <h2> for a section title under the main one.",
     hints: [
       "Headings come in sizes: <h1> through <h6>. Try the second-biggest.",
       "It has an opening and a closing form: <h2> ... </h2>.",
@@ -120,7 +120,7 @@ export const STEPS: Step[] = [
     tag: '<strong></strong> + <em></em>',
     chapter: 'text',
     why:
-      "Two tags for a few words inside a paragraph. <strong> means this is important, and the browser shows it bold. <em> means say this with stress, and the browser shows it italic. Wrap one word in each.",
+      "<strong> marks words as important, in bold. <em> stresses them, in italics. Wrap one word in each.",
     hints: [
       "Add two tags around different words or phrases, inside a paragraph.",
       "<strong> for important text, <em> for stressed text. Both need closing tags.",
@@ -133,7 +133,7 @@ export const STEPS: Step[] = [
     tag: '<br> + <hr>',
     chapter: 'text',
     why:
-      "Most tags wrap something, so they need a closing tag. A few mark a single spot instead, so they have none. <br> is a line break: the text after it starts on a new line. <hr> is a horizontal line across the page. Neither has a closing tag.",
+      "<br> starts a new line. <hr> draws a line across the page. Neither one needs a closing tag.",
     hints: [
       "Add both: a line break inside some text, and a divider on its own line.",
       "Neither has a closing tag. <br> and <hr> just mark a spot.",
@@ -147,7 +147,7 @@ export const STEPS: Step[] = [
     tag: '<ul><li> + <ol><li>',
     chapter: 'lists',
     why:
-      "A list has two kinds of tag. The outer tag says what kind of list it is: <ul> for bullets, <ol> for numbers. Inside it, every item gets its own <li> tag. Write one of each list, with one item in each.",
+      "<ul> makes a bulleted list and <ol> a numbered one. Each item inside goes in its own <li>.",
     hints: [
       "Add two lists: one bulleted, one numbered, each with at least one item.",
       "<ul> and <ol> both wrap <li> items the same way. Only the outer tag differs.",
@@ -163,7 +163,7 @@ export const STEPS: Step[] = [
     tag: '<a href=""> + <img src="" alt="">',
     chapter: 'links-media',
     why:
-      "Some tags need extra settings. A setting written inside the opening tag is called an attribute. It looks like name=\"value\". A link is <a href=\"...\">: href is the address it goes to. An image is <img src=\"...\" alt=\"...\">: src is the picture file, and alt is a few words describing it for people who cannot see it.",
+      "An attribute is a setting inside a tag, like href=\"...\". A link needs href, the address. An image needs src, the file, and alt, a short description.",
     hints: [
       "Add a clickable link and an image, each with the right attributes.",
       "<a> needs href=\"...\". <img> needs both src=\"...\" and alt=\"...\". Leave a space between the tag name and the attribute (<a href=, not <ahref=). Wrap every value in matching quotes.",
@@ -182,7 +182,7 @@ export const STEPS: Step[] = [
     tag: '<div></div> + <span></span>',
     chapter: 'grouping',
     why:
-      "Two tags that mean nothing on their own. They exist to group things, so you can style the group later. <div> groups whole blocks, like a few paragraphs. <span> groups a few words inside a line of text. Nothing changes on the page yet. Wrap a paragraph in a <div>, and a word inside it in a <span>.",
+      "<div> groups whole blocks, like paragraphs. <span> groups a few words inline, inside a line of text. Neither changes how anything looks yet.",
     hints: [
       "Add a <div> around a block of content (like a paragraph), and a <span> around a few words inside it.",
       "Both need a real closing tag: <div>...</div> and <span>...</span>.",
@@ -195,7 +195,7 @@ export const STEPS: Step[] = [
     tag: 'class="" + id=""',
     chapter: 'grouping',
     why:
-      "Two attributes that give a tag a name. class is a name you can give to many tags, like a group label. id is a name for exactly one tag on the page. Add class=\"highlight\" to one tag and id=\"main-heading\" to another.",
+      "class names a group of tags. id names exactly one tag. Add a class to one tag and an id to another.",
     hints: [
       "Add a class attribute to one tag, and an id attribute to a different tag.",
       "Both take a name in quotes: class=\"...\" and id=\"...\". They go inside the tag's own brackets, right after the tag name: <div class=\"highlight\">.",
@@ -209,7 +209,7 @@ export const STEPS: Step[] = [
     tag: '<header></header> + <nav></nav>',
     chapter: 'semantic',
     why:
-      "Two tags for the top of a page. <header> holds the intro: usually the site name and a tagline. <nav> holds the menu of links. Both go inside <body>, near the top. Not inside <head>: that part never holds anything visitors see.",
+      "<header> holds the top of the page. <nav> holds the menu links. Both go inside <body>, near the top.",
     hints: [
       "Inside <body>, near the top, wrap your intro content in <header>, and add a <nav> with a link inside it.",
       "Both need opening and closing tags. <nav> should contain at least one <a>. Neither goes in <head>.",
@@ -222,7 +222,7 @@ export const STEPS: Step[] = [
     tag: '<main></main> + <footer></footer>',
     chapter: 'semantic',
     why:
-      "Two tags that finish the layout. <main> holds the one thing this page is about: the article, the product, the form. <footer> holds the bottom of the page: credits, small links, a copyright line. Wrap your paragraphs in <main>, and add a <footer> below it.",
+      "<main> holds what this page is about. <footer> holds the bottom: credits and small links. Wrap your paragraphs in <main>.",
     hints: [
       "Wrap your central content in <main>, and add a <footer> below it.",
       "Both need opening and closing tags. <main> should hold your paragraphs.",

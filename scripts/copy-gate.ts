@@ -68,6 +68,12 @@ const CSS_TAUGHT: Record<string, number> = {
 // Never on a route, in any track.
 const BANNED_ON_ROUTES = ['element', 'root', 'sibling', 'container', 'wrapper', 'skeleton', 'semantic', 'declaration', 'descendant', 'pseudo-class', 'pseudo class', 'boilerplate', 'markup', 'void', 'cross-axis', 'main axis', 'inherit'];
 
+// The step card is narrow. Anything longer than this reads as a wall.
+// Detail belongs in the hints, which show one at a time on a miss.
+const MAX_STEP_WORDS = 30;
+const MAX_BLURB_WORDS = 30;
+const wordCount = (t: string) => t.split(/\s+/).filter(Boolean).length;
+
 type Finding = { where: string; what: string; detail: string; gated: boolean };
 const findings: Finding[] = [];
 const ok: string[] = [];
@@ -98,8 +104,16 @@ function routeVocabulary(name: string, chapters: Chapter[], steps: Step[], taugh
 
 // ---------------------------------------------------------------- run
 for (const [name, ch, st, taught] of [['html', CHAPTERS, STEPS, HTML_TAUGHT], ['css', CSS_CHAPTERS, CSS_STEPS, CSS_TAUGHT], ['email', EMAIL_CHAPTERS, EMAIL_STEPS, {}]] as const) {
-  for (const c of ch) checkText(`${name} chapter "${c.title}"`, c.blurb, 7, true);
-  st.forEach((s, i) => checkText(`${name} step ${i + 1} ${s.tag}`, [s.why, ...s.hints].join('\n\n'), 7, true));
+  for (const c of ch) {
+    checkText(`${name} chapter "${c.title}"`, c.blurb, 7, true);
+    const n = wordCount(c.blurb);
+    if (n > MAX_BLURB_WORDS) findings.push({ where: `${name} chapter "${c.title}"`, what: `blurb is ${n} words (max ${MAX_BLURB_WORDS})`, detail: '', gated: true });
+  }
+  st.forEach((s, i) => {
+    checkText(`${name} step ${i + 1} ${s.tag}`, [s.why, ...s.hints].join('\n\n'), 7, true);
+    const n = wordCount(s.why);
+    if (n > MAX_STEP_WORDS) findings.push({ where: `${name} step ${i + 1} ${s.tag}`, what: `step text is ${n} words (max ${MAX_STEP_WORDS})`, detail: '', gated: true });
+  });
   routeVocabulary(name, ch, st, taught);
 }
 for (const [name, nest] of [['html nest', NEST], ['css nest', CSS_NEST]] as const)

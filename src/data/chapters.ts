@@ -9,42 +9,42 @@ export const CHAPTERS: Chapter[] = [
     id: 'start',
     title: 'your first line',
     blurb:
-      "Three words before anything else. A tag is a label in angle brackets, like <h1>. It tells the browser what a piece of content is. The browser is the app you are reading this in (Chrome, Safari, Firefox). Render means the browser reads your tags and draws the page. That is all HTML is: labels, read by a browser, drawn on screen.",
+      "A tag is a label in angle brackets, like <h1>. The browser is the app you read this in. Render means the browser reads your tags and draws the page.",
   },
   {
     id: 'foundations',
     title: 'foundations',
     blurb:
-      "Every web page starts with the same five lines. They tell the browser what kind of page this is and where the visible part begins. You will write them once here, and you will see them at the top of every website for the rest of your life.",
+      "Every web page starts with the same few lines. They tell the browser what the page is and where the visible part begins.",
   },
   {
     id: 'text',
     title: 'text basics',
     blurb:
-      "Words on a page come in two kinds: headings and paragraphs. A heading is a title. A paragraph is the normal text under it. This chapter also shows how to make a word bold or italic.",
+      "Headings are titles. Paragraphs are the normal text under them. Then two ways to make a word stand out.",
   },
   {
     id: 'lists',
     title: 'lists',
     blurb:
-      "A list is a set of things that belong together: steps in a recipe, items in a menu, links in a sidebar. HTML has a tag for the list and a tag for each item in it.",
+      "A list is a set of things that belong together. One tag for the list, one tag for each item.",
   },
   {
     id: 'links-media',
     title: 'links & media',
     blurb:
-      "A link takes the reader to another page. An image puts a picture on this one. These two tags are what make a web page more than a document.",
+      "A link takes the reader to another page. An image puts a picture on this one.",
   },
   {
     id: 'grouping',
     title: 'grouping & attributes',
     blurb:
-      "Sometimes you need to treat a few tags as one thing, so you can style them together later. This chapter shows the two tags that do that, and the two ways to give a tag a name.",
+      "Two tags that group other tags, and two ways to give a tag a name so CSS can find it later.",
   },
   {
     id: 'semantic',
     title: 'semantic layout',
     blurb:
-      "A page has parts: the top, the menu, the main content, the bottom. These four tags name those parts. They look like nothing on their own. They matter because browsers, search engines and screen readers use them to understand your page.",
+      "Four tags that name the parts of a page: the top, the menu, the main content, the bottom. Screen readers and search engines use them.",
   },
 ];

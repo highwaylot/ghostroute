@@ -35,7 +35,7 @@ export const EMAIL_STEPS: Step[] = [
     tag: 'email doctype',
     chapter: 'layout',
     why:
-      "A website uses the short <!DOCTYPE html>. Email uses an older, longer doctype called XHTML 1.0 Transitional. Outlook draws the page more predictably with it. Replace your first line with the long version.",
+      "Email uses an older, longer doctype than websites. Outlook draws pages more reliably with it. Replace your first line.",
     hints: [
       "Replace the whole first line. Email uses a much longer, older doctype.",
       "It is the XHTML 1.0 Transitional doctype.",
@@ -48,7 +48,7 @@ export const EMAIL_STEPS: Step[] = [
     tag: 'role="presentation"',
     chapter: 'layout',
     why:
-      "This table is not a table of data. It is only here to lay the email out. role=\"presentation\" tells screen readers to skip past it instead of announcing a table.",
+      "This table is only for layout. role=\"presentation\" tells screen readers not to announce it as a table.",
     hints: [
       "Add an attribute to your outer <table> that says \"this is layout, not data.\"",
       "The attribute is role, and the value is presentation.",
@@ -60,7 +60,7 @@ export const EMAIL_STEPS: Step[] = [
     tag: 'width="600"',
     chapter: 'layout',
     why:
-      "Without a width, your table stretches to fill the whole window, and that looks different everywhere. 600 pixels is the width email has used for years. Set it as an attribute on the table.",
+      "Without a width, the table stretches to fit any window. 600 is the standard email width.",
     hints: [
       "Add a width attribute directly on the outer <table>.",
       "It is a plain number, no px. HTML attributes do not use units.",
@@ -74,7 +74,7 @@ export const EMAIL_STEPS: Step[] = [
     tag: 'style="" on <h1>',
     chapter: 'styling',
     why:
-      "Gmail and others throw away the <style> tag. The CSS that survives is written on the tag itself: style=\"color: #1e2440;\". Inside the quotes you write the same property: value pairs, with no braces. Style your <h1> this way.",
+      "Gmail deletes <style> tags. Put the CSS on the tag itself instead, in a style attribute.",
     hints: [
       "Add a style attribute directly on your <h1>, not a <style> block.",
       "Inside the quotes, write CSS the same way you would inside braces, just without the braces.",
@@ -86,7 +86,7 @@ export const EMAIL_STEPS: Step[] = [
     tag: 'bgcolor + style background',
     chapter: 'styling',
     why:
-      "Two ways to set a background, for two generations of email client. bgcolor=\"...\" is an old attribute some clients still need. style=\"background-color: ...;\" is what modern clients read. Set both on the <td>, with the same color.",
+      "Old email apps read bgcolor. New ones read background-color. Set both on the <td>.",
     hints: [
       "Add two things to your <td>: an old attribute and a modern style property, both setting the same color.",
       "bgcolor=\"...\" is the attribute. style=\"background-color: ...;\" is the modern one.",
@@ -102,7 +102,7 @@ export const EMAIL_STEPS: Step[] = [
     tag: 'alt text (email-critical)',
     chapter: 'images-buttons',
     why:
-      "Most clients hide images until the reader clicks \"show images.\" Until then, the alt text is all they see. In email, alt is not a nicety. It is often the whole message.",
+      "Most email apps hide images until the reader allows them. Until then, alt text is all they see.",
     hints: [
       "Your <img> is missing the attribute that shows as text when the image is hidden.",
       "alt takes a short description of what the image would show.",
@@ -118,7 +118,7 @@ export const EMAIL_STEPS: Step[] = [
     tag: 'bulletproof button',
     chapter: 'images-buttons',
     why:
-      "A link with padding and a background color looks like a button in most clients. Outlook ignores both. The fix: put the background and padding on a <td> around the link, not on the link. Outlook respects a cell.",
+      "Outlook ignores padding and background color on links. Put them on a <td> around the link instead.",
     hints: [
       "Wrap your \"Shop Now\" link in a table cell, and move the background color and padding onto that cell.",
       "Something like: <td style=\"background-color: ...; padding: ...;\"><a href=\"...\">Shop Now</a></td>",
@@ -139,7 +139,7 @@ export const EMAIL_STEPS: Step[] = [
     tag: 'preheader text',
     chapter: 'compatibility',
     why:
-      "The preheader is the short line an inbox shows next to the subject, before the email is opened. If you do not write one, the inbox shows whatever text comes first in your body. Put a hidden line at the very top so you choose that text.",
+      "The preheader is the preview line next to the subject in an inbox. A hidden line at the top lets you choose it.",
     hints: [
       "Add a short hidden line of text right at the top of <body>, before your table.",
       "Hide it with a style attribute that sets display: none. It shows in the inbox preview, not in the opened email.",
