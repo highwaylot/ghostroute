@@ -16,6 +16,7 @@ import { ProjectPane } from '../components/ProjectPane';
 import { MyProjectsPane } from '../components/MyProjectsPane';
 import { NestPane } from '../components/NestPane';
 import { SettingsMenu } from '../components/SettingsMenu';
+import { usePageMeta } from '../lib/pageMeta';
 import { useTheme } from '../lib/ThemeContext';
 import { KEY_INDEX, KEY_CATEGORIES } from '../data/keyIndex';
 import { getNestEntry } from '../data/nest';
@@ -231,11 +232,26 @@ export default function Workspace() {
   const track: Track = trackFromPath(location.pathname);
   const trackConfig = TRACK_CONFIG[track];
   const basePath = trackConfig.basePath;
+  const trackName = track === 'html' ? 'HTML website' : track === 'css' ? 'CSS website' : 'HTML email';
+  const MODE_NAME: Record<string, string> = { route: 'route', solve: 'solve this code', sandbox: 'sandbox', nest: 'nest', myprojects: 'my projects', quickfire: 'quickfire' };
+  const TRACK_DESC: Record<Track, string> = {
+    html: 'Learn HTML by building a real web page one tag at a time, in an editor that shows the result as you type.',
+    css: 'Learn CSS by styling a real page: selectors, the box model, flexbox, grid and responsive layout, with a live preview.',
+    email: 'Learn to build HTML emails that survive Gmail and Outlook: table layouts, inline styles and the quirks of each inbox.',
+  };
   const steps = trackConfig.steps;
   const chapters = trackConfig.chapters;
   const trackPuzzles = trackConfig.puzzles;
   const trackProjects = trackConfig.projects;
   const mode: Mode = resolveMode(modeParam);
+  const pageHeading = `${trackName}: ${MODE_NAME[mode] ?? mode}`;
+  usePageMeta({
+    title: mode === 'route' ? `${trackName} · tagsmiths` : `${MODE_NAME[mode] ?? mode} · ${trackName} · tagsmiths`,
+    description: TRACK_DESC[track],
+    // Every pane of a track is canonically the track itself: the panes are
+    // tools inside one lesson, not separate pages worth indexing.
+    path: basePath,
+  });
   const solveSection: SolveSection = resolveSolveSection(modeParam, subParam);
   const setMode = (m: Mode) => navigate(`${basePath}/${m}`);
   const [code, setCode] = useState(() => loadSavedCode(track));
@@ -349,6 +365,7 @@ export default function Workspace() {
       localStorage.removeItem(`tagsmiths-quickfire-best-${track}`);
       for (const p of trackConfig.projects ?? []) localStorage.removeItem(PROJECT_STORAGE_PREFIX + p.id);
       clearSolvedPuzzles((trackConfig.puzzles ?? []).map((p) => p.id));
+      for (const p of trackConfig.puzzles ?? []) localStorage.removeItem(`tagsmiths-puzzle-${p.id}`);
     } catch {
       // storage unavailable — nothing was saved in the first place
     }
@@ -361,32 +378,35 @@ export default function Workspace() {
     track === 'css'
       ? "Route complete for now — more CSS chapters are on the way. Try Sandbox to keep styling freely in the meantime."
       : track === 'email'
-        ? "Route complete — you've hardened a small promo email against the way real clients render. Try Fix This Code to test what stuck, or the Project to build one from scratch."
-        : "Route complete — you've written a full page: structure, text, lists, links, media, grouping, and semantic layout. That's real, usable HTML. Try Fix This Code to test what stuck, the Project to build something from scratch, or Sandbox to build freely.";
+        ? "Route complete — you've hardened a small promo email against the way real clients render. Try solve this code to test what stuck, or build one from scratch there."
+        : "Route complete — you've written a full page: structure, text, lists, links, media, grouping, and semantic layout. That's real, usable HTML. Try solve this code to test what stuck and build a page from scratch, or the sandbox to build freely.";
 
   return (
     <div className="app">
+      <a className="skip-link" href="#workspace-main">
+        Skip to the lesson
+      </a>
       <header className="topbar">
-        <Link to="/" className="brand-row">
+        <Link to="/" className="brand-row" aria-label="tagsmiths home">
           <Logo size={20} />
         </Link>
 
         <nav className="tabs">
-          <button className={`tab ${mode === 'route' ? 'active' : ''}`} onClick={() => setMode('route')}>
+          <button className={`tab ${mode === 'route' ? 'active' : ''}`} aria-current={mode === 'route' ? 'page' : undefined} onClick={() => setMode('route')}>
             route
           </button>
-          <button className={`tab ${mode === 'solve' ? 'active' : ''}`} onClick={() => setMode('solve')}>
+          <button className={`tab ${mode === 'solve' ? 'active' : ''}`} aria-current={mode === 'solve' ? 'page' : undefined} onClick={() => setMode('solve')}>
             <span className="tab-long">solve this code</span>
             <span className="tab-short">solve</span>
           </button>
-          <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} onClick={() => setMode('sandbox')}>
+          <button className={`tab ${mode === 'sandbox' ? 'active' : ''}`} aria-current={mode === 'sandbox' ? 'page' : undefined} onClick={() => setMode('sandbox')}>
             sandbox
           </button>
-          <button className={`tab ${mode === 'nest' ? 'active' : ''}`} onClick={() => setMode('nest')}>
+          <button className={`tab ${mode === 'nest' ? 'active' : ''}`} aria-current={mode === 'nest' ? 'page' : undefined} onClick={() => setMode('nest')}>
             nest
           </button>
           {QUICKFIRE_ENABLED && (
-            <button className={`tab ${mode === 'quickfire' ? 'active' : ''}`} onClick={() => setMode('quickfire')}>
+            <button className={`tab ${mode === 'quickfire' ? 'active' : ''}`} aria-current={mode === 'quickfire' ? 'page' : undefined} onClick={() => setMode('quickfire')}>
               quickfire
             </button>
           )}
@@ -423,7 +443,11 @@ export default function Workspace() {
       </header>
 
       <div className="workspace">
-        <main className="main">
+        <main className="main" id="workspace-main" tabIndex={-1}>
+          {/* One heading per page, for screen readers and search: the visible
+              layout already says where you are, so this one is hidden. */}
+          {/* The Nest renders its own h1 (the entry being read). */}
+          {mode !== 'nest' && <h1 className="sr-only">{pageHeading}</h1>}
           {mode === 'route' && (
             <div className="workspace-grid">
               <InstructionsRail
@@ -446,7 +470,7 @@ export default function Workspace() {
                     label="active coding window"
                     className={`code-panel ${flash ? 'flash-success' : ''}`}
                   >
-                    <CodeEditor value={code} onChange={setCode} />
+                    <CodeEditor value={code} onChange={setCode} label={`${trackName} route code editor`} />
                   </EditorPanel>
                   <StatsPanel code={code} stepLabel={stepLabel} />
                 </div>
@@ -462,8 +486,7 @@ export default function Workspace() {
 
           {mode === 'solve' && (!trackPuzzles || !trackProjects) && (
             <p className="mode-blurb">
-              No puzzles or projects yet for this track. Try Sandbox to practice freely, or check
-              the roadmap for what's coming.
+              No puzzles or projects yet for this track. Try the sandbox to practice freely.
             </p>
           )}
 

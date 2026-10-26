@@ -1,3 +1,20 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/html", "destination": "/index.html" },
+    { "source": "/html/website", "destination": "/index.html" },
+    { "source": "/html/website/:path*", "destination": "/index.html" },
+    { "source": "/html/email", "destination": "/index.html" },
+    { "source": "/html/email/:path*", "destination": "/index.html" },
+    { "source": "/css", "destination": "/index.html" },
+    { "source": "/css/website", "destination": "/index.html" },
+    { "source": "/css/website/:path*", "destination": "/index.html" },
+    { "source": "/javascript", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    }
+  ]
 }

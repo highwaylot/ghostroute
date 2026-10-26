@@ -36,9 +36,15 @@ type Props = {
 };
 
 export function SandboxPane({ sandboxPath }: Props) {
-  // A share link someone sent lands here: its code replaces the sandbox so
-  // the receiver sees exactly what the sender saw, and can save it as theirs.
-  const [code, setCode] = useState(() => consumeSharedCode() ?? loadSandbox());
+  // A share link someone sent lands here. The receiver sees exactly what the
+  // sender saw, but as an unsaved copy: their own stored sandbox is not
+  // touched until they choose to keep the shared page.
+  const [initial] = useState(() => {
+    const shared = consumeSharedCode();
+    return shared !== null ? { code: shared, shared: true } : { code: loadSandbox(), shared: false };
+  });
+  const [code, setCode] = useState(initial.code);
+  const [viewingShared, setViewingShared] = useState(initial.shared);
   const [justSaved, setJustSaved] = useState(false);
   const [pending, setPending] = useState<PendingAction>(null);
   const [nameDraft, setNameDraft] = useState('');
@@ -49,19 +55,29 @@ export function SandboxPane({ sandboxPath }: Props) {
   useEffect(() => {
     const onHash = () => {
       const shared = consumeSharedCode();
-      if (shared !== null) setCode(shared);
+      if (shared !== null) {
+        setCode(shared);
+        setViewingShared(true);
+      }
     };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
   useEffect(() => {
+    if (viewingShared) return;
     try {
       localStorage.setItem(SANDBOX_KEY, code);
     } catch {
       // storage unavailable — nothing to do
     }
-  }, [code]);
+  }, [code, viewingShared]);
+
+  const keepShared = () => setViewingShared(false);
+  const backToMine = () => {
+    setCode(loadSandbox());
+    setViewingShared(false);
+  };
 
   useEffect(() => {
     if (pending === 'save') nameInputRef.current?.focus();
@@ -88,6 +104,24 @@ export function SandboxPane({ sandboxPath }: Props) {
 
   return (
     <>
+      {viewingShared && (
+        <div className="shared-banner" role="status">
+          <p>
+            You're looking at a page someone shared. It is not saved, and your own sandbox is untouched.
+          </p>
+          <div className="shared-banner-actions">
+            <button className="btn btn-primary btn-sm" onClick={keepShared}>
+              keep this as my sandbox
+            </button>
+            <button className="btn btn-secondary btn-sm" onClick={startSave}>
+              save to my projects
+            </button>
+            <button className="btn btn-secondary btn-sm" onClick={backToMine}>
+              back to my sandbox
+            </button>
+          </div>
+        </div>
+      )}
       <div className="lower">
         <EditorPanel
           label="sandbox — no route, no checks"
@@ -138,7 +172,7 @@ export function SandboxPane({ sandboxPath }: Props) {
             )
           }
         >
-          <CodeEditor value={code} onChange={setCode} />
+          <CodeEditor value={code} onChange={setCode} label="Sandbox code editor" />
         </EditorPanel>
         <StatsPanel code={code} stepLabel="free" />
       </div>

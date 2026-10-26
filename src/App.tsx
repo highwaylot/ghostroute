@@ -1,11 +1,26 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import HtmlHub from './pages/HtmlHub';
-import Workspace from './pages/Workspace';
 import ComingSoon from './pages/ComingSoon';
+import NotFound from './pages/NotFound';
+
+// The workspace carries the code editor, every lesson and both Nest books,
+// which is most of the app's weight. Loading it on demand keeps the landing
+// pages small; the editor arrives with the first workspace route.
+const Workspace = lazy(() => import('./pages/Workspace'));
+
+function Loading() {
+  return (
+    <div className="route-loading" role="status">
+      loading the workspace…
+    </div>
+  );
+}
 
 function App() {
   return (
+    <Suspense fallback={<Loading />}>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/html" element={<HtmlHub />} />
@@ -32,8 +47,9 @@ function App() {
         path="/javascript"
         element={<ComingSoon title="javascript" backTo="/" backLabel="code." />}
       />
-      <Route path="*" element={<Home />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
+    </Suspense>
   );
 }
 

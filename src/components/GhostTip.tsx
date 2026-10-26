@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { Step } from '../data/steps';
 import { useHintLadder, getHint, type AssistLevel } from '../lib/useHintLadder';
 
@@ -18,28 +18,53 @@ export function GhostTip({ steps, current, code, assist, onAdvance, onReset, onS
   const { attempts, registerFail, reset } = useHintLadder(String(current));
   const [justFailed, setJustFailed] = useState(false);
   const [justSolved, setJustSolved] = useState(false);
+  // Shown for 2s after a correct answer, across the move to the next step,
+  // so it is readable (it used to vanish after 650ms).
+  const [showCorrect, setShowCorrect] = useState(false);
+  // One persistent polite live region: every check writes its result here,
+  // so a screen-reader user hears "Correct" or the hint without hunting.
+  const [announce, setAnnounce] = useState('');
+  const advancing = useRef(false);
+
+  const liveRegion = (
+    <p className="sr-only" role="status" aria-live="polite">
+      {announce}
+    </p>
+  );
 
   if (!step) {
     return (
       <div className="ghost-tip">
+        {liveRegion}
         <p className="txt">{completeMessage}</p>
       </div>
     );
   }
 
   const handleCheck = () => {
+    if (advancing.current) return;
     if (step.check(code)) {
       setJustFailed(false);
       reset();
       setJustSolved(true);
+      setShowCorrect(true);
       onSuccess();
+      advancing.current = true;
+      const next = steps[current + 1];
+      setAnnounce(next ? `Correct. Next, step ${current + 2} of ${steps.length}: ${next.tag}.` : 'Correct. Route complete.');
       window.setTimeout(() => {
         setJustSolved(false);
+        advancing.current = false;
         onAdvance();
       }, 650);
+      window.setTimeout(() => setShowCorrect(false), 2000);
     } else {
       registerFail();
       setJustFailed(true);
+      const n = attempts + 1;
+      const earlyIdx = current < 3 ? Math.min(n - 1, step.hints.length - 1) : -1;
+      const nextHint = getHint(step.hints, n, assist) ?? (earlyIdx >= 0 ? step.hints[earlyIdx] : null);
+      setAnnounce(`Not yet. ${nextHint ?? `This step needs ${step.tag} in your code.`}`);
     }
   };
 
@@ -54,7 +79,8 @@ export function GhostTip({ steps, current, code, assist, onAdvance, onReset, onS
 
   return (
     <div className={`ghost-tip ${justSolved ? 'solved' : ''}`}>
-      {justSolved && <p className="solved-banner">✓ Correct — moving on</p>}
+      {liveRegion}
+      {showCorrect && <p className="solved-banner">✓ Correct — on to the next step</p>}
       <div className="txt">
         {/* No "Target:" prefix — the card's STEP header already frames
             this, and the word only read naturally for HTML, where `tag`
@@ -81,10 +107,12 @@ export function GhostTip({ steps, current, code, assist, onAdvance, onReset, onS
         )}
       </div>
       <div className="ghost-tip-actions">
-        <button className="btn btn-secondary btn-on-dark" onClick={onReset} disabled={justSolved}>
+        {/* Not disabled while advancing: a disabled button drops keyboard
+            focus to <body>. The handler ignores presses during the move. */}
+        <button className="btn btn-secondary btn-on-dark" onClick={() => !justSolved && onReset()}>
           Reset this step
         </button>
-        <button className="btn btn-primary" onClick={handleCheck} disabled={justSolved}>
+        <button className="btn btn-primary" onClick={handleCheck} aria-disabled={justSolved}>
           Check my work
         </button>
       </div>

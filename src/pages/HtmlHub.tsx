@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
+import { SiteFooter } from '../components/SiteFooter';
+import { usePageMeta } from '../lib/pageMeta';
 import './Home.css';
 
 const TRACKS = [
@@ -20,12 +22,17 @@ const TRACKS = [
 ];
 
 export default function HtmlHub() {
+  usePageMeta({
+    title: 'HTML · tagsmiths',
+    description: 'Pick an HTML track on tagsmiths: build a real web page, or build an email that survives Gmail and Outlook.',
+    path: '/html',
+  });
   return (
     <div className="landing">
       <Link to="/" className="landing-brand">
         <Logo size={20} />
       </Link>
-      <div className="landing-inner">
+      <main className="landing-inner">
         <Link to="/" className="landing-back">
           ← code.
         </Link>
@@ -40,7 +47,8 @@ export default function HtmlHub() {
             </Link>
           ))}
         </div>
-      </div>
+      </main>
+      <SiteFooter />
     </div>
   );
 }

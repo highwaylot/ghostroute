@@ -53,10 +53,12 @@ export function InstructionsRail({
       <div className="instructions-rail">
         <RouteTrack steps={steps} current={current} onSelect={onSelect} />
 
-        <div className="rail-window">
-          <span className="rail-window-label">chapter info</span>
-          <ChapterIntro chapters={chapters} steps={steps} current={current} />
-        </div>
+        {steps[current] && (
+          <div className="rail-window">
+            <span className="rail-window-label">chapter info</span>
+            <ChapterIntro chapters={chapters} steps={steps} current={current} />
+          </div>
+        )}
 
         <div className="rail-window">
           <span className="rail-window-label">step</span>

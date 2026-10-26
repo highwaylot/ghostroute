@@ -3,26 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tagsmiths</title>
-    <meta name="description" content="tagsmiths — learn to code by building, one real tag at a time." />
+    <title>tagsmiths — learn HTML and CSS by writing real code in your browser</title>
+    <meta name="description" content="Free, in-browser lessons: write real HTML and CSS and watch it render as you type. Guided steps, debugging puzzles and a full reference. No sign-up." />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://tagsmiths.com/" />
+    <link rel="canonical" href="https://www.tagsmiths.com/" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://tagsmiths.com/" />
-    <meta property="og:title" content="tagsmiths" />
-    <meta property="og:description" content="learn to code by building, one real tag at a time." />
-    <meta property="og:image" content="https://tagsmiths.com/og-image.png" />
+    <meta property="og:url" content="https://www.tagsmiths.com/" />
+    <meta property="og:title" content="tagsmiths — learn HTML and CSS by writing real code in your browser" />
+    <meta property="og:description" content="Free, in-browser lessons: write real HTML and CSS and watch it render as you type." />
+    <meta property="og:image" content="https://www.tagsmiths.com/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="tagsmiths" />
-    <meta name="twitter:description" content="learn to code by building, one real tag at a time." />
-    <meta name="twitter:image" content="https://tagsmiths.com/og-image.png" />
+    <meta name="twitter:title" content="tagsmiths — learn HTML and CSS by writing real code in your browser" />
+    <meta name="twitter:description" content="Free, in-browser lessons: write real HTML and CSS and watch it render as you type." />
+    <meta name="twitter:image" content="https://www.tagsmiths.com/og-image.png" />
 
     <meta name="theme-color" content="#0a1440" />
+    <!-- Padding for the no-JavaScript fallback only: these selectors match
+         the fallback's own header/main, never the app that replaces them. -->
+    <style>#root > header, #root > main { padding: 0 16px; }</style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "tagsmiths",
+        "url": "https://www.tagsmiths.com/",
+        "description": "Free, in-browser lessons: write real HTML and CSS and watch it render as you type.",
+        "publisher": { "@type": "Organization", "name": "Fenwick & Vale", "url": "https://fenwickvale.com" }
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
@@ -47,6 +61,9 @@
           in-browser editor and see it render instantly, with guided steps,
           debugging puzzles, and a full HTML reference.
         </p>
+        <noscript>
+          <p>The editor runs in your browser and needs JavaScript turned on.</p>
+        </noscript>
       </main>
     </div>
     <script type="module" src="/src/main.tsx"></script>

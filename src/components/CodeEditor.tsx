@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { html } from '@codemirror/lang-html';
 import { linter, lintGutter, type Diagnostic as CMDiagnostic } from '@codemirror/lint';
@@ -9,6 +9,9 @@ import { useTheme } from '../lib/ThemeContext';
 type Props = {
   value: string;
   onChange: (value: string) => void;
+  // What a screen reader announces for the editor. Every editor on the site
+  // had no name at all ("edit text"); each pane can say what this one is.
+  label?: string;
 };
 
 // Feeds the full diagnostics engine into CodeMirror's own linter, so every
@@ -42,9 +45,17 @@ const chrome = EditorView.theme({
 // extensions is not meant to change under a live view.
 const narrow = typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 700px)').matches;
 
-export function CodeEditor({ value, onChange }: Props) {
+export function CodeEditor({ value, onChange, label = 'Code editor' }: Props) {
   const viewRef = useRef<EditorView | null>(null);
   const { theme } = useTheme();
+  const hintId = useId();
+  // Tab indents inside the editor, so a keyboard user needs the way out
+  // spelled out (WCAG 2.1.2): Esc, then Tab. The note is visible while the
+  // editor has focus and is always linked for screen readers.
+  const a11y = useMemo(
+    () => EditorView.contentAttributes.of({ 'aria-label': label, 'aria-describedby': hintId }),
+    [label, hintId],
+  );
 
   // @uiw/react-codemirror can silently fail to push an external `value`
   // change into the view once the user has typed in it themselves — the
@@ -74,26 +85,31 @@ export function CodeEditor({ value, onChange }: Props) {
   }, [value]);
 
   return (
-    <CodeMirror
-      value={value}
-      height="100%"
-      theme={theme}
-      // autoCloseTags off — auto-inserting closing tags as you type was
-      // fighting the point of the route, which is writing the tag yourself.
-      extensions={[html({ autoCloseTags: false }), diagnosticsLinter, lintGutter(), chrome, ...(narrow ? [EditorView.lineWrapping] : [])]}
-      onChange={onChange}
-      onCreateEditor={(view) => {
-        viewRef.current = view;
-      }}
-      basicSetup={{
-        lineNumbers: true,
-        foldGutter: false,
-        highlightActiveLine: true,
-        // Same reasoning: no auto-closing brackets/quotes, no autocomplete
-        // popups taking over what you're typing.
-        closeBrackets: false,
-        autocompletion: false,
-      }}
-    />
+    <div className="code-editor-wrap">
+      <CodeMirror
+        value={value}
+        height="100%"
+        theme={theme}
+        // autoCloseTags off — auto-inserting closing tags as you type was
+        // fighting the point of the route, which is writing the tag yourself.
+        extensions={[html({ autoCloseTags: false }), diagnosticsLinter, lintGutter(), chrome, a11y, ...(narrow ? [EditorView.lineWrapping] : [])]}
+        onChange={onChange}
+        onCreateEditor={(view) => {
+          viewRef.current = view;
+        }}
+        basicSetup={{
+          lineNumbers: true,
+          foldGutter: false,
+          highlightActiveLine: true,
+          // Same reasoning: no auto-closing brackets/quotes, no autocomplete
+          // popups taking over what you're typing.
+          closeBrackets: false,
+          autocompletion: false,
+        }}
+      />
+      <p id={hintId} className="editor-kbd-hint">
+        Tab indents. To leave the editor, press Esc, then Tab.
+      </p>
+    </div>
   );
 }

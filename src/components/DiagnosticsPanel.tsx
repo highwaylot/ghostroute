@@ -31,7 +31,7 @@ export function DiagnosticsPanel({ code, context = 'free' }: Props) {
       </div>
 
       {empty ? (
-        <p className="diagnostics-empty">Nothing here yet — click in the coding window above and start typing.</p>
+        <p className="diagnostics-empty">Nothing here yet. Start typing in the coding window above.</p>
       ) : diagnostics.length === 0 ? (
         <p className="diagnostics-empty">
           {context === 'route'

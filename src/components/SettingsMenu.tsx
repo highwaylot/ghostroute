@@ -40,6 +40,7 @@ export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, onRestartTr
   const [sound, setSound] = useState(isSoundOn);
   const [confirm, setConfirm] = useState<Confirm>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -47,7 +48,11 @@ export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, onRestartTr
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Escape') {
+        setOpen(false);
+        // Without this, focus drops to <body> and a keyboard user starts over.
+        buttonRef.current?.focus();
+      }
     };
     // A click inside the output iframe never reaches this document, but it
     // does blur the window — treat that as an outside click too.
@@ -84,6 +89,7 @@ export function SettingsMenu({ theme, onToggleTheme, onRestartRoute, onRestartTr
   return (
     <div className="settings" ref={rootRef}>
       <button
+        ref={buttonRef}
         className={`topbar-action ${open ? 'active' : ''}`}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="true"

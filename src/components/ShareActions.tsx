@@ -14,6 +14,7 @@ type Props = {
 // smallest possible answer to learning alone.
 export function ShareActions({ name, code, sandboxPath }: Props) {
   const [copied, setCopied] = useState<'ok' | 'fail' | null>(null);
+  const [manualUrl, setManualUrl] = useState<string | null>(null);
   const timer = useRef<number | null>(null);
   const empty = code.trim() === '';
   const tooBig = code.length > SHARE_MAX_CHARS;
@@ -25,7 +26,10 @@ export function ShareActions({ name, code, sandboxPath }: Props) {
       playCopyTick();
       setCopied('ok');
     } catch {
+      // Clipboard blocked (permissions, an http preview, an old browser):
+      // show the link itself, selected, so it can be copied by hand.
       setCopied('fail');
+      setManualUrl(url);
     }
     if (timer.current) window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setCopied(null), 1800);
@@ -39,8 +43,19 @@ export function ShareActions({ name, code, sandboxPath }: Props) {
         disabled={empty || tooBig}
         title={tooBig ? 'Too long to fit in a link — download it instead' : 'Copy a link that opens this code in someone else\'s sandbox'}
       >
-        {copied === 'ok' ? 'link copied ✓' : copied === 'fail' ? 'couldn\'t copy' : 'share link'}
+        {copied === 'ok' ? 'link copied ✓' : copied === 'fail' ? 'copy it below' : 'share link'}
       </button>
+      {manualUrl && (
+        <input
+          className="share-manual"
+          readOnly
+          value={manualUrl}
+          aria-label="Share link"
+          ref={(el) => el?.select()}
+          onFocus={(e) => e.currentTarget.select()}
+          onBlur={() => setManualUrl(null)}
+        />
+      )}
       <button
         className="btn btn-secondary btn-sm"
         onClick={() => downloadHtml(name, code)}

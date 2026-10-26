@@ -446,7 +446,7 @@
 
 .assist-panel-icon {
   flex-shrink: 0;
-  color: var(--blue);
+  color: var(--link);
 }
 
 .assist-panel-title {
@@ -472,7 +472,7 @@
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #7783b8;
+  color: #9aa4d4; /* was #7783b8, 4.3:1 on the rail navy */
   margin-bottom: 10px;
 }
 
@@ -1484,7 +1484,10 @@
 }
 
 .code-panel .cm-editor.cm-focused {
-  outline: none;
+  /* A visible focus ring on the editor itself (it had none). Inset so it
+     is not clipped by the panel. */
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
 }
 
 .stats {
@@ -1498,7 +1501,7 @@
   height: fit-content;
 }
 
-.stat h3 {
+.stat-label {
   font-size: 10.5px;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -1691,6 +1694,10 @@
   font-size: 11px;
   font-weight: 700;
   background: rgba(103, 109, 140, 0.12);
+  color: #555b78; /* --ink-dim was 4.35:1 on this tint */
+}
+
+:root[data-theme='dark'] .tier-card-check {
   color: var(--ink-dim);
 }
 
@@ -1903,7 +1910,7 @@
   border-radius: 7px;
   border: 1px dashed var(--line);
   background: none;
-  color: var(--blue);
+  color: var(--link);
   cursor: pointer;
   margin-bottom: 4px;
 }
@@ -2121,7 +2128,7 @@
   margin-left: auto;
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--blue);
+  color: var(--link);
   flex-shrink: 0;
 }
 
@@ -2176,7 +2183,11 @@
 }
 
 .count-warning {
-  color: #b8790f;
+  color: #8a5a00; /* 5.4:1 on the panel; #b8790f was 3.3:1 */
+}
+
+:root[data-theme='dark'] .count-warning {
+  color: #dfa33e;
 }
 
 .diagnostics-empty {
@@ -2340,7 +2351,7 @@
   font-size: 10.5px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #6f79b8;
+  color: #9aa4d4; /* was #6f79b8, 4.1:1 on the spine navy */
   padding: 10px 8px 4px;
 }
 
@@ -2436,7 +2447,7 @@
 
 .nest-page-nav button:hover:not(:disabled) {
   border-color: var(--blue);
-  color: var(--blue);
+  color: var(--link);
 }
 
 .nest-page-nav button:disabled {
@@ -2471,7 +2482,7 @@
 }
 
 .copy-btn:hover {
-  color: var(--blue);
+  color: var(--link);
   border-color: var(--blue);
 }
 
@@ -2582,7 +2593,7 @@
   border-radius: 6px;
   border: 1px solid var(--line);
   background: var(--bg);
-  color: var(--blue);
+  color: var(--link);
   cursor: pointer;
 }
 
@@ -2888,3 +2899,141 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+
+
+/* ---------------------------------------------------------------------
+   Audit fixes (accessibility, phone, share, landing)
+   --------------------------------------------------------------------- */
+
+
+/* First Tab on any workspace page: jump past the top bar to the lesson. */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+#workspace-main:focus {
+  outline: none;
+}
+
+
+/* The editor's way out, for keyboard users. Visible while the editor has
+   focus; always linked to it for screen readers via aria-describedby. */
+.code-editor-wrap {
+  position: relative;
+  height: 100%;
+}
+
+.editor-kbd-hint {
+  position: absolute;
+  right: 8px;
+  bottom: 6px;
+  margin: 0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 5;
+}
+
+.code-editor-wrap:focus-within .editor-kbd-hint {
+  opacity: 1;
+}
+
+/* Opening someone else's share link: say so, and offer the choices. */
+.shared-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--hint-border);
+  background: var(--hint-bg);
+  color: var(--hint-fg);
+}
+
+.shared-banner p {
+  margin: 0;
+  flex: 1 1 260px;
+  font-size: 13.5px;
+}
+
+.shared-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.share-manual {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  width: min(320px, 100%);
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.route-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+/* Dark editor gutter: line numbers were too faint on the navy. */
+.cm-theme-dark .cm-gutters {
+  color: #9aa4d4;
+}
+
+/* Phones: the editor was 320px tall, so typing pushed the live preview
+   completely off screen. Smaller editor, preview stays in view. */
+@media (max-width: 600px) {
+  .code-panel {
+    height: 220px;
+  }
+}
+
+/* Touch: copy buttons were hover-only (invisible, still tappable), and a
+   few controls were under the ~44px touch-target guideline. */
+@media (hover: none) {
+  .key-copy-btn {
+    opacity: 1;
+  }
+}
+
+@media (pointer: coarse) {
+  .assist-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .btn-sm,
+  .sidebar-close {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+

@@ -84,7 +84,7 @@ export function NestPane({ bookLabel, keyIndex, categories, getEntry, blueprints
   return (
     <div className="nest-book">
       <div className="nest-spine">
-        <h1 className="nest-spine-title">Nest</h1>
+        <p className="nest-spine-title">Nest</p>
         <span className="nest-spine-sub">{section === 'tags' ? bookLabel : 'the workshop'}</span>
 
         {blueprints && (

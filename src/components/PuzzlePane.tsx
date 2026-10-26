@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { Puzzle, Difficulty } from '../data/puzzles';
 import { CodeEditor } from './CodeEditor';
@@ -32,6 +32,34 @@ function snippet(broken: string): string {
   return trimmed.length > 34 ? trimmed.slice(0, 34) + '…' : trimmed;
 }
 
+// In-progress puzzle code is kept per puzzle, like project code, so a
+// reload does not throw away a half-finished fix. Cleared on solve and on
+// reset, since then there is nothing in progress.
+const PUZZLE_DRAFT_PREFIX = 'tagsmiths-puzzle-';
+function loadDraft(p: Puzzle | undefined): string {
+  if (!p) return '';
+  try {
+    return localStorage.getItem(PUZZLE_DRAFT_PREFIX + p.id) ?? p.broken;
+  } catch {
+    return p.broken;
+  }
+}
+function saveDraft(id: string, code: string, broken: string) {
+  try {
+    if (code === broken) localStorage.removeItem(PUZZLE_DRAFT_PREFIX + id);
+    else localStorage.setItem(PUZZLE_DRAFT_PREFIX + id, code);
+  } catch {
+    // storage unavailable — nothing to do
+  }
+}
+function clearDraft(id: string) {
+  try {
+    localStorage.removeItem(PUZZLE_DRAFT_PREFIX + id);
+  } catch {
+    // storage unavailable — nothing to do
+  }
+}
+
 export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgress }: Props) {
   const { item } = useParams<{ item?: string }>();
   const navigate = useNavigate();
@@ -40,7 +68,7 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
 
   const [selectedId, setSelectedId] = useState(urlPuzzle?.id ?? puzzles[0]?.id);
   const puzzle = puzzles.find((p) => p.id === selectedId);
-  const [code, setCode] = useState(puzzle?.broken ?? '');
+  const [code, setCode] = useState(() => loadDraft(puzzle));
   const [solved, setSolved] = useState(false);
   const { attempts, registerFail, reset } = useHintLadder(puzzle?.id ?? 'none');
   const [justFailed, setJustFailed] = useState(false);
@@ -52,6 +80,8 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
   // Assistance level only controls the passive, fail-triggered cadence;
   // an explicit "need a hint?" ask always works, at any level.
   const [revealedCount, setRevealedCount] = useState(0);
+  const [announce, setAnnounce] = useState('');
+  const solvedRef = useRef<HTMLParagraphElement>(null);
 
   // Two independent collapse layers: a whole difficulty tier can be
   // folded away, and — separately — the solved puzzles inside a tier
@@ -82,7 +112,7 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
     const p = findPuzzle(item);
     if (!p || p.id === selectedId) return;
     setSelectedId(p.id);
-    setCode(p.broken);
+    setCode(loadDraft(p));
     setSolved(false);
     setJustFailed(false);
     setRevealedCount(0);
@@ -91,17 +121,28 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
 
   const selectPuzzle = (p: Puzzle) => {
     setSelectedId(p.id);
-    setCode(p.broken);
+    setCode(loadDraft(p));
     setSolved(false);
     setJustFailed(false);
     setRevealedCount(0);
     navigate(`${basePath}/${p.id}`);
   };
 
+  // Typing writes the draft; switching puzzles reads the next one.
+  const handleCodeChange = (next: string) => {
+    setCode(next);
+    if (puzzle && !solved) saveDraft(puzzle.id, next, puzzle.broken);
+  };
+
   const handleCheck = () => {
     if (!puzzle) return;
     if (puzzle.check(code)) {
+      clearDraft(puzzle.id);
       setSolved(true);
+      setAnnounce('Correct. Fixed it.');
+      // The buttons are replaced by the solved message, so move focus to it
+      // instead of letting it fall to <body>.
+      window.setTimeout(() => solvedRef.current?.focus(), 0);
       setJustFailed(false);
       reset();
       triggerFlash();
@@ -111,11 +152,15 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
     } else {
       registerFail();
       setJustFailed(true);
+      const n = attempts + 1;
+      const i = Math.max(hintIndex(n, assist), revealedCount - 1);
+      setAnnounce(`Not yet. ${i >= 0 ? puzzle.hints[Math.min(i, puzzle.hints.length - 1)] : 'Read the code closely and try again.'}`);
     }
   };
 
   const handleReset = () => {
     if (!puzzle) return;
+    clearDraft(puzzle.id);
     setCode(puzzle.broken);
     setSolved(false);
     setJustFailed(false);
@@ -239,15 +284,20 @@ export function PuzzlePane({ puzzles, basePath, assist, onAssistChange, onProgre
             label="active coding window"
             className={`code-panel puzzle-editor-wrap ${flash ? 'flash-success' : ''}`}
           >
-            <CodeEditor value={code} onChange={setCode} />
+            <CodeEditor value={code} onChange={handleCodeChange} label="Puzzle code editor" />
           </EditorPanel>
 
+          <p className="sr-only" role="status" aria-live="polite">
+            {announce}
+          </p>
           <EditorPanel label="output" className="output-panel puzzle-output">
             <PreviewFrame code={code} title="puzzle preview" />
           </EditorPanel>
 
           {solved ? (
-            <p className="puzzle-solved">Fixed it. Nice debugging.</p>
+            <p className="puzzle-solved" ref={solvedRef} tabIndex={-1}>
+              Fixed it. Nice debugging.
+            </p>
           ) : (
             <>
               {hint && <p className={`hint ${justFailed ? 'flash' : ''}`}>{hint}</p>}

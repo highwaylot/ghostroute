@@ -1,4 +1,29 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+// The preview runs code the learner typed, or code from a share link that
+// someone else wrote. sandbox without allow-same-origin puts it on an opaque
+// origin: its scripts run, but it cannot read this site's storage or reach
+// into the page around it. allow-modals keeps alert() working for lessons;
+// allow-popups lets target="_blank" links open.
+const SANDBOX = 'allow-scripts allow-modals allow-popups';
+
+// Because the frame is cross-origin now, the page cannot read its scroll
+// position or check its body directly. A tiny script appended to the
+// document restores the last scroll position and reports scroll and load
+// back with postMessage. It runs after the learner's own markup.
+function withBridge(code: string, scrollY: number): string {
+  const y = Math.max(0, Math.round(scrollY) || 0);
+  return (
+    code +
+    `\n<script>(function(){var y=${y};function s(m){try{parent.postMessage(Object.assign({__tagsmiths:1},m),'*')}catch(e){}}` +
+    `addEventListener('load',function(){if(y)scrollTo(0,y);s({t:'loaded',empty:!document.body||document.body.children.length<2})});` +
+    `addEventListener('scroll',function(){s({t:'scroll',y:scrollY})},{passive:true})})()</script>`
+  );
+}
+
+type BridgeMessage = { __tagsmiths: 1; t: 'loaded' | 'scroll'; y?: number; empty?: boolean };
+const isBridge = (d: unknown): d is BridgeMessage =>
+  typeof d === 'object' && d !== null && (d as BridgeMessage).__tagsmiths === 1;
 
 type Props = {
   code: string;
@@ -44,14 +69,21 @@ export function PreviewFrame({ code, title }: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, [fullscreen]);
 
-  const handleLoad = () => {
-    const win = iframeRef.current?.contentWindow;
-    if (!win) return;
-    win.scrollTo(0, scrollPos.current);
-    win.addEventListener('scroll', () => {
-      scrollPos.current = win.scrollY;
-    });
-  };
+  // Only messages from our own preview frame count, and only the scroll
+  // number is used from them.
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (e.source !== iframeRef.current?.contentWindow || !isBridge(e.data)) return;
+      if (e.data.t === 'scroll' && typeof e.data.y === 'number') scrollPos.current = e.data.y;
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
+  // Rebuilt only when the code changes, so an unrelated re-render does not
+  // reload the frame with a different scroll value baked in.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const srcDoc = useMemo(() => withBridge(debounced, scrollPos.current), [debounced]);
 
   // A real, separate browser window — draggable to a second monitor,
   // resizable and zoomable with the browser's own native controls, unlike
@@ -78,30 +110,30 @@ export function PreviewFrame({ code, title }: Props) {
   // a page load), so under any normal circumstance — slow connection
   // included — this check should already have real content well before
   // 2s. If it doesn't, that's a real signal, not a false alarm.
+  const popupLoaded = useRef(false);
   const scheduleBlockedCheck = () => {
     if (popupCheckTimeout.current) window.clearTimeout(popupCheckTimeout.current);
+    popupLoaded.current = false;
     popupCheckTimeout.current = window.setTimeout(() => {
       const win = popupWinRef.current;
-      const inner = popupIframeRef.current;
-      if (!win || win.closed || !inner) return;
-      const innerBody = inner.contentDocument?.body;
-      const gotContent = Boolean(innerBody && innerBody.children.length > 0);
-      if (!gotContent && debounced.trim().length > 0) {
+      if (!win || win.closed) return;
+      if (!popupLoaded.current && debounced.trim().length > 0) {
         setPopupSuspectedBlocked(true);
       }
     }, 2000);
   };
 
-  const handlePopupInnerLoad = () => {
-    const innerWin = popupIframeRef.current?.contentWindow;
-    if (!innerWin) return;
-    innerWin.scrollTo(0, popupScrollPos.current);
-    innerWin.addEventListener('scroll', () => {
-      popupScrollPos.current = innerWin.scrollY;
-    });
-    // A real load happened — whatever the 2s check might have flagged no
-    // longer applies.
-    setPopupSuspectedBlocked(false);
+  // The popup's inner frame is sandboxed too, so it reports back by message
+  // to the popup window, which this page can listen on (same origin).
+  const handlePopupMessage = (e: MessageEvent) => {
+    if (e.source !== popupIframeRef.current?.contentWindow || !isBridge(e.data)) return;
+    if (e.data.t === 'scroll' && typeof e.data.y === 'number') popupScrollPos.current = e.data.y;
+    if (e.data.t === 'loaded') {
+      // A real load happened — whatever the 2s check might have flagged no
+      // longer applies.
+      popupLoaded.current = true;
+      setPopupSuspectedBlocked(false);
+    }
   };
 
   const openPopup = () => {
@@ -122,9 +154,11 @@ export function PreviewFrame({ code, title }: Props) {
     const innerFrame = win.document.getElementById('preview') as HTMLIFrameElement | null;
     popupWinRef.current = win;
     popupIframeRef.current = innerFrame;
+    win.addEventListener('message', handlePopupMessage);
     if (innerFrame) {
-      innerFrame.onload = handlePopupInnerLoad;
-      innerFrame.srcdoc = debounced;
+      innerFrame.setAttribute('sandbox', SANDBOX);
+      innerFrame.title = title;
+      innerFrame.srcdoc = withBridge(debounced, popupScrollPos.current);
     }
     setPopupOpen(true);
     scheduleBlockedCheck();
@@ -143,7 +177,7 @@ export function PreviewFrame({ code, title }: Props) {
     const win = popupWinRef.current;
     const inner = popupIframeRef.current;
     if (!win || win.closed || !inner) return;
-    inner.srcdoc = debounced;
+    inner.srcdoc = withBridge(debounced, popupScrollPos.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounced]);
 
@@ -159,7 +193,7 @@ export function PreviewFrame({ code, title }: Props) {
     return () => window.clearInterval(id);
   }, []);
 
-  const frame = <iframe ref={iframeRef} title={title} srcDoc={debounced} onLoad={handleLoad} />;
+  const frame = <iframe ref={iframeRef} title={title} srcDoc={srcDoc} sandbox={SANDBOX} />;
 
   if (fullscreen) {
     return (

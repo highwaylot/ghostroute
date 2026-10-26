@@ -218,3 +218,46 @@
   color: #9aa4d4;
   line-height: 1.5;
 }
+
+
+/* The plain "what this is" line under the mission statement. */
+.landing-what {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: #b7c0f0;
+  max-width: 54ch;
+  margin: -24px auto 32px;
+}
+
+/* Who runs it, and where your work lives. Pinned to the bottom of the
+   landing; the landing reserves room for it so it never covers the tiles. */
+.landing {
+  padding-bottom: 88px;
+}
+
+.site-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  z-index: 2;
+  padding: 0 20px;
+  text-align: center;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #9aa4d4;
+}
+
+.site-footer p {
+  margin: 0 auto;
+  max-width: 60ch;
+}
+
+.site-footer a {
+  color: #c8d0ff;
+}
+
+.landing--pong .site-footer {
+  opacity: 0.1;
+}

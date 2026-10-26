@@ -13,19 +13,19 @@ export function StatsPanel({ code, stepLabel }: Props) {
   return (
     <div className="stats">
       <div className="stat">
-        <h3>Lines</h3>
+        <div className="stat-label">Lines</div>
         <div className="val">{lines}</div>
       </div>
       <div className="stat">
-        <h3>Characters</h3>
+        <div className="stat-label">Characters</div>
         <div className="val">{chars}</div>
       </div>
       <div className={`stat ${unclosed === 0 ? 'ok' : 'err'}`}>
-        <h3>{unclosed === 0 ? 'Tags balanced' : 'Unclosed tags'}</h3>
+        <div className="stat-label">Unclosed tags</div>
         <div className="val">{unclosed}</div>
       </div>
       <div className="stat">
-        <h3>Route step</h3>
+        <div className="stat-label">Route step</div>
         <div className="val">{stepLabel}</div>
       </div>
     </div>

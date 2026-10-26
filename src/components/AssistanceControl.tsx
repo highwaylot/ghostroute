@@ -23,6 +23,8 @@ export function AssistanceControl({ value, onChange, light, large }: Props) {
             className={`assist-btn ${a.level === value ? 'active' : ''}`}
             onClick={() => onChange(a.level)}
             title={`${a.label} — ${a.desc}`}
+            aria-label={`Help level ${a.level}: ${a.label}`}
+            aria-pressed={a.level === value}
           >
             {a.level}
           </button>

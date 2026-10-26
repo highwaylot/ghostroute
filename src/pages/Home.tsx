@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { CodeFlow } from '../components/CodeFlow';
+import { SiteFooter } from '../components/SiteFooter';
+import { usePageMeta } from '../lib/pageMeta';
 import './Home.css';
 
 const LANGUAGES = [
@@ -12,15 +14,25 @@ const LANGUAGES = [
 ];
 
 export default function Home() {
+  usePageMeta({
+    title: 'tagsmiths — learn HTML and CSS by writing real code in your browser',
+    description:
+      'Free, in-browser lessons: write real HTML and CSS and watch it render as you type. Guided steps, debugging puzzles and a full reference. No sign-up.',
+    path: '/',
+  });
   return (
     <div className="landing">
       <CodeFlow />
       <Link to="/" className="landing-brand">
         <Logo size={20} />
       </Link>
-      <div className="landing-inner">
+      <main className="landing-inner">
         <h1 className="landing-hero">code.</h1>
         <p className="landing-mission">we bring the complexity of code to the average person</p>
+        <p className="landing-what">
+          Learn HTML and CSS by writing real code in your browser and watching it render as you type. Free, no
+          sign-up, and your work saves in this browser.
+        </p>
         <div className="landing-tiles">
           {LANGUAGES.map((lang) => (
             <Link key={lang.id} to={lang.to} className="landing-tile">
@@ -29,7 +41,8 @@ export default function Home() {
             </Link>
           ))}
         </div>
-      </div>
+      </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -70,9 +70,25 @@ export function KeySidebar({ open, onClose }: Props) {
     });
   }, [query, category]);
 
-  const handleDragStart = (e: React.MouseEvent) => {
+  // Escape closes the panel, like every other overlay on the site.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
+  // Pointer events cover mouse, pen and touch in one path (the drag used to
+  // be mouse-only). Capture keeps the drag alive if the pointer outruns the
+  // header.
+  const handleDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return;
     dragRef.current = { startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y };
-    const onMove = (ev: MouseEvent) => {
+    const el = e.currentTarget;
+    el.setPointerCapture(e.pointerId);
+    const onMove = (ev: PointerEvent) => {
       if (!dragRef.current) return;
       setPos({
         x: dragRef.current.origX + (ev.clientX - dragRef.current.startX),
@@ -81,11 +97,13 @@ export function KeySidebar({ open, onClose }: Props) {
     };
     const onUp = () => {
       dragRef.current = null;
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup', onUp);
+      el.removeEventListener('pointercancel', onUp);
     };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
+    el.addEventListener('pointercancel', onUp);
   };
 
   if (!open) return null;
@@ -103,11 +121,11 @@ export function KeySidebar({ open, onClose }: Props) {
         ...(savedSize ? { width: `${savedSize.width}px`, height: `${savedSize.height}px` } : {}),
       }}
     >
-      <div className="sidebar-head" onMouseDown={handleDragStart}>
+      <div className="sidebar-head" onPointerDown={handleDragStart}>
         <h2>key index</h2>
         <button
           className="sidebar-close"
-          onMouseDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
           onClick={onClose}
           aria-label="Close key index"
         >

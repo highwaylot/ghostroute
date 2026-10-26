@@ -141,7 +141,14 @@ export function runDiagnostics(code: string): Diagnostic[] {
   while ((vm = attrValRe.exec(code)) !== null) {
     const value = vm[2];
     const hasKnownScheme = /^(https?:|mailto:|tel:|#|\/|\.\/|\.\.\/|data:)/i.test(value);
-    const looksLikeBareDomain = /^[\w-]+(\.[\w-]+)+/i.test(value);
+    // A bare filename (about.html, cat.jpg) is a valid relative link to a
+    // file next to this page, so it must never be flagged. Only something
+    // that starts like a website address counts: www.x, or name.tld with a
+    // common web ending and nothing that looks like a file extension.
+    const FILE_EXT = /\.(html?|php|aspx?|jpe?g|png|gif|svg|webp|avif|ico|bmp|css|js|mjs|json|xml|txt|pdf|zip|mp3|mp4|webm|ogg|wav|woff2?|ttf|otf|csv|md)(?:[?#].*)?$/i;
+    const looksLikeBareDomain =
+      /^www\.[\w-]+(\.[\w-]+)+/i.test(value) ||
+      (/^[\w-]+\.(com|org|net|io|dev|app|co|edu|gov|uk|us|ca|de|fr|ai|me|info)(\/|$)/i.test(value) && !FILE_EXT.test(value));
     const isRisky = value !== '' && !hasKnownScheme && looksLikeBareDomain;
     if (isRisky) {
       diagnostics.push({

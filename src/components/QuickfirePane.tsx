@@ -182,7 +182,7 @@ export function QuickfirePane({ steps, chapters, passedCount, storageKey, onGoTo
       </div>
 
       <EditorPanel label="your answer — from memory" className="code-panel quickfire-editor">
-        <CodeEditor value={answer} onChange={setAnswer} />
+        <CodeEditor value={answer} onChange={setAnswer} label="Quickfire answer editor" />
       </EditorPanel>
 
       <div className="quickfire-actions">

@@ -195,7 +195,7 @@ export function ProjectPane({ projects: PROJECTS, basePath, onProgress }: Props)
             )
           }
         >
-          <CodeEditor value={code} onChange={setCode} />
+          <CodeEditor value={code} onChange={setCode} label="Project code editor" />
         </EditorPanel>
 
         <EditorPanel label="output" className="output-panel">

@@ -185,6 +185,7 @@ export function MyProjectsPane({ sandboxPath }: Props) {
                     className={`btn-icon ${activeId === p.id ? 'btn-on-dark' : ''}`}
                     onClick={() => startRename(p.id, p.name)}
                     title="Rename"
+                    aria-label={`Rename ${p.name}`}
                   >
                     ✎
                   </button>
@@ -192,6 +193,7 @@ export function MyProjectsPane({ sandboxPath }: Props) {
                     className={`btn-icon ${activeId === p.id ? 'btn-on-dark' : ''}`}
                     onClick={() => setConfirmDeleteId(p.id)}
                     title="Delete"
+                    aria-label={`Delete ${p.name}`}
                   >
                     ×
                   </button>
@@ -209,7 +211,7 @@ export function MyProjectsPane({ sandboxPath }: Props) {
             className="code-panel"
             actions={<ShareActions name={active.name} code={active.code} sandboxPath={sandboxPath} />}
           >
-            <CodeEditor value={active.code} onChange={handleCodeChange} />
+            <CodeEditor value={active.code} onChange={handleCodeChange} label={`${active.name} code editor`} />
           </EditorPanel>
           <EditorPanel label="output" className="output-panel">
             <PreviewFrame code={active.code} title="my project preview" />
