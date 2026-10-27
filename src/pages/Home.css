@@ -261,3 +261,7 @@
 .landing--pong .site-footer {
   opacity: 0.1;
 }
+
+.landing-tile:active {
+  transform: scale(0.97);
+}

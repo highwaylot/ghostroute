@@ -444,6 +444,9 @@ export default function Workspace() {
 
       <div className="workspace">
         <main className="main" id="workspace-main" tabIndex={-1}>
+          {/* Re-keyed per tab so the new tab settles in; the panes inside
+              keep their own state as before. */}
+          <div key={mode} className="view-settle main-view">
           {/* One heading per page, for screen readers and search: the visible
               layout already says where you are, so this one is hidden. */}
           {/* The Nest renders its own h1 (the entry being read). */}
@@ -653,6 +656,7 @@ export default function Workspace() {
               />
             </>
           )}
+          </div>
         </main>
 
         <KeySidebar open={keyOpen} onClose={() => setKeyOpen(false)} />

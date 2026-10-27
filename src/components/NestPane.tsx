@@ -149,7 +149,7 @@ export function NestPane({ bookLabel, keyIndex, categories, getEntry, blueprints
       </div>
 
       {section === 'tags' && entry && (
-        <div className="nest-page">
+        <div className="nest-page view-settle" key={entry.tag}>
           <p className="nest-crumb">
             Chapter {chapterNum} · {entry.category} · page {flatIndex + 1} of {orderedTags.length}
           </p>
@@ -213,7 +213,7 @@ export function NestPane({ bookLabel, keyIndex, categories, getEntry, blueprints
       )}
 
       {section === 'blueprints' && blueprint && (
-        <div className="nest-page">
+        <div className="nest-page view-settle" key={blueprint.id}>
           <p className="nest-crumb">
             The Workshop · page {bpIndex + 1} of {(blueprints ?? []).length}
           </p>

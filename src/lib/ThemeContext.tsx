@@ -38,12 +38,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // browser paints, so entering the app doesn't flash light-then-dark
   // (or vice versa) for a frame.
   useLayoutEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
+    const root = document.documentElement;
+    root.classList.add('theme-switching');
+    root.setAttribute('data-theme', theme);
+    // Two frames: the new colors paint with transitions off, then they come
+    // back for ordinary hovers.
+    const id = requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-switching')));
     try {
       localStorage.setItem(THEME_KEY, theme);
     } catch {
       // storage unavailable — theme just won't persist across reloads
     }
+    return () => cancelAnimationFrame(id);
   }, [theme]);
 
   const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));

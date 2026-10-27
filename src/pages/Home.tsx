@@ -3,6 +3,7 @@ import { Logo } from '../components/Logo';
 import { CodeFlow } from '../components/CodeFlow';
 import { SiteFooter } from '../components/SiteFooter';
 import { usePageMeta } from '../lib/pageMeta';
+import { usePreloadWorkspace } from '../lib/usePreloadWorkspace';
 import './Home.css';
 
 const LANGUAGES = [
@@ -14,6 +15,7 @@ const LANGUAGES = [
 ];
 
 export default function Home() {
+  usePreloadWorkspace();
   usePageMeta({
     title: 'tagsmiths — learn HTML and CSS by writing real code in your browser',
     description:
@@ -26,7 +28,7 @@ export default function Home() {
       <Link to="/" className="landing-brand">
         <Logo size={20} />
       </Link>
-      <main className="landing-inner">
+      <main className="landing-inner view-settle">
         <h1 className="landing-hero">code.</h1>
         <p className="landing-mission">we bring the complexity of code to the average person</p>
         <p className="landing-what">

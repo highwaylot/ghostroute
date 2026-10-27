@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { usePageMeta } from '../lib/pageMeta';
+import { usePreloadWorkspace } from '../lib/usePreloadWorkspace';
 import './Home.css';
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function ComingSoon({ title, backTo, backLabel, previewTo }: Props) {
+  usePreloadWorkspace();
   usePageMeta({
     title: `${title} (coming soon) · tagsmiths`,
     description: `The ${title} track is not built yet. HTML and CSS are live on tagsmiths now.`,
@@ -22,7 +24,7 @@ export default function ComingSoon({ title, backTo, backLabel, previewTo }: Prop
       <Link to="/" className="landing-brand">
         <Logo size={20} />
       </Link>
-      <main className="landing-inner">
+      <main className="landing-inner view-settle">
         <Link to={backTo} className="landing-back">
           ← {backLabel}
         </Link>

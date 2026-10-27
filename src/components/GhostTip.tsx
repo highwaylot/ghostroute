@@ -81,7 +81,8 @@ export function GhostTip({ steps, current, code, assist, onAdvance, onReset, onS
     <div className={`ghost-tip ${justSolved ? 'solved' : ''}`}>
       {liveRegion}
       {showCorrect && <p className="solved-banner">✓ Correct — on to the next step</p>}
-      <div className="txt">
+      {/* Keyed by step so each new step settles in. */}
+      <div className="txt" key={current}>
         {/* No "Target:" prefix — the card's STEP header already frames
             this, and the word only read naturally for HTML, where `tag`
             is a literal element. CSS/email steps put a rule pattern or a

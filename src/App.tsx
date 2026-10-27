@@ -4,11 +4,14 @@ import Home from './pages/Home';
 import HtmlHub from './pages/HtmlHub';
 import ComingSoon from './pages/ComingSoon';
 import NotFound from './pages/NotFound';
+import { loadWorkspace } from './lib/workspaceLoader';
 
 // The workspace carries the code editor, every lesson and both Nest books,
 // which is most of the app's weight. Loading it on demand keeps the landing
 // pages small; the editor arrives with the first workspace route.
-const Workspace = lazy(() => import('./pages/Workspace'));
+// The landing pages also preload it in the background (usePreloadWorkspace),
+// so clicking a track is instant instead of a silent 1-2s wait.
+const Workspace = lazy(loadWorkspace);
 
 function Loading() {
   return (

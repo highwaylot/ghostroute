@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { SiteFooter } from '../components/SiteFooter';
 import { usePageMeta } from '../lib/pageMeta';
+import { usePreloadWorkspace } from '../lib/usePreloadWorkspace';
 import './Home.css';
 
 const TRACKS = [
@@ -22,6 +23,7 @@ const TRACKS = [
 ];
 
 export default function HtmlHub() {
+  usePreloadWorkspace();
   usePageMeta({
     title: 'HTML · tagsmiths',
     description: 'Pick an HTML track on tagsmiths: build a real web page, or build an email that survives Gmail and Outlook.',
@@ -32,7 +34,7 @@ export default function HtmlHub() {
       <Link to="/" className="landing-brand">
         <Logo size={20} />
       </Link>
-      <main className="landing-inner">
+      <main className="landing-inner view-settle">
         <Link to="/" className="landing-back">
           ← code.
         </Link>
