@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { TransitionLink } from '../components/TransitionLink';
 import { Logo } from '../components/Logo';
 import { CodeFlow } from '../components/CodeFlow';
 import { SiteFooter } from '../components/SiteFooter';
@@ -25,9 +25,9 @@ export default function Home() {
   return (
     <div className="landing">
       <CodeFlow />
-      <Link to="/" className="landing-brand">
+      <TransitionLink to="/" className="landing-brand">
         <Logo size={20} />
-      </Link>
+      </TransitionLink>
       <main className="landing-inner view-settle">
         <h1 className="landing-hero">code.</h1>
         <p className="landing-mission">we bring the complexity of code to the average person</p>
@@ -37,10 +37,10 @@ export default function Home() {
         </p>
         <div className="landing-tiles">
           {LANGUAGES.map((lang) => (
-            <Link key={lang.id} to={lang.to} className="landing-tile">
+            <TransitionLink key={lang.id} to={lang.to} className="landing-tile">
               <span className="landing-tile-label">{lang.label}</span>
               {!lang.ready && <span className="landing-tile-badge">coming soon</span>}
-            </Link>
+            </TransitionLink>
           ))}
         </div>
       </main>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { InstructionsRail } from '../components/InstructionsRail';
 import { KeySidebar } from '../components/KeySidebar';
 import { StatsPanel } from '../components/StatsPanel';
@@ -16,6 +16,7 @@ import { ProjectPane } from '../components/ProjectPane';
 import { MyProjectsPane } from '../components/MyProjectsPane';
 import { NestPane } from '../components/NestPane';
 import { SettingsMenu } from '../components/SettingsMenu';
+import { TransitionLink } from '../components/TransitionLink';
 import { usePageMeta } from '../lib/pageMeta';
 import { useTheme } from '../lib/ThemeContext';
 import { KEY_INDEX, KEY_CATEGORIES } from '../data/keyIndex';
@@ -387,9 +388,9 @@ export default function Workspace() {
         Skip to the lesson
       </a>
       <header className="topbar">
-        <Link to="/" className="brand-row" aria-label="tagsmiths home">
+        <TransitionLink to="/" className="brand-row" aria-label="tagsmiths home">
           <Logo size={20} />
-        </Link>
+        </TransitionLink>
 
         <nav className="tabs">
           <button className={`tab ${mode === 'route' ? 'active' : ''}`} aria-current={mode === 'route' ? 'page' : undefined} onClick={() => setMode('route')}>

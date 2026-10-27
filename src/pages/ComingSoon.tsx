@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { TransitionLink } from '../components/TransitionLink';
 import { Logo } from '../components/Logo';
 import { usePageMeta } from '../lib/pageMeta';
 import { usePreloadWorkspace } from '../lib/usePreloadWorkspace';
@@ -21,13 +21,13 @@ export default function ComingSoon({ title, backTo, backLabel, previewTo }: Prop
   });
   return (
     <div className="landing">
-      <Link to="/" className="landing-brand">
+      <TransitionLink to="/" className="landing-brand">
         <Logo size={20} />
-      </Link>
+      </TransitionLink>
       <main className="landing-inner view-settle">
-        <Link to={backTo} className="landing-back">
+        <TransitionLink to={backTo} className="landing-back">
           ← {backLabel}
-        </Link>
+        </TransitionLink>
         <span className="landing-eyebrow">{title}</span>
         <h1 className="landing-hero landing-hero-sub">coming soon.</h1>
         <p className="landing-blurb">
@@ -37,19 +37,19 @@ export default function ComingSoon({ title, backTo, backLabel, previewTo }: Prop
         </p>
         {!previewTo && (
           <p className="landing-blurb">
-            <Link to="/html" className="landing-back">
+            <TransitionLink to="/html" className="landing-back">
               html →
-            </Link>{' '}
+            </TransitionLink>{' '}
             ·{' '}
-            <Link to="/css/website" className="landing-back">
+            <TransitionLink to="/css/website" className="landing-back">
               css →
-            </Link>
+            </TransitionLink>
           </p>
         )}
         {previewTo && (
-          <Link to={previewTo} className="landing-back" style={{ marginTop: 8 }}>
+          <TransitionLink to={previewTo} className="landing-back" style={{ marginTop: 8 }}>
             try the early draft →
-          </Link>
+          </TransitionLink>
         )}
       </main>
     </div>

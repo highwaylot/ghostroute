@@ -8,7 +8,9 @@ import { ThemeProvider } from './lib/ThemeContext.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      <BrowserRouter>
+      {/* Synchronous navigations: the page transitions (TransitionLink) need
+          the new page in the DOM in the same tick they start. */}
+      <BrowserRouter useTransitions={false}>
         <App />
       </BrowserRouter>
     </ThemeProvider>

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { TransitionLink } from '../components/TransitionLink';
 import { Logo } from '../components/Logo';
 import { usePageMeta } from '../lib/pageMeta';
 import { usePreloadWorkspace } from '../lib/usePreloadWorkspace';
@@ -16,21 +16,21 @@ export default function NotFound() {
   });
   return (
     <div className="landing">
-      <Link to="/" className="landing-brand" aria-label="tagsmiths home">
+      <TransitionLink to="/" className="landing-brand" aria-label="tagsmiths home">
         <Logo size={20} />
-      </Link>
+      </TransitionLink>
       <main className="landing-inner view-settle">
         <span className="landing-eyebrow">404</span>
         <h1 className="landing-hero landing-hero-sub">page not found.</h1>
         <p className="landing-blurb">That address does not match anything here.</p>
         <p className="landing-blurb">
-          <Link to="/" className="landing-back">
+          <TransitionLink to="/" className="landing-back">
             ← home
-          </Link>{' '}
+          </TransitionLink>{' '}
           ·{' '}
-          <Link to="/html/website" className="landing-back">
+          <TransitionLink to="/html/website" className="landing-back">
             start the HTML route →
-          </Link>
+          </TransitionLink>
         </p>
       </main>
     </div>
