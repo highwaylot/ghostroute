@@ -7,11 +7,12 @@ type StartViewTransition = (update: () => void) => { finished: Promise<void> };
 const isWorkspacePath = (to: string) => /^\/(html\/website|html\/email|css\/website)(\/|$)/.test(to);
 
 // Moving between the landing pages and the workspace used to be a hard cut:
-// in light mode the whole navy screen turned white at once and the logo
-// jumped. With the browser's view-transition API, the navy page resizes
-// into the top bar (or grows back out of it), the logo glides to its new
-// spot, and the page underneath fades in. Browsers without the API, and
-// people who ask for reduced motion, get the plain navigation.
+// in light mode the whole navy screen turned white at once. With the
+// browser's view-transition API, the old page fades out to navy and the
+// new one fades in with a slight settle, while the logo stays exactly
+// where it is (see index.css).
+// Browsers without the API, and people who ask for reduced motion, get the
+// plain navigation.
 export async function navigateWithTransition(navigate: (to: string) => void, to: string) {
   if (isWorkspacePath(to)) await loadWorkspace();
   const start = (document as Document & { startViewTransition?: StartViewTransition }).startViewTransition;
@@ -21,10 +22,16 @@ export async function navigateWithTransition(navigate: (to: string) => void, to:
     return;
   }
   // The new page must be in the DOM when the callback returns, or the
-  // browser would capture the old page as the "after" picture too.
-  start.call(document, () => {
+  // browser would capture the old page as the "after" picture too. The
+  // class goes on only after the old page is captured: it makes the colour
+  // the two pages fade through navy, so the white wordmark never sits on a
+  // light background mid-fade.
+  const root = document.documentElement;
+  const transition = start.call(document, () => {
+    root.classList.add('page-transition');
     flushSync(() => navigate(to));
   });
+  void transition.finished.finally(() => root.classList.remove('page-transition'));
 }
 
 // A drop-in for <Link> between the landing pages and the workspace. Keeps a

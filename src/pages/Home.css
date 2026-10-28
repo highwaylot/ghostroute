@@ -59,13 +59,27 @@
   background: rgba(59, 99, 232, 0.5);
 }
 
+/* Laid out like the workspace's top bar (same height, same side padding,
+   centered), so the logo sits on the exact same pixel on every page and
+   never moves when you go between them. */
 .landing-brand {
   position: absolute;
-  top: 24px;
-  left: 24px;
+  top: 0;
+  left: 0;
+  height: 60px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
   z-index: 2;
   text-decoration: none;
   color: var(--blue-bright);
+}
+
+@media (max-width: 480px) {
+  .landing-brand {
+    height: 56px;
+    padding: 0 12px;
+  }
 }
 
 .landing-inner {

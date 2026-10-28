@@ -92,6 +92,15 @@ body,
   background: var(--bg);
 }
 
+/* The landing pages are navy edge to edge, so the page behind them is
+   too. That keeps overscroll navy, and it is the colour the page
+   transition fades through, so it never flashes white. */
+html:has(.landing),
+html:has(.landing) body,
+html:has(.landing) #root {
+  background: var(--navy);
+}
+
 button {
   font-family: inherit;
 }
@@ -202,16 +211,15 @@ html.theme-switching *::after {
 
 /* ---------------------------------------------------------------------
    Page transition between the landing pages and the workspace
-   (TransitionLink). Two named parts:
-   - site-chrome: the navy landing page and the workspace's navy top bar.
-     The browser resizes one into the other, so in light mode the navy
-     rolls up into the bar instead of the screen cutting to white.
-   - site-logo: the logo, which glides to its new spot.
-   Everything else cross-fades.
+   (TransitionLink). A short fade-through, never a crossfade: the old page
+   is gone in 80ms, then the new one fades in while settling from 98.5%
+   to full size, so the two pages never show through each other. What
+   shows in between is navy, the colour behind the logo on every page.
+   The logo is on the same pixel on every page (see .landing-brand), so it
+   is pinned above both and never moves or fades.
    --------------------------------------------------------------------- */
-.landing,
-.topbar {
-  view-transition-name: site-chrome;
+html.page-transition {
+  background: var(--navy);
 }
 
 .landing-brand .logo,
@@ -219,33 +227,35 @@ html.theme-switching *::after {
   view-transition-name: site-logo;
 }
 
-::view-transition-group(*) {
-  animation-duration: 340ms;
-  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-/* Show the navy pictures at their real size, pinned to the top, and clip
-   them to the resizing box: the panel shortens like a blind going up,
-   rather than squashing its contents. */
-::view-transition-group(site-chrome) {
-  overflow: clip;
-}
-
-::view-transition-old(site-chrome),
-::view-transition-new(site-chrome) {
-  width: 100%;
-  height: auto;
-  object-fit: none;
-  object-position: top left;
-}
-
-/* Both navy pictures stay solid while the box resizes: no fade, and no
-   additive blending (the browser's default), which turned the overlap a
-   muddy purple when going back to the landing page. The new picture sits
-   on top, so going in, the bar appears at the top while the old navy rolls
-   up underneath it; going back, the landing rolls down over the page. */
-::view-transition-old(site-chrome),
-::view-transition-new(site-chrome) {
+::view-transition-group(site-logo) {
   animation: none;
-  mix-blend-mode: normal;
+}
+
+::view-transition-old(site-logo) {
+  display: none;
+}
+
+::view-transition-new(site-logo) {
+  animation: none;
+}
+
+::view-transition-old(root) {
+  animation: vt-fade-out 80ms ease-out both;
+}
+
+::view-transition-new(root) {
+  animation: vt-settle-in 200ms cubic-bezier(0.2, 0.7, 0.2, 1) 80ms both;
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-settle-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
 }
