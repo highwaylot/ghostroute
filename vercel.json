@@ -9,7 +9,9 @@
     { "source": "/css", "destination": "/index.html" },
     { "source": "/css/website", "destination": "/index.html" },
     { "source": "/css/website/:path*", "destination": "/index.html" },
-    { "source": "/javascript", "destination": "/index.html" }
+    { "source": "/javascript", "destination": "/index.html" },
+    { "source": "/ai", "destination": "/index.html" },
+    { "source": "/game-design", "destination": "/index.html" }
   ],
   "headers": [
     {

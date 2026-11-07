@@ -223,7 +223,8 @@ html.page-transition {
 }
 
 .landing-brand .logo,
-.topbar .brand-row .logo {
+.topbar .brand-row .logo,
+.story-topbar .story-brand .logo {
   view-transition-name: site-logo;
 }
 

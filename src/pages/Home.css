@@ -279,3 +279,30 @@
 .landing-tile:active {
   transform: scale(0.97);
 }
+
+/* The second row on the home page: the history sections. Smaller than the
+   language tiles, so the code tracks stay the main thing. */
+.landing-stories-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8f9ada;
+  margin: 28px 0 12px;
+}
+
+.landing-tile-story {
+  min-width: 160px;
+  padding: 16px 20px;
+  gap: 2px;
+}
+
+.landing-tile-story .landing-tile-label {
+  font-size: 17px;
+}
+
+.landing-tile-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #9aa4d4;
+}

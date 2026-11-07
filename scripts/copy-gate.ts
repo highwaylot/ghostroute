@@ -13,6 +13,8 @@ import { NEST } from '../src/data/nest';
 import { CSS_NEST } from '../src/data/cssNest';
 import { PUZZLES } from '../src/data/puzzles';
 import { CSS_PUZZLES } from '../src/data/cssPuzzles';
+import { AI_STORY } from '../src/data/aiStory';
+import { GAME_STORY } from '../src/data/gameStory';
 
 const gateAll = !process.argv.includes('--report-only');
 
@@ -120,6 +122,21 @@ for (const [name, nest] of [['html nest', NEST], ['css nest', CSS_NEST]] as cons
   for (const e of nest) checkText(`${name} ${e.tag}`, [e.whatItDoes, e.whereItGoes, ...e.mistakes].join('\n\n'), 9, gateAll);
 for (const [name, pz] of [['html puzzles', PUZZLES], ['css puzzles', CSS_PUZZLES]] as const)
   for (const p of pz) checkText(`${name} ${p.title}`, [p.prompt, ...p.hints].join('\n\n'), 7, gateAll);
+// The history sections are reading pages, gated at the Nest level. Names
+// of people and things push the measured grade up, so this is checked per
+// entry and per era blurb, where one long name cannot hide in a long text.
+for (const story of [AI_STORY, GAME_STORY]) {
+  checkText(`${story.id} intro`, story.intro, 9, true);
+  checkText(`${story.id} big idea`, story.bigIdea.text, 9, true);
+  for (const era of story.eras) {
+    checkText(`${story.id} era "${era.title}"`, era.blurb, 9, true);
+    for (const e of era.entries) {
+      checkText(`${story.id} ${e.year} "${e.title}"`, e.text, 9, true);
+      const n = wordCount(e.text);
+      if (n > 60) findings.push({ where: `${story.id} ${e.year} "${e.title}"`, what: `entry is ${n} words (max 60)`, detail: '', gated: true });
+    }
+  }
+}
 
 const gatedFails = findings.filter((f) => f.gated);
 const reported = findings.filter((f) => !f.gated);

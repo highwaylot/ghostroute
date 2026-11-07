@@ -5,6 +5,7 @@ import HtmlHub from './pages/HtmlHub';
 import ComingSoon from './pages/ComingSoon';
 import NotFound from './pages/NotFound';
 import { getLoadedWorkspace, loadWorkspace } from './lib/workspaceLoader';
+import { getLoadedStory, loadStory } from './lib/storyLoader';
 
 // The workspace carries the code editor, every lesson and both Nest books,
 // which is most of the app's weight. Loading it on demand keeps the landing
@@ -20,10 +21,17 @@ function Workspace() {
   return <Component />;
 }
 
+// The history pages: their own chunk, same once-per-mount choice as above.
+const LazyStory = lazy(loadStory);
+function StoryRoute({ id }: { id: 'ai' | 'game-design' }) {
+  const [Component] = useState(() => getLoadedStory()?.default ?? LazyStory);
+  return <Component id={id} />;
+}
+
 function Loading() {
   return (
     <div className="route-loading" role="status">
-      loading the workspace…
+      loading…
     </div>
   );
 }
@@ -53,6 +61,9 @@ function App() {
       {/* The css track shipped — anything still pointing at /css (old
           bookmarks, the former "coming soon" tile) lands on the real thing. */}
       <Route path="/css" element={<Navigate to="/css/website" replace />} />
+      {/* Reading sections: the whole story of AI and of game design. */}
+      <Route path="/ai" element={<StoryRoute id="ai" />} />
+      <Route path="/game-design" element={<StoryRoute id="game-design" />} />
       <Route
         path="/javascript"
         element={<ComingSoon title="javascript" backTo="/" backLabel="code." />}

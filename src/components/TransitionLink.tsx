@@ -1,10 +1,12 @@
 import { flushSync } from 'react-dom';
 import { Link, useNavigate, type LinkProps } from 'react-router-dom';
 import { loadWorkspace } from '../lib/workspaceLoader';
+import { loadStory } from '../lib/storyLoader';
 
 type StartViewTransition = (update: () => void) => { finished: Promise<void> };
 
 const isWorkspacePath = (to: string) => /^\/(html\/website|html\/email|css\/website)(\/|$)/.test(to);
+const isStoryPath = (to: string) => /^\/(ai|game-design)(\/|#|$)/.test(to);
 
 // Moving between the landing pages and the workspace used to be a hard cut:
 // in light mode the whole navy screen turned white at once. With the
@@ -14,7 +16,10 @@ const isWorkspacePath = (to: string) => /^\/(html\/website|html\/email|css\/webs
 // Browsers without the API, and people who ask for reduced motion, get the
 // plain navigation.
 export async function navigateWithTransition(navigate: (to: string) => void, to: string) {
+  // Lazy pages are loaded first, so the transition never captures a
+  // "loading" screen as the new page.
   if (isWorkspacePath(to)) await loadWorkspace();
+  if (isStoryPath(to)) await loadStory();
   const start = (document as Document & { startViewTransition?: StartViewTransition }).startViewTransition;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!start || reduce) {

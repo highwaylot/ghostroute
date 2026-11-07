@@ -14,6 +14,12 @@ const LANGUAGES = [
   { id: 'js', label: 'javascript', to: '/javascript', ready: false },
 ];
 
+// Reading sections: the story behind the code, with a few hands-on demos.
+const STORIES = [
+  { id: 'ai', label: 'ai', to: '/ai' },
+  { id: 'game-design', label: 'game design', to: '/game-design' },
+];
+
 export default function Home() {
   usePreloadWorkspace();
   usePageMeta({
@@ -40,6 +46,15 @@ export default function Home() {
             <TransitionLink key={lang.id} to={lang.to} className="landing-tile">
               <span className="landing-tile-label">{lang.label}</span>
               {!lang.ready && <span className="landing-tile-badge">coming soon</span>}
+            </TransitionLink>
+          ))}
+        </div>
+        <p className="landing-stories-label">the whole story</p>
+        <div className="landing-tiles landing-tiles-stories">
+          {STORIES.map((s) => (
+            <TransitionLink key={s.id} to={s.to} className="landing-tile landing-tile-story">
+              <span className="landing-tile-label">{s.label}</span>
+              <span className="landing-tile-sub">history + try it</span>
             </TransitionLink>
           ))}
         </div>
