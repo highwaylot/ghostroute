@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import HtmlHub from './pages/HtmlHub';
 import ComingSoon from './pages/ComingSoon';
@@ -59,6 +60,7 @@ function App() {
       />
       <Route path="*" element={<NotFound />} />
     </Routes>
+    <Analytics />
     </Suspense>
   );
 }
