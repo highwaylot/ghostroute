@@ -467,8 +467,8 @@ export const GAME_STORY: Story = {
     { label: 'Wikipedia, History of video games', url: 'https://en.wikipedia.org/wiki/History_of_video_games' },
   ],
   meta: {
-    title: 'The history of games and game design · tagsmiths',
+    title: 'History of video games and game design · tagsmiths',
     description:
-      'The whole story of games in plain words, from senet and Pong to Minecraft, plus the ideas designers use to make games fun. Tune a tiny game yourself in your browser.',
+      'The history of video games in plain words, from senet and Pong to Minecraft, plus the ideas designers use to make games fun. Tune a tiny game yourself.',
   },
 };

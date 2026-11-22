@@ -24,6 +24,16 @@
     <meta name="twitter:image" content="https://www.tagsmiths.com/og-image.png" />
 
     <meta name="theme-color" content="#0a1440" />
+    <!-- Sets the saved (or system) theme before the first paint. The page
+         arrives prerendered, so without this a dark-mode reader would see
+         it flash light until the app loaded. Mirrors ThemeContext. -->
+    <script>
+      try {
+        var t = localStorage.getItem('tagsmiths-theme');
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
     <!-- Padding for the no-JavaScript fallback only: these selectors match
          the fallback's own header/main, never the app that replaces them. -->
     <style>#root > header, #root > main { padding: 0 16px; }</style>

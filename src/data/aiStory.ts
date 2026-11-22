@@ -410,8 +410,8 @@ export const AI_STORY: Story = {
     { label: 'Wikipedia, History of artificial intelligence', url: 'https://en.wikipedia.org/wiki/History_of_artificial_intelligence' },
   ],
   meta: {
-    title: 'The history of AI, from myth to chatbots · tagsmiths',
+    title: 'History of AI: a timeline from Turing to ChatGPT',
     description:
-      'The whole story of artificial intelligence in plain words, from Talos and Ada Lovelace to ChatGPT. Chat with ELIZA, train a perceptron and try a next-word guesser in your browser.',
+      'The history of AI in plain words, from Turing and Ada Lovelace to ChatGPT. Chat with ELIZA, train a perceptron and try a next-word guesser in your browser.',
   },
 };

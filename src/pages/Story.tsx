@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
 import { TransitionLink } from '../components/TransitionLink';
-import { Logo } from '../components/Logo';
+import { ReadingTopbar } from '../components/ReadingTopbar';
 import { usePageMeta } from '../lib/pageMeta';
-import { useTheme } from '../lib/ThemeContext';
+import { formatDate } from '../lib/dates';
 import { AI_STORY } from '../data/aiStory';
 import { GAME_STORY } from '../data/gameStory';
 import type { DemoId, Story as StoryData } from '../data/storyTypes';
@@ -36,7 +36,6 @@ const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)')
 export default function Story({ id }: { id: StoryData['id'] }) {
   const story = STORIES[id];
   const other = id === 'ai' ? GAME_STORY : AI_STORY;
-  const { theme, toggleTheme } = useTheme();
   const [active, setActive] = useState(story.eras[0].id);
   const chipsRef = useRef<HTMLDivElement>(null);
 
@@ -127,21 +126,7 @@ export default function Story({ id }: { id: StoryData['id'] }) {
       <a className="story-skip" href="#story-main">
         Skip to the story
       </a>
-      <header className="story-topbar">
-        <TransitionLink to="/" className="brand-row story-brand" aria-label="tagsmiths home">
-          <Logo size={20} />
-        </TransitionLink>
-        <nav className="story-switch" aria-label="Stories">
-          {[AI_STORY, GAME_STORY].map((s) => (
-            <TransitionLink key={s.id} to={s.path} className={`story-switch-link ${s.id === id ? 'active' : ''}`} aria-current={s.id === id ? 'page' : undefined}>
-              {s.label}
-            </TransitionLink>
-          ))}
-        </nav>
-        <button type="button" className="story-theme" onClick={toggleTheme} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
-          {theme === 'dark' ? 'light' : 'dark'}
-        </button>
-      </header>
+      <ReadingTopbar current={id} />
 
       <div className="story-chips" ref={chipsRef} aria-label="Eras">
         {eraLinks('story-chip')}
@@ -204,7 +189,7 @@ export default function Story({ id }: { id: StoryData['id'] }) {
               ))}
             </ul>
             <p className="story-small">
-              Spotted a mistake? Dates in history are often argued over. Where sources disagree, this page says "about" or "by one estimate."
+              Updated {formatDate(__CONTENT_DATES__[id])}. Spotted a mistake? Dates in history are often argued over. Where sources disagree, this page says "about" or "by one estimate."
             </p>
           </section>
 

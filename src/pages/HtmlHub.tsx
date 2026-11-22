@@ -25,8 +25,9 @@ const TRACKS = [
 export default function HtmlHub() {
   usePreloadWorkspace();
   usePageMeta({
-    title: 'HTML · tagsmiths',
-    description: 'Pick an HTML track on tagsmiths: build a real web page, or build an email that survives Gmail and Outlook.',
+    title: 'Learn HTML: build a web page or an email · tagsmiths',
+    description:
+      'Two free HTML courses in your browser: build a real web page one tag at a time, or build an HTML email that looks right in Gmail and Outlook.',
     path: '/html',
   });
   return (

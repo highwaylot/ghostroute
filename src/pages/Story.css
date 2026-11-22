@@ -84,6 +84,10 @@
   cursor: pointer;
 }
 
+.story-theme-icon {
+  display: none;
+}
+
 .story-theme:hover {
   border-color: rgba(255, 255, 255, 0.45);
   color: #fff;
@@ -103,8 +107,17 @@
     font-size: 13px;
     padding: 6px 7px;
   }
+  /* Room for three links next to the full logo: the theme button keeps
+     only its icon on a phone. */
   .story-theme {
-    padding: 6px 8px;
+    padding: 4px 8px;
+    font-size: 14px;
+  }
+  .story-theme-icon {
+    display: inline;
+  }
+  .story-theme-label {
+    display: none;
   }
 }
 

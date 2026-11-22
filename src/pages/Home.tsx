@@ -14,18 +14,20 @@ const LANGUAGES = [
   { id: 'js', label: 'javascript', to: '/javascript', ready: false },
 ];
 
-// Reading sections: the story behind the code, with a few hands-on demos.
-const STORIES = [
-  { id: 'ai', label: 'ai', to: '/ai' },
-  { id: 'game-design', label: 'game design', to: '/game-design' },
+// Reading sections: the stories behind the code, with a few hands-on
+// demos, and the reference.
+const READING = [
+  { id: 'ai', label: 'ai', to: '/ai', sub: 'history + try it' },
+  { id: 'game-design', label: 'game design', to: '/game-design', sub: 'history + try it' },
+  { id: 'reference', label: 'reference', to: '/reference', sub: 'every tag, explained' },
 ];
 
 export default function Home() {
   usePreloadWorkspace();
   usePageMeta({
-    title: 'tagsmiths — learn HTML and CSS by writing real code in your browser',
+    title: 'Learn HTML and CSS free, in your browser · tagsmiths',
     description:
-      'Free, in-browser lessons: write real HTML and CSS and watch it render as you type. Guided steps, debugging puzzles and a full reference. No sign-up.',
+      'Free HTML and CSS lessons in your browser: write real code and watch it render as you type. Guided steps, debugging puzzles and a full reference. No sign-up.',
     path: '/',
   });
   return (
@@ -49,12 +51,12 @@ export default function Home() {
             </TransitionLink>
           ))}
         </div>
-        <p className="landing-stories-label">the whole story</p>
+        <p className="landing-stories-label">read</p>
         <div className="landing-tiles landing-tiles-stories">
-          {STORIES.map((s) => (
+          {READING.map((s) => (
             <TransitionLink key={s.id} to={s.to} className="landing-tile landing-tile-story">
               <span className="landing-tile-label">{s.label}</span>
-              <span className="landing-tile-sub">history + try it</span>
+              <span className="landing-tile-sub">{s.sub}</span>
             </TransitionLink>
           ))}
         </div>

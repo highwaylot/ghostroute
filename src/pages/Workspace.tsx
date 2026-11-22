@@ -15,6 +15,7 @@ import { SandboxPane } from '../components/SandboxPane';
 import { ProjectPane } from '../components/ProjectPane';
 import { MyProjectsPane } from '../components/MyProjectsPane';
 import { NestPane } from '../components/NestPane';
+import { findRefByTag } from '../lib/reference';
 import { SettingsMenu } from '../components/SettingsMenu';
 import { TransitionLink } from '../components/TransitionLink';
 import { usePageMeta } from '../lib/pageMeta';
@@ -235,10 +236,16 @@ export default function Workspace() {
   const basePath = trackConfig.basePath;
   const trackName = track === 'html' ? 'HTML website' : track === 'css' ? 'CSS website' : 'HTML email';
   const MODE_NAME: Record<string, string> = { route: 'route', solve: 'solve this code', sandbox: 'sandbox', nest: 'nest', myprojects: 'my projects', quickfire: 'quickfire' };
+  // In the searcher's own words, key phrase first, 60 characters at most.
+  const TRACK_TITLE: Record<Track, string> = {
+    html: 'Learn HTML step by step, free in your browser · tagsmiths',
+    css: 'Learn CSS step by step, free in your browser · tagsmiths',
+    email: 'Learn to code HTML email templates · tagsmiths',
+  };
   const TRACK_DESC: Record<Track, string> = {
-    html: 'Learn HTML by building a real web page one tag at a time, in an editor that shows the result as you type.',
-    css: 'Learn CSS by styling a real page: selectors, the box model, flexbox, grid and responsive layout, with a live preview.',
-    email: 'Learn to build HTML emails that survive Gmail and Outlook: table layouts, inline styles and the quirks of each inbox.',
+    html: 'Free HTML course in your browser: build a real web page one tag at a time, in an editor that shows the result as you type. Guided steps, no sign-up.',
+    css: 'Free CSS course in your browser: style a real page with selectors, the box model, flexbox, grid and media queries, with a live preview. No sign-up.',
+    email: 'Learn to build HTML emails that look right in Gmail and Outlook: table layouts, inline styles and the quirks of each inbox. Free, in your browser.',
   };
   const steps = trackConfig.steps;
   const chapters = trackConfig.chapters;
@@ -247,7 +254,7 @@ export default function Workspace() {
   const mode: Mode = resolveMode(modeParam);
   const pageHeading = `${trackName}: ${MODE_NAME[mode] ?? mode}`;
   usePageMeta({
-    title: mode === 'route' ? `${trackName} · tagsmiths` : `${MODE_NAME[mode] ?? mode} · ${trackName} · tagsmiths`,
+    title: mode === 'route' ? TRACK_TITLE[track] : `${MODE_NAME[mode] ?? mode} · ${trackName} · tagsmiths`,
     description: TRACK_DESC[track],
     // Every pane of a track is canonically the track itself: the panes are
     // tools inside one lesson, not separate pages worth indexing.
@@ -654,6 +661,7 @@ export default function Workspace() {
                 categories={trackConfig.nestCategories}
                 getEntry={trackConfig.nestGetEntry}
                 blueprints={trackConfig.nestBlueprints}
+                pageFor={(tag) => findRefByTag(track, tag)?.path}
               />
             </>
           )}

@@ -9,6 +9,8 @@ type Props = {
   keyIndex: KeyEntry[];
   categories: string[];
   getEntry: (tag: string) => NestEntry | undefined;
+  // The entry's own page under /reference, to share or bookmark.
+  pageFor?: (tag: string) => string | undefined;
   blueprints?: Blueprint[]; // omit to hide the blueprints tab entirely
 };
 
@@ -45,7 +47,7 @@ function Diagram({ example, tag }: { example: string; tag: string }) {
   );
 }
 
-export function NestPane({ bookLabel, keyIndex, categories, getEntry, blueprints }: Props) {
+export function NestPane({ bookLabel, keyIndex, categories, getEntry, blueprints, pageFor }: Props) {
   const [section, setSection] = useState<'tags' | 'blueprints'>('tags');
   const [activeTag, setActiveTag] = useState(keyIndex[0]?.tag ?? '');
   const [activeBlueprint, setActiveBlueprint] = useState(blueprints?.[0]?.id ?? '');
@@ -154,6 +156,11 @@ export function NestPane({ bookLabel, keyIndex, categories, getEntry, blueprints
             Chapter {chapterNum} · {entry.category} · page {flatIndex + 1} of {orderedTags.length}
           </p>
           <h1 className="nest-page-title">{entry.tag}</h1>
+          {pageFor?.(entry.tag) && (
+            <a className="nest-page-permalink" href={pageFor(entry.tag)} target="_blank" rel="noopener">
+              open as its own page ↗
+            </a>
+          )}
 
           <div className="nest-stat-row">
             {Object.entries(entry.stats).map(([key, value]) => (

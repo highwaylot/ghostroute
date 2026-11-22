@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 // A one-button runner to feel the "game feel" and "juice" ideas. The rules
 // never change: run, jump the blocks and pits. Only the numbers and the
@@ -39,6 +39,14 @@ function loadBest() {
   }
 }
 
+const REDUCE_QUERY = '(prefers-reduced-motion: reduce)';
+const subscribeReduce = (cb: () => void) => {
+  const mq = window.matchMedia(REDUCE_QUERY);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+};
+const readReduce = () => window.matchMedia(REDUCE_QUERY).matches;
+
 export function GameFeelDemo() {
   const [settings, setSettings] = useState<Settings>(PLAIN);
   const [best, setBest] = useState(loadBest);
@@ -49,7 +57,7 @@ export function GameFeelDemo() {
     settingsRef.current = settings;
   }, [settings]);
   const pressRef = useRef<() => void>(() => {});
-  const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = useSyncExternalStore(subscribeReduce, readReduce, () => false);
 
   useEffect(() => {
     const canvas = canvasRef.current!;

@@ -2,11 +2,13 @@ import { flushSync } from 'react-dom';
 import { Link, useNavigate, type LinkProps } from 'react-router-dom';
 import { loadWorkspace } from '../lib/workspaceLoader';
 import { loadStory } from '../lib/storyLoader';
+import { loadReference } from '../lib/referenceLoader';
 
 type StartViewTransition = (update: () => void) => { finished: Promise<void> };
 
 const isWorkspacePath = (to: string) => /^\/(html\/website|html\/email|css\/website)(\/|$)/.test(to);
 const isStoryPath = (to: string) => /^\/(ai|game-design)(\/|#|$)/.test(to);
+const isReferencePath = (to: string) => /^\/reference(\/|#|$)/.test(to);
 
 // Moving between the landing pages and the workspace used to be a hard cut:
 // in light mode the whole navy screen turned white at once. With the
@@ -20,6 +22,7 @@ export async function navigateWithTransition(navigate: (to: string) => void, to:
   // "loading" screen as the new page.
   if (isWorkspacePath(to)) await loadWorkspace();
   if (isStoryPath(to)) await loadStory();
+  if (isReferencePath(to)) await loadReference();
   const start = (document as Document & { startViewTransition?: StartViewTransition }).startViewTransition;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!start || reduce) {

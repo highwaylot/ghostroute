@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { loadWorkspace } from './workspaceLoader';
 import { loadStory } from './storyLoader';
+import { loadReference } from './referenceLoader';
 
 // Called by the landing pages. Waits until the page has fully loaded and
 // the browser is then idle (or 1.5s where requestIdleCallback is missing),
@@ -17,6 +18,7 @@ export function usePreloadWorkspace() {
     const warm = () => {
       void loadWorkspace();
       void loadStory();
+      void loadReference();
     };
     const schedule = () => {
       if (w.requestIdleCallback) idleId = w.requestIdleCallback(warm, { timeout: 3000 });

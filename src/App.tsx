@@ -6,6 +6,7 @@ import ComingSoon from './pages/ComingSoon';
 import NotFound from './pages/NotFound';
 import { getLoadedWorkspace, loadWorkspace } from './lib/workspaceLoader';
 import { getLoadedStory, loadStory } from './lib/storyLoader';
+import { getLoadedReference, loadReference } from './lib/referenceLoader';
 
 // The workspace carries the code editor, every lesson and both Nest books,
 // which is most of the app's weight. Loading it on demand keeps the landing
@@ -26,6 +27,13 @@ const LazyStory = lazy(loadStory);
 function StoryRoute({ id }: { id: 'ai' | 'game-design' }) {
   const [Component] = useState(() => getLoadedStory()?.default ?? LazyStory);
   return <Component id={id} />;
+}
+
+// The reference pages: their own chunk too.
+const LazyReference = lazy(loadReference);
+function ReferenceRoute() {
+  const [Component] = useState(() => getLoadedReference()?.default ?? LazyReference);
+  return <Component />;
 }
 
 function Loading() {
@@ -64,6 +72,9 @@ function App() {
       {/* Reading sections: the whole story of AI and of game design. */}
       <Route path="/ai" element={<StoryRoute id="ai" />} />
       <Route path="/game-design" element={<StoryRoute id="game-design" />} />
+      {/* One page per Nest entry, plus the list of them all. */}
+      <Route path="/reference" element={<ReferenceRoute />} />
+      <Route path="/reference/:book/:slug" element={<ReferenceRoute />} />
       <Route
         path="/javascript"
         element={<ComingSoon title="javascript" backTo="/" backLabel="code." />}
