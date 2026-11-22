@@ -16,7 +16,13 @@ createServer((req, res) => {
   if (p.endsWith('.html')) { res.writeHead(308, { Location: p.slice(0, -5) === '/index' ? '/' : p.slice(0, -5) }); return res.end(); }
   for (const r of cfg.redirects ?? []) if (toRe(r.source).test(p)) { res.writeHead(r.permanent ? 308 : 307, { Location: r.destination }); return res.end(); }
   let f = p === '/' ? file(join(DIST, 'index.html')) : file(join(DIST, p)) || file(join(DIST, p + '.html'));
-  if (!f) for (const r of cfg.rewrites ?? []) if (toRe(r.source).test(p)) { f = file(join(DIST, r.destination)); break; }
+  // Like Vercel: with cleanUrls, a rewrite must name the clean path
+  // (/app-shell); a destination ending in .html would hit a redirect and 404.
+  if (!f) for (const r of cfg.rewrites ?? []) if (toRe(r.source).test(p)) {
+    const d = r.destination;
+    f = cfg.cleanUrls && d.endsWith('.html') ? null : file(join(DIST, d)) || file(join(DIST, d + '.html'));
+    break;
+  }
   let status = 200;
   if (!f) { f = join(DIST, '404.html'); status = 404; }
   res.writeHead(status, { 'Content-Type': TYPES[extname(f)] ?? 'application/octet-stream' });

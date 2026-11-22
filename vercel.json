@@ -11,15 +11,15 @@
   "rewrites": [
     {
       "source": "/html/website/:path+",
-      "destination": "/app-shell.html"
+      "destination": "/app-shell"
     },
     {
       "source": "/html/email/:path+",
-      "destination": "/app-shell.html"
+      "destination": "/app-shell"
     },
     {
       "source": "/css/website/:path+",
-      "destination": "/app-shell.html"
+      "destination": "/app-shell"
     }
   ],
   "headers": [
